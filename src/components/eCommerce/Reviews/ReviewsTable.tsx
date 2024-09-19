@@ -133,14 +133,13 @@ const updateReviewStatus = async (id: string, status: string) => {
 };
 
 const deleteReview = async (id: string) => {
-  // Replace with your API call
+
   await fetch(`/api/reviews/${id}`, {
     method: 'DELETE',
   });
 };
 
 const ReviewsTable: React.FC = () => {
-  // Select
   const [select, setSelect] = React.useState("");
   const handleChange = (event: SelectChangeEvent) => {
     setSelect(event.target.value as string);
