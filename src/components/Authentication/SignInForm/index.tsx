@@ -94,7 +94,7 @@ const SignInForm: React.FC = () => {
                       fontWeight: "600",
                     }}
                   >
-                    Welcome back to Trezo!
+                    Welcome back to LMS
                   </Typography>
 
                   <Typography sx={{ fontWeight: "500", fontSize: "16px" }}>

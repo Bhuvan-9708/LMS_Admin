@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, FormEvent } from "react";
-import Image from "next/image";
 import {
   Card,
   Box,
@@ -25,6 +24,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
+import Switch from '@mui/material/Switch';
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
@@ -153,435 +153,43 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
-interface Ratings {
-  star: string;
-}
-
-interface Instructors {
-  id: string;
-  image: string;
-  name: string;
-  designation: string;
-  courses: number;
-  totalEarnings: string;
-  email: string;
-  ratings: Ratings[];
-  status: string;
-}
-
-function createData(
-  id: string,
-  image: string,
-  name: string,
-  designation: string,
-  courses: number,
-  totalEarnings: string,
-  email: string,
-  ratings: Ratings[],
-  status: string
-): Instructors {
-  return {
-    id,
-    image,
-    name,
-    designation,
-    courses,
-    totalEarnings,
-    email,
-    ratings,
-    status,
-  };
-}
-
-const rows = [
-  createData(
-    "#A-1217",
-    "/images/users/user13.jpg",
-    "Olivia Clark",
-    "Big Data",
-    55,
-    "$6,855.00",
-    "olivia@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "active"
-  ),
-  createData(
-    "#A-1216",
-    "/images/users/user14.jpg",
-    "Ava Turner",
-    "UX/UI",
-    120,
-    "$258.00",
-    "ava@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "deactive"
-  ),
-  createData(
-    "#A-1215",
-    "/images/users/user15.jpg",
-    "Lucas Morgan",
-    "Developer",
-    86,
-    "$3890.00",
-    "lucas@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "active"
-  ),
-  createData(
-    "#A-1214",
-    "/images/users/user16.jpg",
-    "Isabella Cooper",
-    "Designer",
-    75,
-    "$2500.00",
-    "isabella@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "active"
-  ),
-  createData(
-    "#A-1213",
-    "/images/users/user17.jpg",
-    "Olivia Clark",
-    "Big Data",
-    55,
-    "$6,855.00",
-    "olivia@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "active"
-  ),
-  createData(
-    "#A-1212",
-    "/images/users/user18.jpg",
-    "Ava Turner",
-    "UX/UI",
-    120,
-    "$258.00",
-    "ava@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "deactive"
-  ),
-  createData(
-    "#A-1211",
-    "/images/users/user19.jpg",
-    "Lucas Morgan",
-    "Developer",
-    86,
-    "$3890.00",
-    "lucas@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "active"
-  ),
-  createData(
-    "#A-1210",
-    "/images/users/user13.jpg",
-    "Olivia Clark",
-    "Big Data",
-    55,
-    "$6,855.00",
-    "olivia@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "active"
-  ),
-  createData(
-    "#A-1209",
-    "/images/users/user14.jpg",
-    "Ava Turner",
-    "UX/UI",
-    120,
-    "$258.00",
-    "ava@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "deactive"
-  ),
-  createData(
-    "#A-1208",
-    "/images/users/user15.jpg",
-    "Lucas Morgan",
-    "Developer",
-    86,
-    "$3890.00",
-    "lucas@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "active"
-  ),
-  createData(
-    "#A-1207",
-    "/images/users/user16.jpg",
-    "Isabella Cooper",
-    "Designer",
-    75,
-    "$2500.00",
-    "isabella@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "active"
-  ),
-  createData(
-    "#A-1206",
-    "/images/users/user17.jpg",
-    "Olivia Clark",
-    "Big Data",
-    55,
-    "$6,855.00",
-    "olivia@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "active"
-  ),
-  createData(
-    "#A-1205",
-    "/images/users/user18.jpg",
-    "Ava Turner",
-    "UX/UI",
-    120,
-    "$258.00",
-    "ava@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "deactive"
-  ),
-  createData(
-    "#A-1204",
-    "/images/users/user19.jpg",
-    "Lucas Morgan",
-    "Developer",
-    86,
-    "$3890.00",
-    "lucas@trezo.com",
-    [
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-      {
-        star: "ri-star-fill",
-      },
-    ],
-    "active"
-  ),
-].sort((b, a) => (a.id < b.id ? -1 : 1));
-
 const Instructors: React.FC = () => {
-  // Table
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [instructors, setInstructors] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | string>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
-  // Avoid a layout jump when reaching the last page with empty rows.
+  React.useEffect(() => {
+    const fetchInstructors = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/instructors");
+        if (!response.ok) {
+          throw new Error("Failed to fetch instructors");
+        }
+        const data = await response.json();
+        setInstructors(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInstructors();
+  }, []);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredInstructors = instructors.filter(instructor =>
+    instructor.first_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredInstructors.length) : 0;
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -590,9 +198,40 @@ const Instructors: React.FC = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleUpdateInstructor = async (id: string, updates: { status?: string; isActive?: boolean }) => {
+    try {
+      const currentResponse = await fetch(`http://localhost:5000/instructors/${id}`);
+      const currentInstructor = await currentResponse.json();
+
+      const updatedInstructor = {
+        ...currentInstructor,
+        is_active: updates.isActive !== undefined ? updates.isActive : currentInstructor.is_active,
+        status: updates.status !== undefined ? updates.status : currentInstructor.status,
+      };
+
+      const response = await fetch(`http://localhost:5000/instructors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedInstructor),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update instructor");
+      }
+
+      // Update local state to reflect changes
+      setInstructors(prevInstructors =>
+        prevInstructors.map(instructor =>
+          instructor.id === id ? updatedInstructor : instructor
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update instructor", error);
+    }
+  };
+
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -611,21 +250,13 @@ const Instructors: React.FC = () => {
     // console.log();
   };
 
-  // Select
-  const [assignedTo, setAssignedTo] = useState("");
-  const handleChangeAssignedTo = (event: SelectChangeEvent) => {
-    setAssignedTo(event.target.value as string);
-  };
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
 
-  const [ratings, setRatings] = useState("");
-  const handleChangeRatings = (event: SelectChangeEvent) => {
-    setRatings(event.target.value as string);
-  };
-
-  const [status, setStatus] = useState("");
-  const handleChangeStatus = (event: SelectChangeEvent) => {
-    setStatus(event.target.value as string);
-  };
+  if (error) {
+    return <Typography>Error: {error}</Typography>;
+  }
 
   return (
     <>
@@ -700,249 +331,62 @@ const Instructors: React.FC = () => {
             <Table sx={{ minWidth: 480 }} aria-label="Table">
               <TableHead className="bg-primary-50">
                 <TableRow>
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    ID
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Name
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Courses
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Total Earnings
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Email
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Ratings
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Status
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom text-end"
-                  >
-                    Action
-                  </TableCell>
+                  <TableCell sx={{ fontWeight: '500', padding: '10px 20px', fontSize: '14px' }} className="text-black border-bottom">ID</TableCell>
+                  <TableCell sx={{ fontWeight: '500', padding: '10px 20px', fontSize: '14px' }} className="text-black border-bottom">Name</TableCell>
+                  <TableCell sx={{ fontWeight: '500', padding: '10px 20px', fontSize: '14px' }} className="text-black border-bottom">Occupation</TableCell>
+                  <TableCell sx={{ fontWeight: '500', padding: '10px 20px', fontSize: '14px' }} className="text-black border-bottom">Phone</TableCell>
+                  <TableCell sx={{ fontWeight: '500', padding: '10px 20px', fontSize: '14px' }} className="text-black border-bottom">Email</TableCell>
+                  <TableCell sx={{ fontWeight: '500', padding: '10px 20px', fontSize: '14px' }} className="text-black border-bottom">Status</TableCell>
+                  <TableCell sx={{ fontWeight: '500', padding: '10px 20px', fontSize: '14px' }} className="text-black border-bottom">IsActive</TableCell>
+                  <TableCell sx={{ fontWeight: '500', padding: '10px 20px', fontSize: '14px' }} className="text-black border-bottom text-end">Action</TableCell>
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {(rowsPerPage > 0
-                  ? rows.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : rows
-                ).map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell
-                      sx={{
-                        padding: "13px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
-                      {row.id}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "13px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "12px",
-                        }}
-                      >
-                        <Box sx={{ flexShrink: "0" }}>
-                          <Image
-                            src={row.image}
-                            alt="instructor"
-                            width={44}
-                            height={44}
-                            style={{ borderRadius: "100px" }}
-                          />
-                        </Box>
-
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontWeight: "500",
-                            }}
-                            className="text-black"
-                          >
-                            {row.name}
-                          </Typography>
-
-                          <Typography className="text-body">
-                            {row.designation}
-                          </Typography>
-                        </Box>
+                {filteredInstructors.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((instructor) => (
+                  <TableRow key={instructor.id}>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.id}</TableCell>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <Typography sx={{ fontWeight: '500' }} className="text-black">{instructor.first_name}</Typography>
                       </Box>
                     </TableCell>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.occupation}</TableCell>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.phone}</TableCell>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.email}</TableCell>
 
-                    <TableCell
-                      sx={{
-                        padding: "13px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
-                      {row.courses}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "13px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
-                      {row.totalEarnings}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "13px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
-                      {row.email}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "13px 20px",
-                      }}
-                      className="border-bottom"
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "2px",
-                        }}
+                    {/* Status dropdown */}
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                      <Select
+                        value={instructor.status}
+                        onChange={(e) => handleUpdateInstructor(instructor.id, { status: e.target.value })}
+                        sx={{ textTransform: 'capitalize' }}
                       >
-                        {row.ratings.map((ratings, index) => (
-                          <i
-                            key={index}
-                            className={ratings.star}
-                            style={{ color: "#fe7a36", fontSize: "15px" }}
-                          ></i>
-                        ))}
-                      </Box>
+                        <MenuItem value="pending">Pending</MenuItem>
+                        <MenuItem value="approved">Approved</MenuItem>
+                        <MenuItem value="rejected">Rejected</MenuItem>
+                      </Select>
                     </TableCell>
 
-                    <TableCell
-                      sx={{
-                        padding: "13px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
-                      <div
-                        className={`trezo-badge ${row.status}`}
-                        style={{ textTransform: "capitalize" }}
-                      >
-                        {row.status}
-                      </div>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                      <Switch
+                        checked={instructor.is_active}
+                        onChange={(e) => handleUpdateInstructor(instructor.id, { isActive: e.target.checked })}
+                        color="primary"
+                      />
                     </TableCell>
 
-                    <TableCell
-                      sx={{
-                        padding: "13px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-end border-bottom"
-                    >
-                      <IconButton
-                        aria-label="delete"
-                        color="error"
-                        sx={{ padding: "5px" }}
-                      >
-                        <i
-                          className="material-symbols-outlined"
-                          style={{ fontSize: "16px" }}
-                        >
-                          delete
-                        </i>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-end border-bottom">
+                      <IconButton aria-label="delete" color="error" sx={{ padding: '5px' }}>
+                        <i className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</i>
                       </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={8} />
+
+                {instructors.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">No instructors found</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -950,14 +394,9 @@ const Instructors: React.FC = () => {
               <TableFooter>
                 <TableRow>
                   <TablePagination
-                    rowsPerPageOptions={[
-                      5,
-                      10,
-                      25,
-                      { label: "All", value: -1 },
-                    ]}
+                    rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                     colSpan={8}
-                    count={rows.length}
+                    count={instructors.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     slotProps={{
@@ -1023,260 +462,54 @@ const Instructors: React.FC = () => {
 
           <Box className="rmu-modal-content">
             <Box component="form" noValidate onSubmit={handleSubmit}>
-              <Box
-                sx={{
-                  padding: "25px",
-                  borderRadius: "8px",
-                }}
-                className="bg-white"
-              >
+              <Box sx={{ padding: "25px", borderRadius: "8px" }} className="bg-white">
                 <Grid container alignItems="center" spacing={2}>
                   <Grid item xs={12} md={12} lg={6}>
-                    <Typography
-                      component="h5"
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        mb: "12px",
-                      }}
-                      className="text-black"
-                    >
-                      Name
-                    </Typography>
-
-                    <TextField
-                      autoComplete="name"
-                      name="name"
-                      required
-                      fullWidth
-                      id="name"
-                      label="Enter name"
-                      autoFocus
-                      InputProps={{
-                        style: { borderRadius: 8 },
-                      }}
-                    />
+                    <Typography component="h5" sx={{ fontWeight: "500", fontSize: "14px", mb: "12px" }} className="text-black">First Name</Typography>
+                    <TextField name="first_name" required fullWidth id="first_name" label="Enter First Name" autoFocus InputProps={{ style: { borderRadius: 8 } }} />
                   </Grid>
-
                   <Grid item xs={12} md={12} lg={6}>
-                    <Typography
-                      component="h5"
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        mb: "12px",
-                      }}
-                      className="text-black"
-                    >
-                      Designation
-                    </Typography>
-
-                    <TextField
-                      autoComplete="designation"
-                      name="designation"
-                      required
-                      fullWidth
-                      id="designation"
-                      label="Enter designation"
-                      autoFocus
-                      InputProps={{
-                        style: { borderRadius: 8 },
-                      }}
-                    />
+                    <Typography component="h5" sx={{ fontWeight: "500", fontSize: "14px", mb: "12px" }} className="text-black">Last Name</Typography>
+                    <TextField name="last_name" fullWidth id="last_name" label="Enter Last Name" InputProps={{ style: { borderRadius: 8 } }} />
                   </Grid>
-
                   <Grid item xs={12} md={12} lg={6}>
-                    <Typography
-                      component="h5"
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        mb: "12px",
-                      }}
-                      className="text-black"
-                    >
-                      Total Earnings
-                    </Typography>
-
-                    <TextField
-                      autoComplete="totalEarnings"
-                      name="totalEarnings"
-                      required
-                      fullWidth
-                      id="totalEarnings"
-                      label="Enter total earnings"
-                      autoFocus
-                      InputProps={{
-                        style: { borderRadius: 8 },
-                      }}
-                    />
+                    <Typography component="h5" sx={{ fontWeight: "500", fontSize: "14px", mb: "12px" }} className="text-black">Occupation</Typography>
+                    <TextField name="occupation" required fullWidth id="occupation" label="Enter Designation" InputProps={{ style: { borderRadius: 8 } }} />
                   </Grid>
-
                   <Grid item xs={12} md={12} lg={6}>
-                    <Typography
-                      component="h5"
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        mb: "12px",
-                      }}
-                      className="text-black"
-                    >
-                      Email
-                    </Typography>
-
-                    <TextField
-                      autoComplete="email"
-                      name="email"
-                      required
-                      fullWidth
-                      id="email"
-                      label="Enter email address"
-                      autoFocus
-                      InputProps={{
-                        style: { borderRadius: 8 },
-                      }}
-                    />
+                    <Typography component="h5" sx={{ fontWeight: "500", fontSize: "14px", mb: "12px" }} className="text-black">Gender</Typography>
+                    <TextField select name="gender" required fullWidth id="gender" label="Select Gender" InputProps={{ style: { borderRadius: 8 } }} SelectProps={{ native: true }}>
+                      <option value="" />
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </TextField>
                   </Grid>
-
                   <Grid item xs={12} md={12} lg={6}>
-                    <Typography
-                      component="h5"
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        mb: "12px",
-                      }}
-                      className="text-black"
-                    >
-                      Ratings
-                    </Typography>
-
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">
-                        Select
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={ratings}
-                        label="Select"
-                        onChange={handleChangeRatings}
-                      >
-                        <MenuItem value={0}>5 Star</MenuItem>
-                        <MenuItem value={1}>4.5 Star</MenuItem>
-                        <MenuItem value={2}>4 Star</MenuItem>
-                        <MenuItem value={3}>3.5 Star</MenuItem>
-                        <MenuItem value={4}>3 Star</MenuItem>
-                        <MenuItem value={5}>2.5 Star</MenuItem>
-                        <MenuItem value={6}>2 Star</MenuItem>
-                        <MenuItem value={7}>1.5 Star</MenuItem>
-                        <MenuItem value={8}>1 Star</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <Typography component="h5" sx={{ fontWeight: "500", fontSize: "14px", mb: "12px" }} className="text-black">Date of Birth</Typography>
+                    <TextField type="date" name="date_of_birth" required fullWidth id="date_of_birth" InputLabelProps={{ shrink: true }} InputProps={{ style: { borderRadius: 8 } }} />
                   </Grid>
-
                   <Grid item xs={12} md={12} lg={6}>
-                    <Typography
-                      component="h5"
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        mb: "12px",
-                      }}
-                      className="text-black"
-                    >
-                      Status
-                    </Typography>
-
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">
-                        Select
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={status}
-                        label="Select"
-                        onChange={handleChangeStatus}
-                      >
-                        <MenuItem value={0}>Active</MenuItem>
-                        <MenuItem value={1}>Deactive</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <Typography component="h5" sx={{ fontWeight: "500", fontSize: "14px", mb: "12px" }} className="text-black">Email</Typography>
+                    <TextField name="email" required fullWidth id="email" label="Enter Email" InputProps={{ style: { borderRadius: 8 } }} />
                   </Grid>
-
-                  <Grid item xs={12} md={12} lg={12}>
-                    <Typography
-                      component="h5"
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        mb: "12px",
-                      }}
-                      className="text-black"
-                    >
-                      Instructor Image
-                    </Typography>
-
-                    <TextField
-                      autoComplete="image"
-                      name="image"
-                      required
-                      fullWidth
-                      id="image"
-                      type="file"
-                      autoFocus
-                      InputProps={{
-                        style: { borderRadius: 8 },
-                      }}
-                    />
+                  <Grid item xs={12} md={12} lg={6}>
+                    <Typography component="h5" sx={{ fontWeight: "500", fontSize: "14px", mb: "12px" }} className="text-black">Phone</Typography>
+                    <TextField name="phone" required fullWidth id="phone" label="Enter Phone Number" InputProps={{ style: { borderRadius: 8 } }} />
                   </Grid>
-
+                  <Grid item xs={12} md={12} lg={6}>
+                    <Typography component="h5" sx={{ fontWeight: "500", fontSize: "14px", mb: "12px" }} className="text-black">Status</Typography>
+                    <TextField select name="status" required fullWidth id="status" label="Select Status" InputProps={{ style: { borderRadius: 8 } }} SelectProps={{ native: true }}>
+                      <option value="" />
+                      <option value="pending">Pending</option>
+                      <option value="approved">Approved</option>
+                      <option value="rejected">Rejected</option>
+                    </TextField>
+                  </Grid>
                   <Grid item xs={12} mt={1}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "end",
-                        gap: "10px",
-                      }}
-                    >
-                      <Button
-                        onClick={handleCloseModal}
-                        variant="outlined"
-                        color="error"
-                        sx={{
-                          textTransform: "capitalize",
-                          borderRadius: "8px",
-                          fontWeight: "500",
-                          fontSize: "13px",
-                          padding: "11px 30px",
-                        }}
-                      >
-                        Cancel
-                      </Button>
-
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        sx={{
-                          textTransform: "capitalize",
-                          borderRadius: "8px",
-                          fontWeight: "500",
-                          fontSize: "13px",
-                          padding: "11px 30px",
-                          color: "#fff !important",
-                        }}
-                      >
-                        <AddIcon
-                          sx={{
-                            position: "relative",
-                            top: "-1px",
-                          }}
-                        />{" "}
-                        Create
-                      </Button>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "end", gap: "10px" }}>
+                      <Button onClick={handleCloseModal} variant="outlined" color="error" sx={{ textTransform: "capitalize", borderRadius: "8px", fontWeight: "500", fontSize: "13px", padding: "11px 30px" }}>Cancel</Button>
+                      <Button type="submit" variant="contained" sx={{ textTransform: "capitalize", borderRadius: "8px", fontWeight: "500", fontSize: "13px", padding: "11px 30px", color: "#fff !important" }}><AddIcon sx={{ position: "relative", top: "-1px" }} /> Create</Button>
                     </Box>
                   </Grid>
                 </Grid>

@@ -1,31 +1,31 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import {
   Card,
   Box,
   Typography,
-  FormControl,
-  InputLabel,
   MenuItem,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  TableHead,
   TableFooter,
-  TablePagination,
   TableRow,
+  TablePagination,
   Paper,
   IconButton,
-  TableHead,
+  Select,
+  Switch,
+  Button
 } from "@mui/material";
-import Link from "next/link";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import styles from "@/components/LMS/Search.module.css";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface TablePaginationActionsProps {
   count: number;
@@ -41,361 +41,149 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
 
-  const handleBackButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onPageChange(event, page - 1);
   };
 
-  const handleNextButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onPageChange(event, page + 1);
   };
 
   return (
-    <Box
-      sx={{
-        flexShrink: 0,
-        display: "flex",
-        gap: "10px",
-        padding: "0 20px",
-      }}
-    >
+    <Box sx={{ flexShrink: 0, display: "flex", gap: "10px", padding: "0 20px" }}>
       <IconButton
         onClick={handleBackButtonClick}
         disabled={page === 0}
         aria-label="previous page"
-        sx={{
-          borderRadius: "4px",
-          padding: "6px",
-        }}
-        className="border"
+        sx={{ borderRadius: "4px", padding: "6px" }}
       >
-        {theme.direction === "rtl" ? (
-          <KeyboardArrowRight />
-        ) : (
-          <KeyboardArrowLeft />
-        )}
+        {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
       </IconButton>
-
       <IconButton
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="next page"
-        sx={{
-          borderRadius: "4px",
-          padding: "6px",
-        }}
-        className="border"
+        sx={{ borderRadius: "4px", padding: "6px" }}
       >
-        {theme.direction === "rtl" ? (
-          <KeyboardArrowLeft />
-        ) : (
-          <KeyboardArrowRight />
-        )}
+        {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
       </IconButton>
     </Box>
   );
 }
 
-function createData(
-  id: any,
-  courseName: string,
-  courseDetailsLink: string,
-  category: string,
-  instructorImg: string,
-  instructorName: string,
-  enrolled: number,
-  startDate: string,
-  endDate: string,
-  price: number
-) {
-  return {
-    id,
-    courseName,
-    courseDetailsLink,
-    category,
-    instructorImg,
-    instructorName,
-    enrolled,
-    startDate,
-    endDate,
-    price,
-  };
-}
-
-const rows = [
-  createData(
-    "#854",
-    "Cybersecurity Awareness",
-    "/lms/courses/details/",
-    "Technology",
-    "/images/users/user6.jpg",
-    "Oliver Khan",
-    180,
-    "25 Mar 2024",
-    "25 Apr 2024",
-    49.99
-  ),
-  createData(
-    "#855",
-    "Python Programming",
-    "/lms/courses/details/",
-    "Science",
-    "/images/users/user7.jpg",
-    "Ava Cooper",
-    250,
-    "20 Mar 2024",
-    "20 Apr 2024",
-    45.32
-  ),
-  createData(
-    "#856",
-    "Big Data Analytics",
-    "/lms/courses/details/",
-    "Health & Wellness",
-    "/images/users/user8.jpg",
-    "Isabella Evans",
-    320,
-    "15 Mar 2024",
-    "15 Apr 2024",
-    99.0
-  ),
-  createData(
-    "#857",
-    "Introduction to Blockchain",
-    "/lms/courses/details/",
-    "Education",
-    "/images/users/user9.jpg",
-    "Mia Hughes",
-    135,
-    "11 Mar 2024",
-    "11 Apr 2024",
-    29.75
-  ),
-  createData(
-    "#858",
-    "Network Administration",
-    "/lms/courses/details/",
-    "Food & Cooking",
-    "/images/users/user10.jpg",
-    "Noah Mitchell",
-    460,
-    "5 Mar 2024",
-    "5 Apr 2024",
-    56.99
-  ),
-  createData(
-    "#859",
-    "Artificial Intelligenc",
-    "/lms/courses/details/",
-    "Lifestyle & Fashion",
-    "/images/users/user11.jpg",
-    "Oliver Khan",
-    515,
-    "10 Feb 2024",
-    "10 Mar 2024",
-    49.99
-  ),
-  createData(
-    "#860",
-    "Network Administration",
-    "/lms/courses/details/",
-    "Food & Cooking",
-    "/images/users/user10.jpg",
-    "Noah Mitchell",
-    460,
-    "05 Feb 2024",
-    "05 Mar 2024",
-    49.99
-  ),
-  createData(
-    "#861",
-    "Introduction to Blockchain",
-    "/lms/courses/details/",
-    "Education",
-    "/images/users/user9.jpg",
-    "Mia Hughes",
-    135,
-    "10 Mar 2024",
-    "10 Mar 2024",
-    29.75
-  ),
-  createData(
-    "#862",
-    "Big Data Analytics",
-    "/lms/courses/details/",
-    "Health & Wellness",
-    "/images/users/user8.jpg",
-    "Isabella Evans",
-    320,
-    "15 Mar 2024",
-    "15 Mar 2024",
-    99.0
-  ),
-  createData(
-    "#863",
-    "Python Programming",
-    "/lms/courses/details/",
-    "Science",
-    "/images/users/user7.jpg",
-    "Ava Cooper",
-    250,
-    "20 Mar 2024",
-    "20 Mar 2024",
-    45.32
-  ),
-  createData(
-    "#864",
-    "Photoshop Mastery",
-    "/lms/courses/details/",
-    "Education",
-    "/images/users/user9.jpg",
-    "Mia Hughes",
-    135,
-    "10 Mar 2024",
-    "10 Apr 2024",
-    60.99
-  ),
-  createData(
-    "#865",
-    "Business Finance",
-    "/lms/courses/details/",
-    "Health & Wellness",
-    "/images/users/user8.jpg",
-    "Isabella Evans",
-    320,
-    "15 Mar 2024",
-    "15 Apr 2024",
-    70.99
-  ),
-  createData(
-    "#866",
-    "Graphic Design Basics",
-    "/lms/courses/details/",
-    "Science",
-    "/images/users/user7.jpg",
-    "Ava Cooper",
-    250,
-    "20 Mar 2024",
-    "20 Apr 2024",
-    80.99
-  ),
-  createData(
-    "#867",
-    "Introduction Of Python",
-    "/lms/courses/details/",
-    "Technology",
-    "/images/users/user6.jpg",
-    "Oliver Khan",
-    180,
-    "25 Mar 2024",
-    "25 Mar 2024",
-    90.99
-  ),
-  createData(
-    "#868",
-    "Artificial Intelligence",
-    "/lms/courses/details/",
-    "Lifestyle & Fashion",
-    "/images/users/user11.jpg",
-    "Oliver Khan",
-    180,
-    "25 Feb 2024",
-    "25 Mar 2024",
-    95.99
-  ),
-  createData(
-    "#869",
-    "Network Administration",
-    "/lms/courses/details/",
-    "Food & Cooking",
-    "/images/users/user10.jpg",
-    "Noah Mitchel",
-    460,
-    "05 Mar 2024",
-    "05 Apr 2024",
-    85.99
-  ),
-  createData(
-    "#870",
-    "Introduction to Blockchain",
-    "/lms/courses/details/",
-    "Education",
-    "/images/users/user9.jpg",
-    "Mia Hughes",
-    135,
-    "10 Mar 2024",
-    "10 Apr 2024",
-    75.99
-  ),
-  createData(
-    "#871",
-    "Big Data Analytics",
-    "/lms/courses/details/",
-    "Health & Wellness",
-    "/images/users/user8.jpg",
-    "Isabella Evans",
-    320,
-    "15 Mar 2024",
-    "15 Apr 2024",
-    56.99
-  ),
-  createData(
-    "#872",
-    "Python Programming",
-    "/lms/courses/details/",
-    "Science",
-    "/images/users/user7.jpg",
-    "Ava Cooper",
-    250,
-    "20 Mar 2024",
-    "20 Apr 2024",
-    99.99
-  ),
-  createData(
-    "#873",
-    "Cybersecurity Awareness",
-    "/lms/courses/details/",
-    "Technology",
-    "/images/users/user6.jpg",
-    "Oliver Khan",
-    180,
-    "25 Mar 2024",
-    "25 Mar 2024",
-    47.99
-  ),
-].sort((b, a) => (a.id < b.id ? -1 : 1));
-
 const Courses: React.FC = () => {
-  // Select
-  const [select, setSelect] = React.useState("");
-  const handleChange = (event: SelectChangeEvent) => {
-    setSelect(event.target.value as string);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | string>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const Router = useRouter();
+
+  const handleAddCourses = () => {
+    Router.push('/lms/create-course');
+  }
+
+  React.useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/courses");
+        if (!response.ok) {
+          throw new Error("Failed to fetch courses");
+        }
+        const data = await response.json();
+        setCourses(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
   };
 
-  // Table
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const filteredCourses = courses.filter(course =>
+    course.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  // Table pagination
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredCourses.length) : 0;
 
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const handleToggleActive = async (id: string, newStatus: boolean) => {
+    try {
+      const response = await fetch(`http://localhost:5000/courses/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: newStatus }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update status");
+      }
+      setCourses(prevCourses =>
+        prevCourses.map(course =>
+          course.id === id ? { ...course, isActive: newStatus } : course
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update course status", error);
+    }
+  };
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    try {
+      const response = await fetch(`http://localhost:5000/courses/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update status");
+      }
+      setCourses(prevCourses =>
+        prevCourses.map(course =>
+          course.id === id ? { ...course, status: newStatus } : course
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update course status", error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:5000/courses/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete course");
+      }
+      setCourses(prevCourses => prevCourses.filter(course => course.id !== id));
+    } catch (error) {
+      console.error("Failed to delete course", error);
+    }
+  };
+
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  if (error) {
+    return <Typography>Error: {error}</Typography>;
+  }
 
   return (
     <>
@@ -430,35 +218,17 @@ const Courses: React.FC = () => {
               type="text"
               className={styles.inputSearch}
               placeholder="Search course here..."
+              onChange={handleSearchChange}
             />
           </Box>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <FormControl sx={{ minWidth: "115px" }} size="small">
-              <InputLabel id="demo-select-small">Select</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={select}
-                label="select"
-                onChange={handleChange}
-                className="select"
-              >
-                <MenuItem value={0}>Paid</MenuItem>
-                <MenuItem value={0}>Free</MenuItem>
-                <MenuItem value={1}>Top Rated</MenuItem>
-                <MenuItem value={2}>Best Seller</MenuItem>
-              </Select>
-            </FormControl>
+          <Box sx={{ padding: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Button variant="contained" color="primary" onClick={handleAddCourses}>
+              Add Course
+            </Button>
           </Box>
         </Box>
 
-        {/* Table */}
         <Box
           sx={{
             marginLeft: "-25px",
@@ -476,287 +246,60 @@ const Courses: React.FC = () => {
             <Table sx={{ minWidth: 1200 }} aria-label="Courses Table">
               <TableHead className="bg-primary-50">
                 <TableRow>
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 24px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    ID
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Course Name
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Category
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Instructor
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Enrolled
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Start Date
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    End Date
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Price
-                  </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
-                    className="text-black border-bottom"
-                  >
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {(rowsPerPage > 0
-                  ? rows.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : rows
-                ).map((row) => (
-                  <TableRow key={row.id}>
+                  {["ID", "Course Name", "Category", "Created By", "Price", "Status", "Active", "Action"].map((header, index) => (
                     <TableCell
+                      key={index} // Add a unique key for each cell
                       sx={{
-                        padding: "15px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="border-bottom"
-                    >
-                      {row.id}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "15px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="border-bottom"
-                    >
-                      <Link
-                        href={row.courseDetailsLink}
-                        className="text-body hover-text-color"
-                        style={{ fontWeight: "500" }}
-                      >
-                        {row.courseName}
-                      </Link>
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "15px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="border-bottom"
-                    >
-                      {row.category}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "15px 20px",
+                        fontWeight: "500",
+                        padding: "10px 24px",
                         fontSize: "14px",
                       }}
                       className="text-black border-bottom"
                     >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "12px",
-                        }}
-                      >
-                        <Box sx={{ flexShrink: "0" }}>
-                          <Image
-                            src={row.instructorImg}
-                            alt="Product"
-                            width={40}
-                            height={40}
-                            style={{ borderRadius: "100px" }}
-                          />
-                        </Box>
-
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontWeight: "500",
-                            }}
-                          >
-                            {row.instructorName}
-                          </Typography>
-                        </Box>
-                      </Box>
+                      {header} {/* Use the header value here */}
                     </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
 
-                    <TableCell
-                      sx={{
-                        padding: "15px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="border-bottom"
-                    >
-                      {row.enrolled}
+              <TableBody>
+                {filteredCourses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((course) => (
+                  <TableRow key={course.id}>
+                    <TableCell>{course.id}</TableCell>
+                    <TableCell>{course.title}</TableCell>
+                    <TableCell>{course.category}</TableCell>
+                    <TableCell>{course.startDate}</TableCell>
+                    <TableCell>{course.price}</TableCell>
+                    <TableCell>
+                      <Select value={course.status} onChange={(e) => handleStatusChange(course.id, e.target.value)}>
+                        <MenuItem value="Published">Published</MenuItem>
+                        <MenuItem value="Draft">Draft</MenuItem>
+                        <MenuItem value="Archived">Archived</MenuItem>
+                      </Select>
                     </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "15px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="border-bottom"
-                    >
-                      {row.startDate}
+                    <TableCell>
+                      <Switch
+                        checked={course.isActive}
+                        onChange={(e) => handleToggleActive(course.id, e.target.checked)}
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
                     </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "15px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="border-bottom"
-                    >
-                      {row.endDate}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "15px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="border-bottom"
-                    >
-                      {row.price}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "15px 20px",
-                      }}
-                      className="border-bottom"
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Link href={row.courseDetailsLink}>
-                          <IconButton
-                            aria-label="view"
-                            color="primary"
-                            sx={{ padding: "5px" }}
-                          >
-                            <i
-                              className="material-symbols-outlined"
-                              style={{ fontSize: "16px" }}
-                            >
-                              visibility
-                            </i>
-                          </IconButton>
-                        </Link>
-
-                        <IconButton
-                          aria-label="edit"
-                          color="secondary"
-                          sx={{ padding: "5px" }}
-                        >
-                          <i
-                            className="material-symbols-outlined"
-                            style={{ fontSize: "16px" }}
-                          >
-                            edit
-                          </i>
-                        </IconButton>
-
-                        <IconButton
-                          aria-label="delete"
-                          color="error"
-                          sx={{ padding: "5px" }}
-                        >
-                          <i
-                            className="material-symbols-outlined"
-                            style={{ fontSize: "16px" }}
-                          >
-                            delete
-                          </i>
-                        </IconButton>
-                      </Box>
+                    <TableCell>
+                      <IconButton aria-label="view" color="primary">
+                        <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
+                      </IconButton>
+                      <IconButton aria-label="edit" color="secondary">
+                        <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
+                      </IconButton>
+                      <IconButton aria-label="delete" color="error" onClick={() => handleDelete(course.id)}>
+                        <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>delete</i>
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
                 {emptyRows > 0 && (
                   <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={9} />
+                    <TableCell colSpan={8} />
                   </TableRow>
                 )}
               </TableBody>
@@ -764,36 +307,36 @@ const Courses: React.FC = () => {
               <TableFooter>
                 <TableRow>
                   <TablePagination
-                    rowsPerPageOptions={[
-                      5,
-                      10,
-                      25,
-                      { label: "All", value: -1 },
-                    ]}
-                    colSpan={9}
-                    count={rows.length}
+                    rowsPerPageOptions={[10, 25, 50]}
+                    colSpan={6}
+                    count={courses.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
-                    slotProps={{
-                      select: {
-                        inputProps: {
-                          "aria-label": "rows per page",
-                        },
-                        native: true,
+                    SelectProps={{
+                      inputProps: {
+                        "aria-label": "rows per page",
                       },
+                      native: true,
                     }}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                     ActionsComponent={TablePaginationActions}
-                    sx={{
-                      border: "none",
-                    }}
                   />
                 </TableRow>
               </TableFooter>
             </Table>
           </TableContainer>
         </Box>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredCourses.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          ActionsComponent={TablePaginationActions}
+        />
       </Card>
     </>
   );

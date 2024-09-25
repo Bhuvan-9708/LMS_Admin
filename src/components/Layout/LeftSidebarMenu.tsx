@@ -958,7 +958,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                       </Link>
                     </li>
 
-                    <li className="sidemenu-item">
+                    {/* <li className="sidemenu-item">
                       <Link
                         href="/lms/create-course/"
                         className={`sidemenu-link ${
@@ -967,7 +967,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                       >
                         Create Course
                       </Link>
-                    </li>
+                    </li> */}
 
                     <li className="sidemenu-item">
                       <Link

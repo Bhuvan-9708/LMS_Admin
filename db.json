@@ -1,0 +1,170 @@
+{
+  "courses": [
+    {
+      "id": "1",
+      "title": "Introduction to React",
+      "status": "published",
+      "category": "Web Development",
+      "price": 49.99,
+      "slug": "intro-to-react",
+      "level": "Beginner",
+      "isActive": true,
+      "startDate": "2024-09-22"
+    },
+    {
+      "id": "2",
+      "title": "Advanced JavaScript Techniques",
+      "status": "draft",
+      "category": "Programming",
+      "price": 79.99,
+      "slug": "advanced-javascript",
+      "level": "Advanced",
+      "isActive": false,
+      "startDate": "2024-09-21"
+    },
+    {
+      "id": "3",
+      "title": "Python for Data Science",
+      "status": "published",
+      "category": "Data Science",
+      "price": 89.99,
+      "slug": "python-data-science",
+      "level": "Intermediate",
+      "isActive": true,
+      "startDate": "2024-09-12"
+    },
+    {
+      "id": "4",
+      "title": "Machine Learning Fundamentals",
+      "status": "published",
+      "category": "Artificial Intelligence",
+      "price": 99.99,
+      "slug": "ml-fundamentals",
+      "level": "Intermediate",
+      "isActive": false,
+      "startDate": "2024-09-14"
+    },
+    {
+      "id": "5",
+      "title": "UX/UI Design Principles",
+      "status": "draft",
+      "category": "Design",
+      "price": 59.99,
+      "slug": "ux-ui-design",
+      "level": "Beginner",
+      "isActive": true,
+      "startDate": "2024-09-24"
+    }
+  ],
+  "instructors": [
+    {
+      "id": "1",
+      "first_name": "John",
+      "last_name": "Doe",
+      "bio": "John is a full-stack developer with over 5 years of experience in web development.",
+      "user_name": "john_doe",
+      "gender": "male",
+      "occupation": "Software Engineer",
+      "date_of_birth": "1990-04-15",
+      "image": "/images/john-doe.png",
+      "education": [
+        {
+          "degree": "BSc Computer Science",
+          "board": "Cambridge",
+          "institution": "University of Cambridge",
+          "year": 2012,
+          "score_card": "/documents/john-scorecard.pdf",
+          "support_document": "/documents/john-degree-certificate.pdf"
+        }
+      ],
+      "email": "john.doe@example.com",
+      "phone": "1234567890",
+      "is_active": false,
+      "status": "approved",
+      "is_verified": true,
+      "work_experience": [
+        {
+          "company": "Google",
+          "position": "Software Developer",
+          "start_date": "2013-05-01",
+          "end_date": "2016-08-01",
+          "description": "Worked on various cloud and AI projects."
+        },
+        {
+          "company": "Microsoft",
+          "position": "Senior Developer",
+          "start_date": "2016-09-01",
+          "description": "Leading the cloud infrastructure team."
+        }
+      ],
+      "certificate": [
+        {
+          "name": "AWS Certified Developer",
+          "url": "/certificates/aws-cert.pdf"
+        },
+        {
+          "name": "Microsoft Azure Architect",
+          "url": "/certificates/azure-cert.pdf"
+        }
+      ],
+      "category": [
+        1,
+        2
+      ],
+      "slug": "john-doe-software-engineer",
+      "user_id": 1001
+    },
+    {
+      "id": "2",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "bio": "Jane is an expert in machine learning with 10 years of experience.",
+      "user_name": "jane_smith",
+      "gender": "female",
+      "occupation": "Data Scientist",
+      "date_of_birth": "1985-07-10",
+      "image": "/images/jane-smith.png",
+      "education": [
+        {
+          "degree": "MSc Data Science",
+          "board": "Stanford",
+          "institution": "Stanford University",
+          "year": 2008,
+          "score_card": "/documents/jane-scorecard.pdf",
+          "support_document": "/documents/jane-degree-certificate.pdf"
+        }
+      ],
+      "email": "jane.smith@example.com",
+      "phone": "9876543210",
+      "is_active": true,
+      "status": "approved",
+      "is_verified": true,
+      "work_experience": [
+        {
+          "company": "Facebook",
+          "position": "Lead Data Scientist",
+          "start_date": "2009-03-01",
+          "end_date": "2015-07-01",
+          "description": "Led a team of data scientists working on AI and machine learning projects."
+        },
+        {
+          "company": "Amazon",
+          "position": "Senior Data Scientist",
+          "start_date": "2015-08-01",
+          "description": "Currently working on improving product recommendations."
+        }
+      ],
+      "certificate": [
+        {
+          "name": "Certified Data Scientist",
+          "url": "/certificates/data-scientist-cert.pdf"
+        }
+      ],
+      "category": [
+        3
+      ],
+      "slug": "jane-smith-data-scientist",
+      "user_id": 1002
+    }
+  ]
+}
