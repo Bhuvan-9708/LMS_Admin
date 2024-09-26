@@ -166,5 +166,41 @@
       "slug": "jane-smith-data-scientist",
       "user_id": 1002
     }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "first_name": "John",
+      "last_name": "Doe",
+      "occupation": "Software Engineer",
+      "user_name": "john_doe",
+      "bio": "A passionate developer.",
+      "email": "john.doe@example.com",
+      "phone": "1234567890",
+      "user_type": "student",
+      "is_active": false,
+      "slug": "john-doe",
+      "profilePicture": "profile_picture_url",
+      "tokens": [],
+      "createdAt": "2024-09-25T12:34:56Z",
+      "updatedAt": "2024-09-25T12:34:56Z"
+    },
+    {
+      "id": "2",
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "occupation": "Data Analyst",
+      "user_name": "jane_smith",
+      "bio": "Loves analyzing data.",
+      "email": "jane.smith@example.com",
+      "phone": "0987654321",
+      "user_type": "student",
+      "is_active": true,
+      "slug": "jane-smith",
+      "profilePicture": "profile_picture_url",
+      "tokens": [],
+      "createdAt": "2024-09-25T12:35:56Z",
+      "updatedAt": "2024-09-25T12:35:56Z"
+    }
   ]
 }

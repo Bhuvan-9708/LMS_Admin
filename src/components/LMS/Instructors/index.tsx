@@ -366,6 +366,7 @@ const Instructors: React.FC = () => {
               <i className="material-symbols-outlined">search</i>
             </label>
             <input
+              onChange={handleSearchChange}
               type="text"
               className={styles.inputSearch}
               placeholder="Search instructor here..."
@@ -438,7 +439,7 @@ const Instructors: React.FC = () => {
                       <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
                         <Select
                           value={instructor.status}
-                          onChange={(e) => handleStatusChange(instructor._id, e.target.value, instructor.is_active)} // Use _id instead of id
+                          onChange={(e) => handleStatusChange(instructor._id, e.target.value, instructor.status)} // Use _id instead of id
                           sx={{ textTransform: 'capitalize' }}
                         >
                           <MenuItem value="pending">Pending</MenuItem>
@@ -450,7 +451,7 @@ const Instructors: React.FC = () => {
                       <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
                         <Switch
                           checked={instructor.is_active}
-                          onChange={(e) => handleStatusChange(instructor._id, instructor.status, e.target.checked)} // Use _id instead of id
+                          onChange={(e) => handleStatusChange(instructor._id, instructor.is_active, e.target.checked)} // Use _id instead of id
                           color="primary"
                         />
                       </TableCell>

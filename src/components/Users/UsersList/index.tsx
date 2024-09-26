@@ -1,7 +1,6 @@
 "use client";
 
-import * as React from "react";
-import Image from "next/image";
+import React, { useState, FormEvent } from "react";
 import {
   Card,
   Box,
@@ -18,12 +17,15 @@ import {
   TableHead,
   Button,
 } from "@mui/material";
+import Switch from '@mui/material/Switch';
 import Link from "next/link";
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import styles from "@/components/Users/Search.module.css";
 import AddIcon from "@mui/icons-material/Add";
+import MuiAlert, { AlertProps, AlertColor } from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 interface TablePaginationActionsProps {
   count: number;
@@ -33,6 +35,20 @@ interface TablePaginationActionsProps {
     event: React.MouseEvent<HTMLButtonElement>,
     newPage: number
   ) => void;
+}
+
+interface Users {
+  _id: string;
+  first_name: string;
+  last_name: string;
+  occupation: string;
+  user_name: string;
+  bio: string;
+  email: string;
+  phone: string;
+  user_type: string;
+  is_active: boolean;
+  createdAt: string;
 }
 
 function TablePaginationActions(props: TablePaginationActionsProps) {
@@ -97,69 +113,63 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
-function createData(
-  userId: string,
-  userImage: string,
-  userName: string,
-  email: string,
-  location: string,
-  phone: string,
-  projects: number,
-  joinDate: string,
-  roles: string[],
-  permissions: string[]
-) {
-  return {
-    userId,
-    userImage,
-    userName,
-    email,
-    location,
-    phone,
-    projects,
-    joinDate,
-    roles,
-    permissions,
-  };
-}
-
-// Example rows with roles and permissions
-const rows = [
-  createData(
-    "#JAN-158",
-    "/images/users/user6.jpg",
-    "Marcia Baker",
-    "marcia@trezo.com",
-    "Washington D.C",
-    "+1 555-445-4455",
-    6,
-    "01 Dec 2024",
-    ["Admin"],
-    ["Create", "Read", "Update"]
-  ),
-  createData(
-    "#JAN-157",
-    "/images/users/user7.jpg",
-    "Carolyn Barnes",
-    "carolyn@trezo.com",
-    "Chicago",
-    "+1 555-455-9966",
-    10,
-    "02 Dec 2024",
-    ["Editor"],
-    ["Read", "Update"]
-  ),
-
-].sort((b, a) => (a.userId < b.userId ? -1 : 1));
-
 const UsersList: React.FC = () => {
   // Table
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | string>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedInstructor, setSelectedInstructor] = useState<Users | null>(null);
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+
+  const handleViewDetails = (user: Users) => {
+    setSelectedInstructor(user);
+    setViewDialogOpen(true);
+  };
+
+  const handleCloseViewDialog = () => {
+    setViewDialogOpen(false);
+    setSelectedInstructor(null);
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/users");
+      const data = await response.json();
+
+      if (data) {
+        setUsers(data);
+        console.log("Fetched users data:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredUsers = users.filter((user) =>
+    user.first_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, users.length - page * rowsPerPage);
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -174,6 +184,52 @@ const UsersList: React.FC = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const handleUpdateInstructor = async (id: string, updates: { isActive?: boolean }) => {
+    try {
+      const currentResponse = await fetch(`http://localhost:5000/users/${id}`);
+      const currentUser = await currentResponse.json();
+
+      const updatedUser = {
+        ...currentUser,
+        is_active: updates.isActive !== undefined ? updates.isActive : currentUser.is_active,
+      };
+
+      const response = await fetch(`http://localhost:5000/users/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedUser),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update User");
+      }
+
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.id === id ? updatedUser : user
+        )
+      );
+
+      setSnackbarMessage("User updated successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+
+    } catch (error) {
+      console.error("Failed to update User", error);
+      setSnackbarMessage("Error updating User. Please try again.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  };
+
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  if (error) {
+    return <Typography>Error: {error}</Typography>;
+  }
 
   return (
     <>
@@ -199,16 +255,17 @@ const UsersList: React.FC = () => {
               component="form"
               className={styles.searchBox}
               sx={{
-                width: "265px",
+                width: { sm: "265px" },
               }}
             >
               <label>
                 <i className="material-symbols-outlined">search</i>
               </label>
               <input
+                onChange={handleSearchChange}
                 type="text"
                 className={styles.inputSearch}
-                placeholder="Search here..."
+                placeholder="Search Users here..."
               />
             </Box>
 
@@ -289,29 +346,7 @@ const UsersList: React.FC = () => {
                       }}
                       className="text-black border-bottom"
                     >
-                      Location
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        fontWeight: "500",
-                        padding: "10px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
                       Phone
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        fontWeight: "500",
-                        padding: "10px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
-                      Projects
                     </TableCell>
 
                     <TableCell
@@ -324,7 +359,7 @@ const UsersList: React.FC = () => {
                     >
                       Join Date
                     </TableCell>
-
+                    <TableCell sx={{ fontWeight: '500', padding: '10px 20px', fontSize: '14px' }} className="text-black border-bottom">IsActive</TableCell>
                     <TableCell
                       sx={{
                         fontWeight: "500",
@@ -339,172 +374,79 @@ const UsersList: React.FC = () => {
                 </TableHead>
 
                 <TableBody>
-                  {(rowsPerPage > 0
-                    ? rows.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                    : rows
-                  ).map((row) => (
-                    <TableRow key={row.userId}>
-                      <TableCell
-                        sx={{
-                          padding: "14px 20px",
-                          fontSize: "14px",
-                        }}
-                        className="border-bottom"
-                      >
-                        {row.userId}
-                      </TableCell>
+                  {filteredUsers
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((user) => (
+                      <TableRow key={user._id}>
+                        <TableCell sx={{ padding: "14px 20px", fontSize: "14px" }} className="border-bottom">
+                          {user.id}
+                        </TableCell>
 
-                      <TableCell
-                        sx={{
-                          padding: "14px 20px",
-                          fontSize: "14px",
-                        }}
-                        className="border-bottom"
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "13px",
-                          }}
-                        >
-                          <Box sx={{ flexShrink: "0" }}>
-                            <Image
-                              src={row.userImage}
-                              alt="Product"
-                              width={40}
-                              height={40}
-                              style={{ borderRadius: "100px" }}
-                            />
+                        <TableCell sx={{ padding: "14px 20px", fontSize: "14px" }} className="border-bottom">
+                          <Box sx={{ display: "flex", alignItems: "center", gap: "13px" }}>
+                            <Box>
+                              <Typography sx={{ fontSize: "15px", fontWeight: "500" }} className="text-black">
+                                {user.first_name} {user.last_name}
+                              </Typography>
+                            </Box>
                           </Box>
+                        </TableCell>
 
-                          <Box>
-                            <Typography
-                              sx={{
-                                fontSize: "15px",
-                                fontWeight: "500",
-                              }}
-                              className="text-black"
-                            >
-                              {row.userName}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </TableCell>
+                        <TableCell sx={{ padding: "14px 20px", fontSize: "14px" }} className="text-black border-bottom">
+                          {user.email}
+                        </TableCell>
 
-                      <TableCell
-                        sx={{
-                          padding: "14px 20px",
-                          fontSize: "14px",
-                        }}
-                        className="text-black border-bottom"
-                      >
-                        {row.email}
-                      </TableCell>
+                        <TableCell sx={{ padding: "14px 20px", fontSize: "14px" }} className="text-black border-bottom">
+                          {user.phone}
+                        </TableCell>
 
-                      <TableCell
-                        sx={{
-                          padding: "14px 20px",
-                          fontSize: "14px",
-                        }}
-                        className="text-black border-bottom"
-                      >
-                        {row.location}
-                      </TableCell>
-
-                      <TableCell
-                        sx={{
-                          padding: "14px 20px",
-                          fontSize: "14px",
-                        }}
-                        className="text-black border-bottom"
-                      >
-                        {row.phone}
-                      </TableCell>
-
-                      <TableCell
-                        sx={{
-                          padding: "14px 20px",
-                          fontSize: "14px",
-                        }}
-                        className="text-black border-bottom"
-                      >
-                        {row.projects}
-                      </TableCell>
-
-                      <TableCell
-                        sx={{
-                          padding: "14px 20px",
-                          fontSize: "14px",
-                        }}
-                        className="text-black border-bottom"
-                      >
-                        {row.joinDate}
-                      </TableCell>
-
-                      <TableCell
-                        sx={{
-                          padding: "14px 20px",
-                        }}
-                        className="border-bottom"
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <IconButton
-                            aria-label="view"
+                        <TableCell sx={{ padding: "14px 20px", fontSize: "14px" }} className="text-black border-bottom">
+                          {new Date(user.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                          <Switch
+                            checked={user.is_active}
+                            onChange={(e) => handleUpdateInstructor(user.id, { isActive: e.target.checked })}
                             color="primary"
-                            sx={{ padding: "5px" }}
-                          >
-                            <i
-                              className="material-symbols-outlined"
-                              style={{ fontSize: "16px" }}
-                            >
-                              visibility
-                            </i>
-                          </IconButton>
+                          />
+                        </TableCell>
+                        <TableCell sx={{ padding: "14px 20px" }} className="border-bottom">
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <IconButton aria-label="view" color="primary" sx={{ padding: "5px" }}>
+                              <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+                                visibility
+                              </i>
+                            </IconButton>
+                            <IconButton aria-label="edit" color="secondary" sx={{ padding: "5px" }}>
+                              <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+                                edit
+                              </i>
+                            </IconButton>
+                            <IconButton aria-label="delete" color="error" sx={{ padding: "5px" }}>
+                              <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+                                delete
+                              </i>
+                            </IconButton>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
 
-                          <IconButton
-                            aria-label="edit"
-                            color="secondary"
-                            sx={{ padding: "5px" }}
-                          >
-                            <i
-                              className="material-symbols-outlined"
-                              style={{ fontSize: "16px" }}
-                            >
-                              edit
-                            </i>
-                          </IconButton>
-
-                          <IconButton
-                            aria-label="delete"
-                            color="error"
-                            sx={{ padding: "5px" }}
-                          >
-                            <i
-                              className="material-symbols-outlined"
-                              style={{ fontSize: "16px" }}
-                            >
-                              delete
-                            </i>
-                          </IconButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={8} />
                     </TableRow>
                   )}
                 </TableBody>
+                <Snackbar
+                  open={snackbarOpen}
+                  autoHideDuration={6000}
+                  onClose={() => setSnackbarOpen(false)}
+                >
+                  <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+                    {snackbarMessage}
+                  </Alert>
+                </Snackbar>
 
                 <TableFooter>
                   <TableRow>
@@ -516,7 +458,7 @@ const UsersList: React.FC = () => {
                         { label: "All", value: -1 },
                       ]}
                       colSpan={8}
-                      count={rows.length}
+                      count={users.length}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       slotProps={{
