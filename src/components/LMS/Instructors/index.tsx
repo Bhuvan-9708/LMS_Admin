@@ -14,16 +14,20 @@ import {
   TableFooter,
   TablePagination,
   TableRow,
-  Paper,
   IconButton,
   TableHead,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
   DialogTitle,
   Grid,
+  Divider,
+  CardContent,
+  Paper,
   TextField,
-  FormControl,
-  InputLabel,
 } from "@mui/material";
+import { Email, Phone, Work, School, AccountCircle, Verified, HourglassFull } from '@mui/icons-material'
 import Switch from '@mui/material/Switch';
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -35,6 +39,8 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CloseIcon from "@mui/icons-material/Close";
 import PropTypes from "prop-types";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps, AlertColor } from '@mui/material/Alert';
 
 // Modal
 interface BootstrapDialogTitleProps {
@@ -90,6 +96,52 @@ interface TablePaginationActionsProps {
     newPage: number
   ) => void;
 }
+
+interface Education {
+  degree: string;
+  board: string;
+  institution: string;
+  year: number;
+  score_card: string;
+  support_document: string;
+}
+
+interface WorkExperience {
+  company: string;
+  position: string;
+  start_date: string;
+  end_date?: string;
+  description: string;
+}
+
+interface Certificate {
+  name: string;
+  url: string;
+}
+
+interface Instructor {
+  id: string;
+  first_name: string;
+  last_name: string;
+  user_name: string;
+  gender: string;
+  occupation: string;
+  date_of_birth: string;
+  image: string;
+  education: Education[];
+  email: string;
+  phone: string;
+  is_active: boolean;
+  status: string;
+  is_verified: boolean;
+  work_experience: WorkExperience[];
+  certificate: Certificate[];
+  category: number[];
+  slug: string;
+  user_id: number;
+  bio: string;
+}
+
 
 function TablePaginationActions(props: TablePaginationActionsProps) {
   const theme = useTheme();
@@ -154,29 +206,58 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 }
 
 const Instructors: React.FC = () => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [instructors, setInstructors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedInstructor, setSelectedInstructor] = useState<Instructor | null>(null);
+
+  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+
+  // const handleOpenDialog = (instructor: Instructor, type: 'status' | 'isActive') => {
+  //   setSelectedInstructor(instructor);
+  //   setDialogOpen(true);
+  // };
+
+  // const handleCloseDialog = () => {
+  //   setDialogOpen(false);
+  //   setSelectedInstructor(null);
+  // };
+
+  const handleViewDetails = (instructor: Instructor) => {
+    setSelectedInstructor(instructor);
+    setViewDialogOpen(true);
+  };
+
+  const handleCloseViewDialog = () => {
+    setViewDialogOpen(false);
+    setSelectedInstructor(null);
+  };
+
+  const fetchInstructors = async () => {
+    try {
+      const response = await fetch('https://lms-v1-mu.vercel.app/api/instructor');
+      const data = await response.json();
+      if (data.success) {
+        setInstructors(data.data);
+        console.log(">>>>>>", data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   React.useEffect(() => {
-    const fetchInstructors = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/instructors");
-        if (!response.ok) {
-          throw new Error("Failed to fetch instructors");
-        }
-        const data = await response.json();
-        setInstructors(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchInstructors();
   }, []);
 
@@ -184,7 +265,7 @@ const Instructors: React.FC = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredInstructors = instructors.filter(instructor =>
+  const filteredInstructors = instructors.filter((instructor) =>
     instructor.first_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -198,38 +279,35 @@ const Instructors: React.FC = () => {
     setPage(newPage);
   };
 
-  const handleUpdateInstructor = async (id: string, updates: { status?: string; isActive?: boolean }) => {
+  const handleUpdateInstructor = async (id: string, updateData: { status: string; isActive: boolean }) => {
+    console.log("Instructor ID:", id);
+    console.log("Update Data:", updateData);
     try {
-      const currentResponse = await fetch(`http://localhost:5000/instructors/${id}`);
-      const currentInstructor = await currentResponse.json();
-
-      const updatedInstructor = {
-        ...currentInstructor,
-        is_active: updates.isActive !== undefined ? updates.isActive : currentInstructor.is_active,
-        status: updates.status !== undefined ? updates.status : currentInstructor.status,
-      };
-
-      const response = await fetch(`http://localhost:5000/instructors/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedInstructor),
+      const response = await fetch(`https://lms-v1-mu.vercel.app/api/instructor/status/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to update instructor");
+      const result = await response.json();
+      if (result.success) {
+        setSnackbarMessage('Instructor updated successfully');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+        fetchInstructors();
+      } else {
+        throw new Error('Failed to update instructor');
       }
-
-      // Update local state to reflect changes
-      setInstructors(prevInstructors =>
-        prevInstructors.map(instructor =>
-          instructor.id === id ? updatedInstructor : instructor
-        )
-      );
     } catch (error) {
-      console.error("Failed to update instructor", error);
+      setSnackbarMessage('Error updating instructor');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
+  const handleStatusChange = (instructorId: string, newStatus: string, isActive: boolean) => {
+    console.log("Calling handleUpdateInstructor with ID:", instructorId);
+    handleUpdateInstructor(instructorId, { status: newStatus, isActive });
+  };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -343,46 +421,54 @@ const Instructors: React.FC = () => {
               </TableHead>
 
               <TableBody>
-                {filteredInstructors.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((instructor) => (
-                  <TableRow key={instructor.id}>
-                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.id}</TableCell>
-                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Typography sx={{ fontWeight: '500' }} className="text-black">{instructor.first_name}</Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.occupation}</TableCell>
-                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.phone}</TableCell>
-                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.email}</TableCell>
+                {filteredInstructors
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((instructor) => (
+                    <TableRow key={instructor._id}>
+                      <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.id}</TableCell>
+                      <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <Typography sx={{ fontWeight: '500' }} className="text-black">{instructor.first_name}</Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.occupation}</TableCell>
+                      <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.phone}</TableCell>
+                      <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{instructor.email}</TableCell>
 
-                    {/* Status dropdown */}
-                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
-                      <Select
-                        value={instructor.status}
-                        onChange={(e) => handleUpdateInstructor(instructor.id, { status: e.target.value })}
-                        sx={{ textTransform: 'capitalize' }}
-                      >
-                        <MenuItem value="pending">Pending</MenuItem>
-                        <MenuItem value="approved">Approved</MenuItem>
-                        <MenuItem value="rejected">Rejected</MenuItem>
-                      </Select>
-                    </TableCell>
+                      <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                        <Select
+                          value={instructor.status}
+                          onChange={(e) => handleStatusChange(instructor._id, e.target.value, instructor.is_active)} // Use _id instead of id
+                          sx={{ textTransform: 'capitalize' }}
+                        >
+                          <MenuItem value="pending">Pending</MenuItem>
+                          <MenuItem value="approved">Approved</MenuItem>
+                          <MenuItem value="rejected">Rejected</MenuItem>
+                        </Select>
+                      </TableCell>
 
-                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
-                      <Switch
-                        checked={instructor.is_active}
-                        onChange={(e) => handleUpdateInstructor(instructor.id, { isActive: e.target.checked })}
-                        color="primary"
-                      />
-                    </TableCell>
+                      <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                        <Switch
+                          checked={instructor.is_active}
+                          onChange={(e) => handleStatusChange(instructor._id, instructor.status, e.target.checked)} // Use _id instead of id
+                          color="primary"
+                        />
+                      </TableCell>
 
-                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-end border-bottom">
-                      <IconButton aria-label="delete" color="error" sx={{ padding: '5px' }}>
-                        <i className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</i>
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-end border-bottom">
+                        <IconButton
+                          aria-label="view"
+                          color="primary"
+                          onClick={() => handleViewDetails(instructor)}
+                        >
+                          <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
+                        </IconButton>
+                        <IconButton aria-label="delete" color="error" sx={{ padding: '5px' }}>
+                          <i className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</i>
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
 
                 {instructors.length === 0 && (
                   <TableRow>
@@ -390,6 +476,186 @@ const Instructors: React.FC = () => {
                   </TableRow>
                 )}
               </TableBody>
+              <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={() => setSnackbarOpen(false)}
+              >
+                <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+                  {snackbarMessage}
+                </Alert>
+              </Snackbar>
+
+              <Dialog open={viewDialogOpen} onClose={handleCloseViewDialog} fullWidth maxWidth="md">
+                <DialogTitle>Instructor Details</DialogTitle>
+                <DialogContent dividers>
+                  <DialogContentText>
+                    <Paper elevation={2} style={{ padding: '16px', marginBottom: '16px' }}>
+                      <Typography variant="h6" gutterBottom>
+                        <AccountCircle style={{ marginRight: '8px' }} />
+                        Basic Information
+                      </Typography>
+                      <Divider style={{ marginBottom: '8px' }} />
+                      <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Full Name:</strong> {selectedInstructor?.first_name} {selectedInstructor?.last_name}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Email:</strong> <Email /> {selectedInstructor?.email}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Phone:</strong> <Phone /> {selectedInstructor?.phone}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Occupation:</strong> <Work /> {selectedInstructor?.occupation}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="body1">
+                            <strong>Bio:</strong> {selectedInstructor?.bio}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Gender:</strong> {selectedInstructor?.gender}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Date of Birth:</strong> {selectedInstructor?.date_of_birth}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Status:</strong> {selectedInstructor?.status}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Active:</strong> {selectedInstructor?.is_active ? 'Yes' : 'No'}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <Verified style={{ marginRight: '8px' }} />
+                            <strong>Verified:</strong> {selectedInstructor?.is_verified ? 'Yes' : 'No'}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </Paper>
+
+                    {/* Education */}
+                    <Card style={{ marginBottom: '16px' }}>
+                      <CardContent>
+                        <Typography variant="h6" gutterBottom>
+                          <School style={{ marginRight: '8px' }} />
+                          Education
+                        </Typography>
+                        <Divider style={{ marginBottom: '8px' }} />
+                        {selectedInstructor?.education?.length ? (
+                          selectedInstructor.education.map((edu, index) => (
+                            <div key={index} style={{ marginBottom: '16px' }}>
+                              <Typography variant="body2">
+                                <strong>Degree:</strong> {edu.degree}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Board:</strong> {edu.board}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Institution:</strong> {edu.institution}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Year:</strong> {edu.year}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Score Card:</strong> <a href={edu.score_card} target="_blank" rel="noopener noreferrer">View</a>
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Support Document:</strong> <a href={edu.support_document} target="_blank" rel="noopener noreferrer">View</a>
+                              </Typography>
+                            </div>
+                          ))
+                        ) : (
+                          <Typography variant="body2">No education details available.</Typography>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    {/* Work Experience */}
+                    <Card style={{ marginBottom: '16px' }}>
+                      <CardContent>
+                        <Typography variant="h6" gutterBottom>
+                          <Work style={{ marginRight: '8px' }} />
+                          Work Experience
+                        </Typography>
+                        <Divider style={{ marginBottom: '8px' }} />
+                        {selectedInstructor?.work_experience?.length ? (
+                          selectedInstructor.work_experience.map((work, index) => (
+                            <div key={index} style={{ marginBottom: '16px' }}>
+                              <Typography variant="body2">
+                                <strong>Company:</strong> {work.company}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Position:</strong> {work.position}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Start Date:</strong> {work.start_date}
+                              </Typography>
+                              {work.end_date && (
+                                <Typography variant="body2">
+                                  <strong>End Date:</strong> {work.end_date}
+                                </Typography>
+                              )}
+                              <Typography variant="body2">
+                                <strong>Description:</strong> {work.description}
+                              </Typography>
+                            </div>
+                          ))
+                        ) : (
+                          <Typography variant="body2">No work experience details available.</Typography>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    {/* Certifications */}
+                    <Card>
+                      <CardContent>
+                        <Typography variant="h6" gutterBottom>
+                          <Verified style={{ marginRight: '8px' }} />
+                          Certifications
+                        </Typography>
+                        <Divider style={{ marginBottom: '8px' }} />
+                        {selectedInstructor?.certificate?.length ? (
+                          selectedInstructor.certificate.map((cert, index) => (
+                            <div key={index} style={{ marginBottom: '16px' }}>
+                              <Typography variant="body2">
+                                <strong>Name:</strong> {cert.name}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>URL:</strong> <a href={cert.url} target="_blank" rel="noopener noreferrer">View Certificate</a>
+                              </Typography>
+                            </div>
+                          ))
+                        ) : (
+                          <Typography variant="body2">No certification details available.</Typography>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseViewDialog} color="primary" variant="contained">
+                    Close
+                  </Button>
+                </DialogActions>
+              </Dialog>
 
               <TableFooter>
                 <TableRow>

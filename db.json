@@ -136,8 +136,8 @@
       ],
       "email": "jane.smith@example.com",
       "phone": "9876543210",
-      "is_active": true,
-      "status": "approved",
+      "is_active": false,
+      "status": "pending",
       "is_verified": true,
       "work_experience": [
         {
