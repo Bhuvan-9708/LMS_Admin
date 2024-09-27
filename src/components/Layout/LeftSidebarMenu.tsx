@@ -117,9 +117,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/dashboard/ecommerce/"
-                        className={`sidemenu-link ${
-                          pathname === "/dashboard/ecommerce/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/dashboard/ecommerce/" ? "active" : ""
+                          }`}
                       >
                         eCommerce
                       </Link>
@@ -128,9 +127,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/dashboard/crm/"
-                        className={`sidemenu-link ${
-                          pathname === "/dashboard/crm/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/dashboard/crm/" ? "active" : ""
+                          }`}
                       >
                         CRM
                         <span className="trezo-badge">Hot</span>
@@ -140,11 +138,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/dashboard/project-management/"
-                        className={`sidemenu-link ${
-                          pathname === "/dashboard/project-management/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/dashboard/project-management/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Project Management
                       </Link>
@@ -153,9 +150,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/dashboard/lms/"
-                        className={`sidemenu-link ${
-                          pathname === "/dashboard/lms/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/dashboard/lms/" ? "active" : ""
+                          }`}
                       >
                         LMS
                       </Link>
@@ -164,9 +160,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/dashboard/helpdesk/"
-                        className={`sidemenu-link ${
-                          pathname === "/dashboard/helpdesk/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/dashboard/helpdesk/" ? "active" : ""
+                          }`}
                       >
                         HelpDesk
                         <span className="trezo-badge style-two">Top</span>
@@ -195,9 +190,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/"
-                        className={`sidemenu-link ${
-                          pathname === "/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/" ? "active" : ""
+                          }`}
                       >
                         Home
                       </Link>
@@ -206,9 +200,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/front-pages/features/"
-                        className={`sidemenu-link ${
-                          pathname === "/front-pages/features/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/front-pages/features/" ? "active" : ""
+                          }`}
                       >
                         Features
                       </Link>
@@ -217,9 +210,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/front-pages/team/"
-                        className={`sidemenu-link ${
-                          pathname === "/front-pages/team/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/front-pages/team/" ? "active" : ""
+                          }`}
                       >
                         Our Team
                       </Link>
@@ -228,9 +220,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/front-pages/faq/"
-                        className={`sidemenu-link ${
-                          pathname === "/front-pages/faq/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/front-pages/faq/" ? "active" : ""
+                          }`}
                       >
                         FAQ’s
                       </Link>
@@ -239,9 +230,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/front-pages/contact/"
-                        className={`sidemenu-link ${
-                          pathname === "/front-pages/contact/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/front-pages/contact/" ? "active" : ""
+                          }`}
                       >
                         Contact
                       </Link>
@@ -263,9 +253,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 
               <Link
                 href="/apps/to-do-list/"
-                className={`sidebar-menu-link ${
-                  pathname === "/apps/to-do-list/" ? "active" : ""
-                }`}
+                className={`sidebar-menu-link ${pathname === "/apps/to-do-list/" ? "active" : ""
+                  }`}
               >
                 <i className="material-symbols-outlined">
                   format_list_bulleted
@@ -275,9 +264,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 
               <Link
                 href="/apps/calendar/"
-                className={`sidebar-menu-link ${
-                  pathname === "/apps/calendar/" ? "active" : ""
-                }`}
+                className={`sidebar-menu-link ${pathname === "/apps/calendar/" ? "active" : ""
+                  }`}
               >
                 <i className="material-symbols-outlined">date_range</i>
                 <span className="title">Calendar</span>
@@ -285,9 +273,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 
               <Link
                 href="/apps/contacts/"
-                className={`sidebar-menu-link ${
-                  pathname === "/apps/contacts/" ? "active" : ""
-                }`}
+                className={`sidebar-menu-link ${pathname === "/apps/contacts/" ? "active" : ""
+                  }`}
               >
                 <i className="material-symbols-outlined">contact_page</i>
                 <span className="title">Contacts</span>
@@ -295,9 +282,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 
               <Link
                 href="/apps/chat/"
-                className={`sidebar-menu-link ${
-                  pathname === "/apps/chat/" ? "active" : ""
-                }`}
+                className={`sidebar-menu-link ${pathname === "/apps/chat/" ? "active" : ""
+                  }`}
               >
                 <i className="material-symbols-outlined">chat</i>
                 <span className="title">Chat</span>
@@ -323,9 +309,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/apps/email/"
-                        className={`sidemenu-link ${
-                          pathname === "/apps/email/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/apps/email/" ? "active" : ""
+                          }`}
                       >
                         Inbox
                       </Link>
@@ -334,9 +319,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/apps/email/compose/"
-                        className={`sidemenu-link ${
-                          pathname === "/apps/email/compose/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/apps/email/compose/" ? "active" : ""
+                          }`}
                       >
                         Compose
                       </Link>
@@ -345,9 +329,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/apps/email/read/"
-                        className={`sidemenu-link ${
-                          pathname === "/apps/email/read/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/apps/email/read/" ? "active" : ""
+                          }`}
                       >
                         Read
                       </Link>
@@ -358,9 +341,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 
               <Link
                 href="/apps/kanban-board/"
-                className={`sidebar-menu-link ${
-                  pathname === "/apps/kanban-board/" ? "active" : ""
-                }`}
+                className={`sidebar-menu-link ${pathname === "/apps/kanban-board/" ? "active" : ""
+                  }`}
               >
                 <i className="material-symbols-outlined">team_dashboard</i>
                 <span className="title">Kanban Board</span>
@@ -386,9 +368,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/apps/file-manager/"
-                        className={`sidemenu-link ${
-                          pathname === "/apps/file-manager/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/apps/file-manager/" ? "active" : ""
+                          }`}
                       >
                         My Drive
                       </Link>
@@ -397,11 +378,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/apps/file-manager/assets/"
-                        className={`sidemenu-link ${
-                          pathname === "/apps/file-manager/assets/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/apps/file-manager/assets/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Assets
                       </Link>
@@ -410,11 +390,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/apps/file-manager/projects/"
-                        className={`sidemenu-link ${
-                          pathname === "/apps/file-manager/projects/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/apps/file-manager/projects/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Projects
                       </Link>
@@ -423,11 +402,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/apps/file-manager/personal/"
-                        className={`sidemenu-link ${
-                          pathname === "/apps/file-manager/personal/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/apps/file-manager/personal/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Personal
                       </Link>
@@ -436,11 +414,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/apps/file-manager/applications/"
-                        className={`sidemenu-link ${
-                          pathname === "/apps/file-manager/applications/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/apps/file-manager/applications/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Applications
                       </Link>
@@ -449,11 +426,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/apps/file-manager/documents/"
-                        className={`sidemenu-link ${
-                          pathname === "/apps/file-manager/documents/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/apps/file-manager/documents/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Documents
                       </Link>
@@ -462,11 +438,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/apps/file-manager/media/"
-                        className={`sidemenu-link ${
-                          pathname === "/apps/file-manager/media/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/apps/file-manager/media/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Media
                       </Link>
@@ -505,9 +480,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/" ? "active" : ""
+                          }`}
                       >
                         Products Grid
                       </Link>
@@ -516,11 +490,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/products-list/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/products-list/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/products-list/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Products List
                       </Link>
@@ -529,11 +502,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/products-list/details/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/products-list/details/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/products-list/details/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Product Details
                       </Link>
@@ -542,11 +514,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/create-product/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/create-product/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/create-product/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Create Product
                       </Link>
@@ -555,11 +526,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/edit-product/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/edit-product/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/edit-product/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Edit Product
                       </Link>
@@ -568,9 +538,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/cart/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/cart/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/cart/" ? "active" : ""
+                          }`}
                       >
                         Cart
                       </Link>
@@ -579,9 +548,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/checkout/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/checkout/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/checkout/" ? "active" : ""
+                          }`}
                       >
                         Checkout
                       </Link>
@@ -590,9 +558,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/orders/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/orders/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/orders/" ? "active" : ""
+                          }`}
                       >
                         Orders
                       </Link>
@@ -601,11 +568,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/orders/details/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/orders/details/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/orders/details/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Order Details
                       </Link>
@@ -614,11 +580,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/orders/create/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/orders/create/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/orders/create/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Create Order
                       </Link>
@@ -627,11 +592,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/orders/tracking/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/orders/tracking/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/orders/tracking/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Order Tracking
                       </Link>
@@ -640,9 +604,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/customers/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/customers/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/customers/" ? "active" : ""
+                          }`}
                       >
                         Customers
                       </Link>
@@ -651,11 +614,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/customers/details/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/customers/details/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/customers/details/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Customer Details
                       </Link>
@@ -664,9 +626,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/categories/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/categories/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/categories/" ? "active" : ""
+                          }`}
                       >
                         Categories
                       </Link>
@@ -675,9 +636,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/sellers/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/sellers/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/sellers/" ? "active" : ""
+                          }`}
                       >
                         Sellers
                       </Link>
@@ -686,11 +646,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/sellers/details/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/sellers/details/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/sellers/details/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Seller Details
                       </Link>
@@ -699,11 +658,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/sellers/create/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/sellers/create/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/sellers/create/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Create Seller
                       </Link>
@@ -712,9 +670,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/reviews/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/reviews/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/reviews/" ? "active" : ""
+                          }`}
                       >
                         Reviews
                       </Link>
@@ -723,9 +680,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ecommerce/refunds/"
-                        className={`sidemenu-link ${
-                          pathname === "/ecommerce/refunds/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ecommerce/refunds/" ? "active" : ""
+                          }`}
                       >
                         Refunds
                       </Link>
@@ -753,9 +709,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/crm/contacts/"
-                        className={`sidemenu-link ${
-                          pathname === "/crm/contacts/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/crm/contacts/" ? "active" : ""
+                          }`}
                       >
                         Contacts
                       </Link>
@@ -764,9 +719,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/crm/customers/"
-                        className={`sidemenu-link ${
-                          pathname === "/crm/customers/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/crm/customers/" ? "active" : ""
+                          }`}
                       >
                         Customers
                       </Link>
@@ -775,9 +729,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/crm/leads/"
-                        className={`sidemenu-link ${
-                          pathname === "/crm/leads/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/crm/leads/" ? "active" : ""
+                          }`}
                       >
                         Leads
                       </Link>
@@ -786,9 +739,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/crm/deals/"
-                        className={`sidemenu-link ${
-                          pathname === "/crm/deals/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/crm/deals/" ? "active" : ""
+                          }`}
                       >
                         Deals
                       </Link>
@@ -816,11 +768,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/project-management/project-overview/"
-                        className={`sidemenu-link ${
-                          pathname === "/project-management/project-overview/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/project-management/project-overview/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Project Overview
                       </Link>
@@ -829,11 +780,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/project-management/projects-list/"
-                        className={`sidemenu-link ${
-                          pathname === "/project-management/projects-list/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/project-management/projects-list/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Projects List
                       </Link>
@@ -842,11 +792,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/project-management/create-project/"
-                        className={`sidemenu-link ${
-                          pathname === "/project-management/create-project/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/project-management/create-project/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Create Project
                       </Link>
@@ -855,11 +804,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/project-management/clients/"
-                        className={`sidemenu-link ${
-                          pathname === "/project-management/clients/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/project-management/clients/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Clients
                       </Link>
@@ -868,11 +816,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/project-management/teams/"
-                        className={`sidemenu-link ${
-                          pathname === "/project-management/teams/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/project-management/teams/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Teams
                       </Link>
@@ -881,11 +828,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/project-management/kanban-board/"
-                        className={`sidemenu-link ${
-                          pathname === "/project-management/kanban-board/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/project-management/kanban-board/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Kanban Board
                       </Link>
@@ -894,11 +840,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/project-management/users/"
-                        className={`sidemenu-link ${
-                          pathname === "/project-management/users/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/project-management/users/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Users
                       </Link>
@@ -926,9 +871,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/lms/courses/"
-                        className={`sidemenu-link ${
-                          pathname === "/lms/courses/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/lms/courses/" ? "active" : ""
+                          }`}
                       >
                         Courses List
                       </Link>
@@ -937,9 +881,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/lms/courses/details/"
-                        className={`sidemenu-link ${
-                          pathname === "/lms/courses/details/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/lms/courses/details/" ? "active" : ""
+                          }`}
                       >
                         Course Details
                       </Link>
@@ -948,11 +891,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/lms/courses/lesson-preview/"
-                        className={`sidemenu-link ${
-                          pathname === "/lms/courses/lesson-preview/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/lms/courses/lesson-preview/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Lesson Preview
                       </Link>
@@ -972,9 +914,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/lms/edit-course/"
-                        className={`sidemenu-link ${
-                          pathname === "/lms/edit-course/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/lms/edit-course/" ? "active" : ""
+                          }`}
                       >
                         Edit Course
                       </Link>
@@ -983,9 +924,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/lms/instructors/"
-                        className={`sidemenu-link ${
-                          pathname === "/lms/instructors/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/lms/instructors/" ? "active" : ""
+                          }`}
                       >
                         Instructors
                       </Link>
@@ -1004,6 +944,43 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                   aria-controls="panel9d-content"
                   id="panel9d-header"
                 >
+                  <i className="material-symbols-outlined">auto_stories</i>
+                  <span className="title">CMS</span>
+                </AccordionSummary>
+                <AccordionDetails className="mat-details">
+                  <ul className="sidebar-sub-menu">
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/templates/"
+                        className={`sidemenu-link ${pathname === "/cms/templates/" ? "active" : ""
+                          }`}
+                      >
+                        Page Templates
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/create-template/"
+                        className={`sidemenu-link ${pathname === "/cms/create-template/"
+                          }`}
+                      >
+                        Create Templates
+                      </Link>
+                    </li>
+                  </ul>
+                </AccordionDetails>
+              </Accordion>
+
+              <Accordion
+                expanded={expanded === "panel24"}
+                onChange={handleChange("panel24")}
+                className="mat-accordion"
+              >
+                <AccordionSummary
+                  className="mat-summary"
+                  aria-controls="panel9d-content"
+                  id="panel24d-header"
+                >
                   <i className="material-symbols-outlined">support</i>
                   <span className="title">HelpDesk</span>
                 </AccordionSummary>
@@ -1013,9 +990,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/helpdesk/tickets/"
-                        className={`sidemenu-link ${
-                          pathname === "/helpdesk/tickets/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/helpdesk/tickets/" ? "active" : ""
+                          }`}
                       >
                         Tickets
                       </Link>
@@ -1024,11 +1000,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/helpdesk/tickets/details/"
-                        className={`sidemenu-link ${
-                          pathname === "/helpdesk/tickets/details/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/helpdesk/tickets/details/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Ticket Details
                       </Link>
@@ -1037,9 +1012,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/helpdesk/agents/"
-                        className={`sidemenu-link ${
-                          pathname === "/helpdesk/agents/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/helpdesk/agents/" ? "active" : ""
+                          }`}
                       >
                         Agents
                       </Link>
@@ -1048,9 +1022,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/helpdesk/reports/"
-                        className={`sidemenu-link ${
-                          pathname === "/helpdesk/reports/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/helpdesk/reports/" ? "active" : ""
+                          }`}
                       >
                         Reports
                       </Link>
@@ -1078,9 +1051,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/events/"
-                        className={`sidemenu-link ${
-                          pathname === "/events/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/events/" ? "active" : ""
+                          }`}
                       >
                         Events Grid
                       </Link>
@@ -1089,9 +1061,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/events/list"
-                        className={`sidemenu-link ${
-                          pathname === "/events/list/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/events/list/" ? "active" : ""
+                          }`}
                       >
                         Events List
                       </Link>
@@ -1100,9 +1071,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/events/details/"
-                        className={`sidemenu-link ${
-                          pathname === "/events/details/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/events/details/" ? "active" : ""
+                          }`}
                       >
                         Event Details
                       </Link>
@@ -1111,11 +1081,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/events/create-an-event/"
-                        className={`sidemenu-link ${
-                          pathname === "/events/create-an-event/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/events/create-an-event/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Create An Event
                       </Link>
@@ -1124,9 +1093,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/events/edit-an-event/"
-                        className={`sidemenu-link ${
-                          pathname === "/events/edit-an-event/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/events/edit-an-event/" ? "active" : ""
+                          }`}
                       >
                         Edit An Event
                       </Link>
@@ -1154,9 +1122,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/social/profile/"
-                        className={`sidemenu-link ${
-                          pathname === "/social/profile/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/social/profile/" ? "active" : ""
+                          }`}
                       >
                         Profile
                       </Link>
@@ -1165,9 +1132,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/social/settings/"
-                        className={`sidemenu-link ${
-                          pathname === "/social/settings/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/social/settings/" ? "active" : ""
+                          }`}
                       >
                         Settings
                       </Link>
@@ -1195,9 +1161,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/invoices/"
-                        className={`sidemenu-link ${
-                          pathname === "/invoices/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/invoices/" ? "active" : ""
+                          }`}
                       >
                         Invoices
                       </Link>
@@ -1206,9 +1171,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/invoices/details/"
-                        className={`sidemenu-link ${
-                          pathname === "/invoices/details/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/invoices/details/" ? "active" : ""
+                          }`}
                       >
                         Invoice Details
                       </Link>
@@ -1217,9 +1181,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/invoices/create/"
-                        className={`sidemenu-link ${
-                          pathname === "/invoices/create/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/invoices/create/" ? "active" : ""
+                          }`}
                       >
                         Create Invoice
                       </Link>
@@ -1228,9 +1191,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/invoices/edit/"
-                        className={`sidemenu-link ${
-                          pathname === "/invoices/edit/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/invoices/edit/" ? "active" : ""
+                          }`}
                       >
                         Edit Details
                       </Link>
@@ -1258,9 +1220,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/users/"
-                        className={`sidemenu-link ${
-                          pathname === "/users/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/users/" ? "active" : ""
+                          }`}
                       >
                         Team Members
                       </Link>
@@ -1269,9 +1230,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/users/users-list/"
-                        className={`sidemenu-link ${
-                          pathname === "/users/users-list/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/users/users-list/" ? "active" : ""
+                          }`}
                       >
                         Users List
                       </Link>
@@ -1280,9 +1240,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/users/add-user/"
-                        className={`sidemenu-link ${
-                          pathname === "/users/add-user/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/users/add-user/" ? "active" : ""
+                          }`}
                       >
                         Add User
                       </Link>
@@ -1310,9 +1269,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/profile/"
-                        className={`sidemenu-link ${
-                          pathname === "/profile/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/profile/" ? "active" : ""
+                          }`}
                       >
                         User Profile
                       </Link>
@@ -1321,9 +1279,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/profile/teams/"
-                        className={`sidemenu-link ${
-                          pathname === "/profile/teams/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/profile/teams/" ? "active" : ""
+                          }`}
                       >
                         Teams
                       </Link>
@@ -1332,9 +1289,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/profile/projects/"
-                        className={`sidemenu-link ${
-                          pathname === "/profile/projects/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/profile/projects/" ? "active" : ""
+                          }`}
                       >
                         Projects
                       </Link>
@@ -1378,11 +1334,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/icons/material-symbols/"
-                        className={`sidemenu-link ${
-                          pathname === "/icons/material-symbols/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/icons/material-symbols/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Material Symbols
                       </Link>
@@ -1391,9 +1346,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/icons/remixicon/"
-                        className={`sidemenu-link ${
-                          pathname === "/icons/remixicon/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/icons/remixicon/" ? "active" : ""
+                          }`}
                       >
                         RemixIcon
                       </Link>
@@ -1421,9 +1375,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/autocomplete/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/autocomplete/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/autocomplete/" ? "active" : ""
+                          }`}
                       >
                         Autocomplete
                       </Link>
@@ -1432,9 +1385,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/buttons/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/buttons/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/buttons/" ? "active" : ""
+                          }`}
                       >
                         Buttons
                       </Link>
@@ -1443,9 +1395,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/checkbox/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/checkbox/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/checkbox/" ? "active" : ""
+                          }`}
                       >
                         Checkbox
                       </Link>
@@ -1454,9 +1405,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/radio/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/radio/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/radio/" ? "active" : ""
+                          }`}
                       >
                         Radio
                       </Link>
@@ -1465,9 +1415,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/rating/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/rating/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/rating/" ? "active" : ""
+                          }`}
                       >
                         Rating
                       </Link>
@@ -1476,9 +1425,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/select/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/select/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/select/" ? "active" : ""
+                          }`}
                       >
                         Select
                       </Link>
@@ -1487,9 +1435,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/slider/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/slider/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/slider/" ? "active" : ""
+                          }`}
                       >
                         Slider
                       </Link>
@@ -1498,9 +1445,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/switch/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/switch/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/switch/" ? "active" : ""
+                          }`}
                       >
                         Switch
                       </Link>
@@ -1509,9 +1455,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/transfer-list/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/transfer-list/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/transfer-list/" ? "active" : ""
+                          }`}
                       >
                         Transfer List
                       </Link>
@@ -1520,9 +1465,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/avatar/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/avatar/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/avatar/" ? "active" : ""
+                          }`}
                       >
                         Avatar
                       </Link>
@@ -1531,9 +1475,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/badge/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/badge/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/badge/" ? "active" : ""
+                          }`}
                       >
                         Badge
                       </Link>
@@ -1542,9 +1485,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/chip/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/chip/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/chip/" ? "active" : ""
+                          }`}
                       >
                         Chip
                       </Link>
@@ -1553,9 +1495,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/divider/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/divider/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/divider/" ? "active" : ""
+                          }`}
                       >
                         Divider
                       </Link>
@@ -1564,9 +1505,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/table/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/table/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/table/" ? "active" : ""
+                          }`}
                       >
                         Table
                       </Link>
@@ -1575,9 +1515,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/tooltip/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/tooltip/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/tooltip/" ? "active" : ""
+                          }`}
                       >
                         Tooltip
                       </Link>
@@ -1586,9 +1525,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/typography/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/typography/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/typography/" ? "active" : ""
+                          }`}
                       >
                         Typography
                       </Link>
@@ -1597,9 +1535,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/alerts/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/alerts/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/alerts/" ? "active" : ""
+                          }`}
                       >
                         Alerts
                       </Link>
@@ -1608,9 +1545,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/dialog/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/dialog/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/dialog/" ? "active" : ""
+                          }`}
                       >
                         Dialog
                       </Link>
@@ -1619,9 +1555,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/progress/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/progress/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/progress/" ? "active" : ""
+                          }`}
                       >
                         Progress
                       </Link>
@@ -1630,9 +1565,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/snackbar/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/snackbar/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/snackbar/" ? "active" : ""
+                          }`}
                       >
                         Snackbar
                       </Link>
@@ -1641,9 +1575,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/accordion/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/accordion/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/accordion/" ? "active" : ""
+                          }`}
                       >
                         Accordion
                       </Link>
@@ -1652,9 +1585,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/card/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/card/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/card/" ? "active" : ""
+                          }`}
                       >
                         Card
                       </Link>
@@ -1663,9 +1595,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/breadcrumbs/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/breadcrumbs/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/breadcrumbs/" ? "active" : ""
+                          }`}
                       >
                         Breadcrumbs
                       </Link>
@@ -1674,9 +1605,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/drawer/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/drawer/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/drawer/" ? "active" : ""
+                          }`}
                       >
                         Drawer
                       </Link>
@@ -1685,9 +1615,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/pagination/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/pagination/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/pagination/" ? "active" : ""
+                          }`}
                       >
                         Pagination
                       </Link>
@@ -1696,9 +1625,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/speed-dial/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/speed-dial/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/speed-dial/" ? "active" : ""
+                          }`}
                       >
                         Speed Dial
                       </Link>
@@ -1707,9 +1635,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/stepper/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/stepper/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/stepper/" ? "active" : ""
+                          }`}
                       >
                         Stepper
                       </Link>
@@ -1718,9 +1645,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/tabs/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/tabs/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/tabs/" ? "active" : ""
+                          }`}
                       >
                         Tabs
                       </Link>
@@ -1729,9 +1655,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/image-list/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/image-list/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/image-list/" ? "active" : ""
+                          }`}
                       >
                         Image List
                       </Link>
@@ -1740,9 +1665,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/transitions/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/transitions/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/transitions/" ? "active" : ""
+                          }`}
                       >
                         Transitions
                       </Link>
@@ -1751,9 +1675,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/tree-view/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/tree-view/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/tree-view/" ? "active" : ""
+                          }`}
                       >
                         Tree View
                       </Link>
@@ -1762,9 +1685,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/masonry/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/masonry/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/masonry/" ? "active" : ""
+                          }`}
                       >
                         Masonry
                       </Link>
@@ -1773,9 +1695,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/ui-kit/timeline/"
-                        className={`sidemenu-link ${
-                          pathname === "/ui-kit/timeline/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/ui-kit/timeline/" ? "active" : ""
+                          }`}
                       >
                         Timeline
                       </Link>
@@ -1803,9 +1724,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/tables/"
-                        className={`sidemenu-link ${
-                          pathname === "/tables/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/tables/" ? "active" : ""
+                          }`}
                       >
                         Basic Table
                       </Link>
@@ -1814,9 +1734,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/tables/data-table/"
-                        className={`sidemenu-link ${
-                          pathname === "/tables/data-table/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/tables/data-table/" ? "active" : ""
+                          }`}
                       >
                         Data Table
                       </Link>
@@ -1844,9 +1763,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/forms/basic-elements/"
-                        className={`sidemenu-link ${
-                          pathname === "/forms/basic-elements/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/forms/basic-elements/" ? "active" : ""
+                          }`}
                       >
                         Basic Elements
                       </Link>
@@ -1855,11 +1773,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/forms/advanced-elements/"
-                        className={`sidemenu-link ${
-                          pathname === "/forms/advanced-elements/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/forms/advanced-elements/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Advanced Elements
                       </Link>
@@ -1868,9 +1785,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/forms/editors/"
-                        className={`sidemenu-link ${
-                          pathname === "/forms/editors/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/forms/editors/" ? "active" : ""
+                          }`}
                       >
                         Editors
                       </Link>
@@ -1879,9 +1795,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/forms/file-uploader/"
-                        className={`sidemenu-link ${
-                          pathname === "/forms/file-uploader/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/forms/file-uploader/" ? "active" : ""
+                          }`}
                       >
                         File Uploader
                       </Link>
@@ -1909,9 +1824,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/charts/line/"
-                        className={`sidemenu-link ${
-                          pathname === "/charts/line/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/charts/line/" ? "active" : ""
+                          }`}
                       >
                         Line
                       </Link>
@@ -1920,9 +1834,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/charts/area/"
-                        className={`sidemenu-link ${
-                          pathname === "/charts/area/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/charts/area/" ? "active" : ""
+                          }`}
                       >
                         Area
                       </Link>
@@ -1931,9 +1844,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/charts/column/"
-                        className={`sidemenu-link ${
-                          pathname === "/charts/column/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/charts/column/" ? "active" : ""
+                          }`}
                       >
                         Column
                       </Link>
@@ -1942,9 +1854,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/charts/mixed/"
-                        className={`sidemenu-link ${
-                          pathname === "/charts/mixed/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/charts/mixed/" ? "active" : ""
+                          }`}
                       >
                         Mixed
                       </Link>
@@ -1953,9 +1864,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/charts/radialbar/"
-                        className={`sidemenu-link ${
-                          pathname === "/charts/radialbar/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/charts/radialbar/" ? "active" : ""
+                          }`}
                       >
                         RadialBar
                       </Link>
@@ -1964,9 +1874,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/charts/radar/"
-                        className={`sidemenu-link ${
-                          pathname === "/charts/radar/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/charts/radar/" ? "active" : ""
+                          }`}
                       >
                         Radar
                       </Link>
@@ -1975,9 +1884,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/charts/pie/"
-                        className={`sidemenu-link ${
-                          pathname === "/charts/pie/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/charts/pie/" ? "active" : ""
+                          }`}
                       >
                         Pie
                       </Link>
@@ -1986,9 +1894,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/charts/polar/"
-                        className={`sidemenu-link ${
-                          pathname === "/charts/polar/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/charts/polar/" ? "active" : ""
+                          }`}
                       >
                         Polar
                       </Link>
@@ -1997,9 +1904,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/charts/more/"
-                        className={`sidemenu-link ${
-                          pathname === "/charts/more/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/charts/more/" ? "active" : ""
+                          }`}
                       >
                         More
                       </Link>
@@ -2027,11 +1933,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/authentication/sign-in/"
-                        className={`sidemenu-link ${
-                          pathname === "/authentication/sign-in/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/authentication/sign-in/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Sign In
                       </Link>
@@ -2040,11 +1945,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/authentication/sign-up/"
-                        className={`sidemenu-link ${
-                          pathname === "/authentication/sign-up/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/authentication/sign-up/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Sign Up
                       </Link>
@@ -2053,11 +1957,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/authentication/forgot-password/"
-                        className={`sidemenu-link ${
-                          pathname === "/authentication/forgot-password/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/authentication/forgot-password/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Forgot Password
                       </Link>
@@ -2066,11 +1969,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/authentication/reset-password/"
-                        className={`sidemenu-link ${
-                          pathname === "/authentication/reset-password/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/authentication/reset-password/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Reset Password
                       </Link>
@@ -2079,11 +1981,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/authentication/confirm-email/"
-                        className={`sidemenu-link ${
-                          pathname === "/authentication/confirm-email/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/authentication/confirm-email/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Confirm Email
                       </Link>
@@ -2092,11 +1993,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/authentication/lock-screen/"
-                        className={`sidemenu-link ${
-                          pathname === "/authentication/lock-screen/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/authentication/lock-screen/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Lock Screen
                       </Link>
@@ -2133,9 +2033,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/pricing/"
-                        className={`sidemenu-link ${
-                          pathname === "/pricing/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/pricing/" ? "active" : ""
+                          }`}
                       >
                         Pricing
                       </Link>
@@ -2144,9 +2043,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/timeline/"
-                        className={`sidemenu-link ${
-                          pathname === "/timeline/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/timeline/" ? "active" : ""
+                          }`}
                       >
                         Timeline
                       </Link>
@@ -2155,9 +2053,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/faq/"
-                        className={`sidemenu-link ${
-                          pathname === "/faq/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/faq/" ? "active" : ""
+                          }`}
                       >
                         FAQ
                       </Link>
@@ -2166,9 +2063,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/gallery/"
-                        className={`sidemenu-link ${
-                          pathname === "/gallery/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/gallery/" ? "active" : ""
+                          }`}
                       >
                         Gallery
                       </Link>
@@ -2177,9 +2073,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/testimonials/"
-                        className={`sidemenu-link ${
-                          pathname === "/testimonials/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/testimonials/" ? "active" : ""
+                          }`}
                       >
                         Testimonials
                       </Link>
@@ -2188,9 +2083,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/search/"
-                        className={`sidemenu-link ${
-                          pathname === "/search/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/search/" ? "active" : ""
+                          }`}
                       >
                         Search
                       </Link>
@@ -2199,9 +2093,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/coming-soon/"
-                        className={`sidemenu-link ${
-                          pathname === "/coming-soon/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/coming-soon/" ? "active" : ""
+                          }`}
                       >
                         Coming Soon
                       </Link>
@@ -2210,9 +2103,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/blank-page/"
-                        className={`sidemenu-link ${
-                          pathname === "/blank-page/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/blank-page/" ? "active" : ""
+                          }`}
                       >
                         Blank Page
                       </Link>
@@ -2240,9 +2132,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/not-found/"
-                        className={`sidemenu-link ${
-                          pathname === "/not-found/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/not-found/" ? "active" : ""
+                          }`}
                       >
                         404 Error Page
                       </Link>
@@ -2251,9 +2142,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/internal-error/"
-                        className={`sidemenu-link ${
-                          pathname === "/internal-error/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/internal-error/" ? "active" : ""
+                          }`}
                       >
                         Internal Error
                       </Link>
@@ -2264,9 +2154,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 
               <Link
                 href="/widgets/"
-                className={`sidebar-menu-link ${
-                  pathname === "/widgets/" ? "active" : ""
-                }`}
+                className={`sidebar-menu-link ${pathname === "/widgets/" ? "active" : ""
+                  }`}
               >
                 <i className="material-symbols-outlined">widgets</i>
                 <span className="title">Widgets</span>
@@ -2274,9 +2163,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 
               <Link
                 href="/maps/"
-                className={`sidebar-menu-link ${
-                  pathname === "/maps/" ? "active" : ""
-                }`}
+                className={`sidebar-menu-link ${pathname === "/maps/" ? "active" : ""
+                  }`}
               >
                 <i className="material-symbols-outlined">map</i>
                 <span className="title">Maps</span>
@@ -2284,9 +2172,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 
               <Link
                 href="/notifications/"
-                className={`sidebar-menu-link ${
-                  pathname === "/notifications/" ? "active" : ""
-                }`}
+                className={`sidebar-menu-link ${pathname === "/notifications/" ? "active" : ""
+                  }`}
               >
                 <i className="material-symbols-outlined">notifications</i>
                 <span className="title">Notifications</span>
@@ -2294,9 +2181,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 
               <Link
                 href="/members/"
-                className={`sidebar-menu-link ${
-                  pathname === "/members/" ? "active" : ""
-                }`}
+                className={`sidebar-menu-link ${pathname === "/members/" ? "active" : ""
+                  }`}
               >
                 <i className="material-symbols-outlined">people</i>
                 <span className="title">Members</span>
@@ -2337,9 +2223,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/settings/"
-                        className={`sidemenu-link ${
-                          pathname === "/settings/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/settings/" ? "active" : ""
+                          }`}
                       >
                         Account Settings
                       </Link>
@@ -2348,11 +2233,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/settings/change-password/"
-                        className={`sidemenu-link ${
-                          pathname === "/settings/change-password/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/settings/change-password/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Change Password
                       </Link>
@@ -2361,9 +2245,8 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/settings/connections/"
-                        className={`sidemenu-link ${
-                          pathname === "/settings/connections/" ? "active" : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/settings/connections/" ? "active" : ""
+                          }`}
                       >
                         Connections
                       </Link>
@@ -2372,11 +2255,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/settings/privacy-policy/"
-                        className={`sidemenu-link ${
-                          pathname === "/settings/privacy-policy/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/settings/privacy-policy/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Privacy Policy
                       </Link>
@@ -2385,11 +2267,10 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                     <li className="sidemenu-item">
                       <Link
                         href="/settings/terms-conditions/"
-                        className={`sidemenu-link ${
-                          pathname === "/settings/terms-conditions/"
-                            ? "active"
-                            : ""
-                        }`}
+                        className={`sidemenu-link ${pathname === "/settings/terms-conditions/"
+                          ? "active"
+                          : ""
+                          }`}
                       >
                         Terms & Conditions
                       </Link>

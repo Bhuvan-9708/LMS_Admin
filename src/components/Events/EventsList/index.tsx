@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import {
   Card,
@@ -14,6 +14,8 @@ import {
   TablePagination,
   TableRow,
   Paper,
+  MenuItem,
+  Select,
   IconButton,
   TableHead,
   Button,
@@ -24,6 +26,9 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import styles from "@/components/Events/EventsList/Search.module.css";
 import AddIcon from "@mui/icons-material/Add";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps, AlertColor } from '@mui/material/Alert';
+import Switch from '@mui/material/Switch';
 
 interface TablePaginationActionsProps {
   count: number;
@@ -34,7 +39,6 @@ interface TablePaginationActionsProps {
     newPage: number
   ) => void;
 }
-
 function TablePaginationActions(props: TablePaginationActionsProps) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -97,239 +101,50 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
-function createData(
-  eventID: string,
-  eventImage: string,
-  eventName: string,
-  dateAndTime: string,
-  location: string,
-  organizer: string,
-  status: string,
-  detailsLink: string
-) {
-  return {
-    eventID,
-    eventImage,
-    eventName,
-    dateAndTime,
-    location,
-    organizer,
-    status,
-    detailsLink,
-  };
-}
-
-const rows = [
-  createData(
-    "JAN-258",
-    "/images/events/event1.jpg",
-    "Annual Conference 2024",
-    "01 Dec 2024 09:00 AM",
-    "Convention Center",
-    "ABC Corporation",
-    "happening",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-257",
-    "/images/events/event2.jpg",
-    "Leadership Summit 2",
-    "10 Dec 2024 03:00 AM",
-    "Online",
-    "Marketing Pros",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-256",
-    "/images/events/event3.jpg",
-    "Product Launch Webinar",
-    "15 Dec 2024 06:00 PM",
-    "City Sky Lounge",
-    "Tech Solutions Inc.",
-    "past",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-255",
-    "/images/events/event4.jpg",
-    "AI in Healthcare Symposium",
-    "20 Dec 2024 09:00 AM",
-    "Training Center",
-    "Startup Hub",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-254",
-    "/images/events/event5.jpg",
-    "Tech Summit 2024",
-    "25 Dec 2024 02:30 PM",
-    "Tech Park Auditorium",
-    "Community Foundation",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-253",
-    "/images/events/event6.jpg",
-    "Startup Pitch Day",
-    "30 Dec 2024 11:00 AM",
-    "Grand Hotel Ballroom",
-    "FutureTech Solution",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-252",
-    "/images/events/event7.jpg",
-    "Workshop: Digital Marketing",
-    "01 Jan 2024 07:00 AM",
-    "Innovation Hub",
-    "Leadership Institute",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-251",
-    "/images/events/event8.jpg",
-    "Charity Gala Dinner",
-    "10 Jan 2024 03:00PM",
-    "Medical Center",
-    "XYZ Innovations",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-250",
-    "/images/events/event9.jpg",
-    "Web Development Semina",
-    "20 Jan 2024 01:00 PM",
-    "Corporate HQ",
-    "DTech Institute",
-    "past",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-249",
-    "/images/events/event10.jpg",
-    "Networking Mixer",
-    "30 Jan 2024 10:00 AM",
-    "Online",
-    "ABC Corporation",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-248",
-    "/images/events/event1.jpg",
-    "Annual Conference 2024",
-    "01 Dec 2024 09:00 AM",
-    "Convention Center",
-    "ABC Corporation",
-    "happening",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-247",
-    "/images/events/event4.jpg",
-    "AI in Healthcare Symposium",
-    "20 Dec 2024 09:00 AM",
-    "Training Center",
-    "Startup Hub",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-246",
-    "/images/events/event5.jpg",
-    "Tech Summit 2024",
-    "25 Dec 2024 02:30 PM",
-    "Tech Park Auditorium",
-    "Community Foundation",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-245",
-    "/images/events/event2.jpg",
-    "Leadership Summit 2",
-    "10 Dec 2024 03:00 AM",
-    "Online",
-    "Marketing Pros",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-244",
-    "/images/events/event3.jpg",
-    "Product Launch Webinar",
-    "15 Dec 2024 06:00 PM",
-    "City Sky Lounge",
-    "Tech Solutions Inc.",
-    "past",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-243",
-    "/images/events/event6.jpg",
-    "Startup Pitch Day",
-    "30 Dec 2024 11:00 AM",
-    "Grand Hotel Ballroom",
-    "FutureTech Solution",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-242",
-    "/images/events/event8.jpg",
-    "Charity Gala Dinner",
-    "10 Jan 2024 03:00PM",
-    "Medical Center",
-    "XYZ Innovations",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-241",
-    "/images/events/event7.jpg",
-    "Workshop: Digital Marketing",
-    "01 Jan 2024 07:00 AM",
-    "Innovation Hub",
-    "Leadership Institute",
-    "upcoming",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-240",
-    "/images/events/event9.jpg",
-    "Web Development Semina",
-    "20 Jan 2024 01:00 PM",
-    "Corporate HQ",
-    "DTech Institute",
-    "past",
-    "/events/details/"
-  ),
-  createData(
-    "JAN-239",
-    "/images/events/event10.jpg",
-    "Networking Mixer",
-    "30 Jan 2024 10:00 AM",
-    "Online",
-    "ABC Corporation",
-    "upcoming",
-    "/events/details/"
-  ),
-].sort((b, a) => (a.eventID < b.eventID ? -1 : 1));
-
 const EventsList: React.FC = () => {
   // Table
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | string>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
 
-  // Avoid a layout jump when reaching the last page with empty rows.
+  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch('https://lms-v1-mu.vercel.app/api/event/get-all-events');
+      const data = await response.json();
+      if (data.success) {
+        setEvents(data.data);
+        console.log(">>>>>>", data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+  const filteredEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredEvents.length) : 0;
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -338,12 +153,68 @@ const EventsList: React.FC = () => {
     setPage(newPage);
   };
 
+  const handleUpdateEvent = async (
+    id: string,
+    updateData: { status?: string; isActive?: boolean }
+  ) => {
+    console.log("Instructor ID:", id);
+    console.log("Update Data:", updateData);
+    try {
+      const response = await fetch(`https://lms-v1-mu.vercel.app/api/event/status/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData),
+      });
+      const result = await response.json();
+      if (result.success) {
+        setSnackbarMessage('Events updated successfully');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+        fetchEvents();
+      } else {
+        throw new Error('Failed to update Events');
+      }
+    } catch (error) {
+      setSnackbarMessage('Error updating Events');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleStatusChange = (eventId: string, newStatus: string) => {
+    console.log("Calling handleUpdateEvent with ID:", eventId);
+    handleUpdateEvent(eventId, { status: newStatus });
+  };
+
+  const handleIsActiveChange = (eventId: string, isActive: boolean) => {
+    console.log("Calling handleUpdateEvent with ID:", eventId, "New Value:", isActive);
+    handleUpdateEvent(eventId, { isActive });
+  };
+  const formatDateTime = (dateString: string, timeString: string) => {
+    const date = new Date(dateString);
+    const optionsDate: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = date.toLocaleDateString('en-US', optionsDate);
+
+    const [hours, minutes] = timeString.split(':');
+    const formattedTime = `${parseInt(hours) % 12 || 12}:${minutes} ${parseInt(hours) >= 12 ? 'PM' : 'AM'}`;
+
+    return `${formattedDate} at ${formattedTime}`;
+  };
+
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  if (error) {
+    return <Typography>Error: {error}</Typography>;
+  }
 
   return (
     <>
@@ -376,6 +247,7 @@ const EventsList: React.FC = () => {
                 <i className="material-symbols-outlined">search</i>
               </label>
               <input
+                onChange={handleSearchChange}
                 type="text"
                 className={styles.inputSearch}
                 placeholder="Search event here..."
@@ -400,7 +272,6 @@ const EventsList: React.FC = () => {
             </NextLink>
           </Box>
 
-          {/* Table */}
           <TableContainer
             component={Paper}
             sx={{
@@ -412,78 +283,42 @@ const EventsList: React.FC = () => {
             <Table sx={{ minWidth: 1250 }} aria-label="Table">
               <TableHead className="bg-f6f7f9">
                 <TableRow>
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
+                  <TableCell sx={{ fontWeight: "500", padding: "10px 20px", fontSize: "14px", }}
                     className="text-black border-bottom"
                   >
                     Event ID
                   </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
+                  <TableCell sx={{ fontWeight: "500", padding: "10px 20px", fontSize: "14px", }}
                     className="text-black border-bottom"
                   >
-                    Event
+                    Image
                   </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
+                  <TableCell sx={{ fontWeight: "500", padding: "10px 20px", fontSize: "14px", }}
                     className="text-black border-bottom"
                   >
-                    Date and Time
+                    Event Title
                   </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
+                  <TableCell sx={{ fontWeight: "500", padding: "10px 20px", fontSize: "14px", }}
                     className="text-black border-bottom"
                   >
-                    Location
+                    Start Date & Time
                   </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
+                  <TableCell sx={{ fontWeight: "500", padding: "10px 20px", fontSize: "14px", }}
                     className="text-black border-bottom"
                   >
                     Organizer
                   </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
+                  <TableCell sx={{ fontWeight: "500", padding: "10px 20px", fontSize: "14px", }}
+                    className="text-black border-bottom"
+                  >
+                    Is Active
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "500", padding: "10px 20px", fontSize: "14px", }}
                     className="text-black border-bottom"
                   >
                     Status
                   </TableCell>
-
-                  <TableCell
-                    sx={{
-                      fontWeight: "500",
-                      padding: "10px 20px",
-                      fontSize: "14px",
-                    }}
+                  <TableCell sx={{ fontWeight: "500", padding: "10px 20px", fontSize: "14px", }}
                     className="text-black border-bottom"
                   >
                     Action
@@ -492,171 +327,142 @@ const EventsList: React.FC = () => {
               </TableHead>
 
               <TableBody>
-                {(rowsPerPage > 0
-                  ? rows.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : rows
-                ).map((row) => (
-                  <TableRow key={row.eventID}>
-                    <TableCell
-                      sx={{
-                        padding: "14px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="border-bottom"
-                    >
-                      {row.eventID}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "14px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="border-bottom"
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "13px",
-                        }}
+                {filteredEvents
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((event) => (
+                    <TableRow key={event._id}>
+                      <TableCell sx={{ padding: "14px 20px", fontSize: "14px", }}
+                        className="border-bottom"
                       >
-                        <Box sx={{ flexShrink: "0" }}>
-                          <Image
-                            src={row.eventImage}
-                            alt="Product"
-                            width={40}
-                            height={26}
-                            style={{ borderRadius: "7px" }}
-                          />
-                        </Box>
+                        {event.event_id}
+                      </TableCell>
 
-                        <Box>
-                          <NextLink href={row.detailsLink}>
-                            <Typography
-                              sx={{
-                                fontSize: "15px",
-                                fontWeight: "500",
-                              }}
-                              className="text-black"
+                      <TableCell sx={{ padding: "14px 20px", fontSize: "14px", }}
+                        className="border-bottom"
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "13px",
+                          }}
+                        >
+                          <Box sx={{ flexShrink: "0" }}>
+                            <Image
+                              src={event.image}
+                              alt="Product"
+                              width={80}
+                              height={36}
+                              style={{ borderRadius: "7px" }}
+                            />
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell sx={{ padding: "14px 20px", fontSize: "14px" }}
+                        className="text-black border-bottom"
+                      >
+                        {event.title}
+                      </TableCell>
+                      <TableCell sx={{ padding: "14px 20px", fontSize: "14px" }}
+                        className="text-black border-bottom"
+                      >
+                        {formatDateTime(event.start_date, event.start_time)}
+                      </TableCell>
+
+                      <TableCell sx={{ padding: "14px 20px", fontSize: "14px", }}
+                        className="text-black border-bottom"
+                      >
+                        {event.organizer}
+                      </TableCell>
+
+                      <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                        <Switch
+                          checked={event.is_active}
+                          onChange={(e) => handleIsActiveChange(event._id, e.target.checked)}
+                          color="primary"
+                        />
+                      </TableCell>
+
+                      <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                        <Select
+                          value={event.status}
+                          onChange={(e) => handleStatusChange(event._id, e.target.value as string)}
+                          sx={{ textTransform: 'capitalize' }}
+                        >
+                          <MenuItem value="pending">Pending</MenuItem>
+                          <MenuItem value="approved">Approved</MenuItem>
+                          <MenuItem value="rejected">Rejected</MenuItem>
+                        </Select>
+                      </TableCell>
+
+                      <TableCell sx={{ padding: "14px 20px", fontSize: "14px", }}
+                        className="border-bottom"
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <NextLink href={`/events/${event._id}`}>
+                            <IconButton
+                              aria-label="view"
+                              color="primary"
+                              sx={{ padding: "5px" }}
                             >
-                              {row.eventName}
-                            </Typography>
+                              <i
+                                className="material-symbols-outlined"
+                                style={{ fontSize: "16px" }}
+                              >
+                                visibility
+                              </i>
+                            </IconButton>
                           </NextLink>
-                        </Box>
-                      </Box>
-                    </TableCell>
 
-                    <TableCell
-                      sx={{
-                        padding: "14px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
-                      {row.dateAndTime}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "14px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
-                      {row.location}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "14px 20px",
-                        fontSize: "14px",
-                      }}
-                      className="text-black border-bottom"
-                    >
-                      {row.organizer}
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "14px 20px",
-                      }}
-                      className="border-bottom"
-                    >
-                      <div
-                        className={`trezo-badge ${row.status}`}
-                        style={{ textTransform: "capitalize" }}
-                      >
-                        {row.status}
-                      </div>
-                    </TableCell>
-
-                    <TableCell
-                      sx={{
-                        padding: "14px 20px",
-                      }}
-                      className="border-bottom"
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <NextLink href={row.detailsLink}>
                           <IconButton
-                            aria-label="view"
-                            color="primary"
+                            aria-label="edit"
+                            color="secondary"
                             sx={{ padding: "5px" }}
                           >
                             <i
                               className="material-symbols-outlined"
                               style={{ fontSize: "16px" }}
                             >
-                              visibility
+                              edit
                             </i>
                           </IconButton>
-                        </NextLink>
 
-                        <IconButton
-                          aria-label="edit"
-                          color="secondary"
-                          sx={{ padding: "5px" }}
-                        >
-                          <i
-                            className="material-symbols-outlined"
-                            style={{ fontSize: "16px" }}
+                          <IconButton
+                            aria-label="delete"
+                            color="error"
+                            sx={{ padding: "5px" }}
                           >
-                            edit
-                          </i>
-                        </IconButton>
-
-                        <IconButton
-                          aria-label="delete"
-                          color="error"
-                          sx={{ padding: "5px" }}
-                        >
-                          <i
-                            className="material-symbols-outlined"
-                            style={{ fontSize: "16px" }}
-                          >
-                            delete
-                          </i>
-                        </IconButton>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                            <i
+                              className="material-symbols-outlined"
+                              style={{ fontSize: "16px" }}
+                            >
+                              delete
+                            </i>
+                          </IconButton>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 {emptyRows > 0 && (
                   <TableRow style={{ height: 53 * emptyRows }}>
                     <TableCell colSpan={10} />
                   </TableRow>
                 )}
               </TableBody>
-
+              <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={() => setSnackbarOpen(false)}
+              >
+                <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+                  {snackbarMessage}
+                </Alert>
+              </Snackbar>
               <TableFooter>
                 <TableRow>
                   <TablePagination
@@ -667,7 +473,7 @@ const EventsList: React.FC = () => {
                       { label: "All", value: -1 },
                     ]}
                     colSpan={10}
-                    count={rows.length}
+                    count={events.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     slotProps={{
@@ -690,7 +496,7 @@ const EventsList: React.FC = () => {
             </Table>
           </TableContainer>
         </Box>
-      </Card>
+      </Card >
     </>
   );
 };

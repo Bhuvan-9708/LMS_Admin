@@ -417,11 +417,6 @@ const UsersList: React.FC = () => {
                                 visibility
                               </i>
                             </IconButton>
-                            <IconButton aria-label="edit" color="secondary" sx={{ padding: "5px" }}>
-                              <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>
-                                edit
-                              </i>
-                            </IconButton>
                             <IconButton aria-label="delete" color="error" sx={{ padding: "5px" }}>
                               <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>
                                 delete

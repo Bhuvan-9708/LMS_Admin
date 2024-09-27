@@ -279,7 +279,10 @@ const Instructors: React.FC = () => {
     setPage(newPage);
   };
 
-  const handleUpdateInstructor = async (id: string, updateData: { status: string; isActive: boolean }) => {
+  const handleUpdateInstructor = async (
+    id: string,
+    updateData: { status?: string; isActive?: boolean } // Optional properties
+  ) => {
     console.log("Instructor ID:", id);
     console.log("Update Data:", updateData);
     try {
@@ -304,9 +307,13 @@ const Instructors: React.FC = () => {
     }
   };
 
-  const handleStatusChange = (instructorId: string, newStatus: string, isActive: boolean) => {
+  const handleIsActiveChange = (instructorId: string, isActive: boolean) => {
     console.log("Calling handleUpdateInstructor with ID:", instructorId);
-    handleUpdateInstructor(instructorId, { status: newStatus, isActive });
+    handleUpdateInstructor(instructorId, { isActive });
+  };
+  const handleStatusChange = (instructorId: string, newStatus: string) => {
+    console.log("Calling handleUpdateInstructor with ID:", instructorId);
+    handleUpdateInstructor(instructorId, { status: newStatus });
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -439,7 +446,7 @@ const Instructors: React.FC = () => {
                       <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
                         <Select
                           value={instructor.status}
-                          onChange={(e) => handleStatusChange(instructor._id, e.target.value, instructor.status)} // Use _id instead of id
+                          onChange={(e) => handleStatusChange(instructor._id, e.target.value as string)}
                           sx={{ textTransform: 'capitalize' }}
                         >
                           <MenuItem value="pending">Pending</MenuItem>
@@ -451,7 +458,7 @@ const Instructors: React.FC = () => {
                       <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
                         <Switch
                           checked={instructor.is_active}
-                          onChange={(e) => handleStatusChange(instructor._id, instructor.is_active, e.target.checked)} // Use _id instead of id
+                          onChange={(e) => handleIsActiveChange(instructor._id, e.target.checked)}
                           color="primary"
                         />
                       </TableCell>
