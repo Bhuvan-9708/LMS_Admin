@@ -26,6 +26,8 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import styles from "@/components/LMS/Search.module.css";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps, AlertColor } from '@mui/material/Alert';
 
 interface TablePaginationActionsProps {
   count: number;
@@ -71,6 +73,12 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
+interface Courses {
+  _id: string;
+  status: string;
+  is_active: boolean;
+}
+
 const Courses: React.FC = () => {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,28 +86,39 @@ const Courses: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
   const Router = useRouter();
+
+  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
 
   const handleAddCourses = () => {
     Router.push('/lms/create-course');
   }
 
-  React.useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/courses");
-        if (!response.ok) {
-          throw new Error("Failed to fetch courses");
-        }
-        const data = await response.json();
-        setCourses(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchCourses = async () => {
+    try {
+      const response = await fetch("https://vstudyonline.com/api/v1/course");
+      if (!response.ok) {
+        throw new Error("Failed to fetch courses");
       }
-    };
-
+      const data = await response.json();
+      if (data.success) {
+        setCourses(data.data);
+        console.log(data.data);
+      } else {
+        throw new Error(data.message || "Unknown error");
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  React.useEffect(() => {
     fetchCourses();
   }, []);
 
@@ -123,44 +142,50 @@ const Courses: React.FC = () => {
     setPage(0);
   };
 
-  const handleToggleActive = async (id: string, newStatus: boolean) => {
+  const handleUpdateCourseStatus = async (
+    id: string,
+    updateData: { status?: string; isActive?: boolean }
+  ) => {
+    console.log("Coursed ID:", id);
+    console.log("Update Data:", updateData);
+
+    const courseResponse = await fetch(`https://vstudyonline.com/api/v1/course/status/${id}`);
+    const event = await courseResponse.json();
+
+    const dataToUpdate = {
+      status: updateData.status ?? event.status,
+      is_active: updateData.isActive !== undefined ? updateData.isActive : event.is_active
+    };
+
     try {
-      const response = await fetch(`http://localhost:5000/courses/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: newStatus }),
+      const response = await fetch(`https://vstudyonline.com/api/v1/course/status/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToUpdate),
       });
-      if (!response.ok) {
-        throw new Error("Failed to update status");
+      const result = await response.json();
+      if (result.success) {
+        setSnackbarMessage('Courses updated successfully');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+        fetchCourses();
+      } else {
+        throw new Error('Failed to update Courses');
       }
-      setCourses(prevCourses =>
-        prevCourses.map(course =>
-          course.id === id ? { ...course, isActive: newStatus } : course
-        )
-      );
     } catch (error) {
-      console.error("Failed to update course status", error);
+      setSnackbarMessage('Error updating Courses');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
-  const handleStatusChange = async (id: string, newStatus: string) => {
-    try {
-      const response = await fetch(`http://localhost:5000/courses/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to update status");
-      }
-      setCourses(prevCourses =>
-        prevCourses.map(course =>
-          course.id === id ? { ...course, status: newStatus } : course
-        )
-      );
-    } catch (error) {
-      console.error("Failed to update course status", error);
-    }
+  const handleIsActiveChange = (courseId: string, isActive: boolean) => {
+    console.log("Calling handleUpdatecourseId with ID:", courseId);
+    handleUpdateCourseStatus(courseId, { isActive });
+  };
+  const handleStatusChange = (courseId: string, newStatus: string) => {
+    console.log("Calling handleUpdatecourseId with ID:", courseId);
+    handleUpdateCourseStatus(courseId, { status: newStatus });
   };
 
   const handleDelete = async (id: string) => {
@@ -175,6 +200,14 @@ const Courses: React.FC = () => {
     } catch (error) {
       console.error("Failed to delete course", error);
     }
+  };
+
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const optionsDate: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = date.toLocaleDateString('en-US', optionsDate);
+
+    return `${formattedDate}`;
   };
 
   if (loading) {
@@ -246,9 +279,9 @@ const Courses: React.FC = () => {
             <Table sx={{ minWidth: 1200 }} aria-label="Courses Table">
               <TableHead className="bg-primary-50">
                 <TableRow>
-                  {["ID", "Course Name", "Category", "Created By", "Price", "Status", "Active", "Action"].map((header, index) => (
+                  {["ID", "Course Name", "Course Level", "Created By", "Price", "Status", "Active", "Action"].map((header, index) => (
                     <TableCell
-                      key={index} // Add a unique key for each cell
+                      key={index}
                       sx={{
                         fontWeight: "500",
                         padding: "10px 24px",
@@ -256,7 +289,7 @@ const Courses: React.FC = () => {
                       }}
                       className="text-black border-bottom"
                     >
-                      {header} {/* Use the header value here */}
+                      {header}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -264,24 +297,29 @@ const Courses: React.FC = () => {
 
               <TableBody>
                 {filteredCourses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((course) => (
-                  <TableRow key={course.id}>
-                    <TableCell>{course.id}</TableCell>
-                    <TableCell>{course.title}</TableCell>
-                    <TableCell>{course.category}</TableCell>
-                    <TableCell>{course.startDate}</TableCell>
-                    <TableCell>{course.price}</TableCell>
-                    <TableCell>
-                      <Select value={course.status} onChange={(e) => handleStatusChange(course.id, e.target.value)}>
-                        <MenuItem value="Published">Published</MenuItem>
-                        <MenuItem value="Draft">Draft</MenuItem>
-                        <MenuItem value="Archived">Archived</MenuItem>
+                  <TableRow key={course._id}>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{course._id}</TableCell>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{course.title}</TableCell>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{course.course_level}</TableCell>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{formatDateTime(course.createdAt)}</TableCell>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">{course.price}</TableCell>
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                      <Select
+                        value={course.status}
+                        onChange={(e) => handleStatusChange(course._id, e.target.value as string)}
+                        sx={{ textTransform: 'capitalize' }}
+                      >
+                        <MenuItem value="pending">Pending</MenuItem>
+                        <MenuItem value="approved">Approved</MenuItem>
+                        <MenuItem value="rejected">Rejected</MenuItem>
                       </Select>
                     </TableCell>
-                    <TableCell>
+
+                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
                       <Switch
-                        checked={course.isActive}
-                        onChange={(e) => handleToggleActive(course.id, e.target.checked)}
-                        inputProps={{ "aria-label": "controlled" }}
+                        checked={course.is_active ?? false}
+                        onChange={(e) => handleIsActiveChange(course._id, e.target.checked)}
+                        color="primary"
                       />
                     </TableCell>
                     <TableCell>
@@ -303,7 +341,15 @@ const Courses: React.FC = () => {
                   </TableRow>
                 )}
               </TableBody>
-
+              <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={() => setSnackbarOpen(false)}
+              >
+                <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+                  {snackbarMessage}
+                </Alert>
+              </Snackbar>
               <TableFooter>
                 <TableRow>
                   <TablePagination

@@ -102,7 +102,6 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 }
 
 const EventsList: React.FC = () => {
-  // Table
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [events, setEvents] = useState<any[]>([]);
@@ -157,13 +156,21 @@ const EventsList: React.FC = () => {
     id: string,
     updateData: { status?: string; isActive?: boolean }
   ) => {
-    console.log("Instructor ID:", id);
+    console.log("Event ID:", id);
     console.log("Update Data:", updateData);
+
+    const eventResponse = await fetch(`https://lms-v1-mu.vercel.app/api/event/status/${id}`);
+    const event = await eventResponse.json();
+
+    const dataToUpdate = {
+      status: updateData.status ?? event.status,
+      is_active: updateData.isActive !== undefined ? updateData.isActive : event.is_active
+    };
     try {
       const response = await fetch(`https://lms-v1-mu.vercel.app/api/event/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateData),
+        body: JSON.stringify(dataToUpdate),
       });
       const result = await response.json();
       if (result.success) {

@@ -244,7 +244,7 @@ const Instructors: React.FC = () => {
 
   const fetchInstructors = async () => {
     try {
-      const response = await fetch('https://lms-v1-mu.vercel.app/api/instructor');
+      const response = await fetch('https://vstudyonline.com/api/instructor');
       const data = await response.json();
       if (data.success) {
         setInstructors(data.data);
@@ -281,15 +281,23 @@ const Instructors: React.FC = () => {
 
   const handleUpdateInstructor = async (
     id: string,
-    updateData: { status?: string; isActive?: boolean } // Optional properties
+    updateData: { status?: string; isActive?: boolean }
   ) => {
     console.log("Instructor ID:", id);
     console.log("Update Data:", updateData);
+
+    const instructorResponse = await fetch(`https://vstudyonline.com/api/instructor/${id}`);
+    const instructor = await instructorResponse.json();
+
+    const dataToUpdate = {
+      status: updateData.status ?? instructor.status, 
+      is_active: updateData.isActive !== undefined ? updateData.isActive : instructor.is_active 
+    };
     try {
-      const response = await fetch(`https://lms-v1-mu.vercel.app/api/instructor/status/${id}`, {
+      const response = await fetch(`https://vstudyonline.com/api/instructor/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateData),
+        body: JSON.stringify(dataToUpdate),
       });
       const result = await response.json();
       if (result.success) {
@@ -457,7 +465,7 @@ const Instructors: React.FC = () => {
 
                       <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
                         <Switch
-                          checked={instructor.is_active}
+                          checked={instructor.is_active ?? false}
                           onChange={(e) => handleIsActiveChange(instructor._id, e.target.checked)}
                           color="primary"
                         />
