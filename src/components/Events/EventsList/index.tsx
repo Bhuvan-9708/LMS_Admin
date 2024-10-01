@@ -159,7 +159,7 @@ const EventsList: React.FC = () => {
     console.log("Event ID:", id);
     console.log("Update Data:", updateData);
 
-    const eventResponse = await fetch(`https://lms-v1-mu.vercel.app/api/event/status/${id}`);
+    const eventResponse = await fetch(`https://vstudyonline.com/api/event/status/${id}`);
     const event = await eventResponse.json();
 
     const dataToUpdate = {
@@ -167,7 +167,7 @@ const EventsList: React.FC = () => {
       is_active: updateData.isActive !== undefined ? updateData.isActive : event.is_active
     };
     try {
-      const response = await fetch(`https://lms-v1-mu.vercel.app/api/event/status/${id}`, {
+      const response = await fetch(`https://vstudyonline.com/api/event/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToUpdate),

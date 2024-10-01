@@ -8,8 +8,6 @@ import {
   Box,
   Typography,
   FormControl,
-  InputLabel,
-  MenuItem,
   TextField,
   Button,
   Select,
@@ -17,6 +15,8 @@ import {
   Checkbox,
   FormControlLabel,
   Chip,
+  MenuItem,
+  Alert,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -39,11 +39,16 @@ interface Category {
   _id: string;
   name: string;
 }
+// interface ScheduleItem {
+//   day: number;
+//   time: string;
+//   date: Dayjs | null;
+// };
 
 interface EventFormData {
   title: string;
-  event_type: 'workshop' | 'seminar' | 'presentation' | 'workshop-seminar' | 'workshop-presentation';
-  event_level: 'all' | 'beginner' | 'intermediate' | 'expert';
+  event_type: string;
+  event_level: string;
   start_date: Dayjs | null;
   start_time: Dayjs | null;
   end_time: Dayjs | null;
@@ -52,6 +57,7 @@ interface EventFormData {
   is_active: boolean;
   category: string;
   is_paid: boolean;
+  organizer: string;
   price: {
     amount: number;
     currency: string;
@@ -64,22 +70,26 @@ interface EventFormData {
   is_certificate: boolean;
   certificate: string;
   certificate_description: string;
-  schedule: { day: number; time: string; date: Dayjs | null }[];
+  schedule: Array<{ day: number; time: string; date: Dayjs | null }>;
 }
 
-const eventTypes = ['workshop', 'seminar', 'presentation', 'workshop-seminar', 'workshop-presentation'] as const;
-const eventLevels = ['all', 'beginner', 'intermediate', 'expert'] as const;
+interface FormErrors {
+  [key: string]: string;
+}
+
+const eventTypes = ['workshop', 'seminar', 'presentation', 'workshop-seminar', 'workshop-presentation'];
+const eventLevels = ['all', 'beginner', 'intermediate', 'expert'];
 
 const CreateAnEvent: React.FC = () => {
   const [formData, setFormData] = useState<EventFormData>({
     title: '',
-    event_type: 'workshop',
+    event_type: '',
     event_level: 'all',
     start_date: null,
     start_time: null,
     end_time: null,
     registration_link: '',
-    instructor: [] as string[],
+    instructor: [],
     is_active: true,
     category: '',
     is_paid: false,
@@ -95,11 +105,14 @@ const CreateAnEvent: React.FC = () => {
     is_certificate: true,
     certificate: '',
     certificate_description: '',
-    schedule: [],
+    schedule: [{ day: 0, time: '', date: null }],
+    organizer: ''
   });
 
   const [instructors, setInstructors] = useState<Instructor[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInstructors = async () => {
@@ -108,17 +121,19 @@ const CreateAnEvent: React.FC = () => {
         const data = await response.json();
         if (data.success) {
           setInstructors(data.data);
-          console.log(">>>>>>", data.data);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching instructors:', error);
       }
     };
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('/api/categories');
-        setCategories(response.data);
+        const response = await fetch('https://vstudyonline.com/api/category/get-all-categories');
+        const data = await response.json();
+        if (data.success) {
+          setCategories(data.data.categories);
+        }
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
@@ -134,6 +149,7 @@ const CreateAnEvent: React.FC = () => {
       ...prevData,
       [name]: value,
     }));
+    validateField(name, value);
   };
 
   const handleSelectChange = (e: SelectChangeEvent<string | string[]>) => {
@@ -142,17 +158,8 @@ const CreateAnEvent: React.FC = () => {
       ...prevData,
       [name]: value,
     }));
+    validateField(name, value);
   };
-
-  const handleRemoveInstructor = (instructorId: string) => {
-    setFormData((prevData) => {
-      const updatedInstructors = prevData.instructor.filter(
-        (id) => id !== instructorId
-      );
-      return { ...prevData, instructor: updatedInstructors };
-    });
-  };
-
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
@@ -167,13 +174,24 @@ const CreateAnEvent: React.FC = () => {
       ...prevData,
       [name]: date,
     }));
+    validateField(name, date);
   };
-
+  const handleScheduleDateChange = (date: Dayjs | null, index: number) => {
+    setFormData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
+      updatedSchedule[index].date = date;
+      return {
+        ...prevData,
+        schedule: updatedSchedule,
+      };
+    });
+  };
   const handleTimeChange = (time: Dayjs | null, name: string) => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: time,
     }));
+    validateField(name, time);
   };
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,7 +200,7 @@ const CreateAnEvent: React.FC = () => {
       ...prevData,
       price: {
         ...prevData.price,
-        [name]: name === 'amount' ? parseFloat(value) : value,
+        [name]: name === 'amount' ? (value === '' ? 0 : parseFloat(value)) : value,
       },
     }));
   };
@@ -221,27 +239,144 @@ const CreateAnEvent: React.FC = () => {
     });
   };
 
+  const validateField = (name: string, value: any) => {
+    let error = '';
+    switch (name) {
+      case 'title':
+        error = value ? '' : 'Title is required';
+        break;
+      case 'event_type':
+        error = eventTypes.includes(value) ? '' : 'Invalid event type';
+        break;
+      case 'event_level':
+        error = eventLevels.includes(value) ? '' : 'Invalid event level';
+        break;
+      case 'start_date':
+        error = value && dayjs(value).isValid() ? '' : 'Start date is required';
+        break;
+      case 'start_time':
+      case 'end_time':
+        error = value && dayjs(value).isValid() ? '' : `${name === 'start_time' ? 'Start' : 'End'} time is required`;
+        break;
+      case 'registration_link':
+        error = value ? (/^https?:\/\/.+/.test(value) ? '' : 'Invalid URL format') : 'Registration link is required';
+        break;
+      case 'instructor':
+        error = (value as string[]).length > 0 ? '' : 'At least one instructor is required';
+        break;
+      case 'category':
+        error = value ? '' : 'Category is required';
+        break;
+      case 'description':
+        error = value ? '' : 'Description is required';
+        break;
+      default:
+        break;
+    }
+    setErrors(prev => ({ ...prev, [name]: error }));
+  };
+
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+    Object.keys(formData).forEach((key) => {
+      validateField(key, formData[key as keyof EventFormData]);
+    });
+    setErrors(newErrors);
+    return Object.values(newErrors).every(error => !error);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+
+    if (!validateForm()) {
+      console.error('Form validation failed');
+      return;
+    }
+
     try {
       const formDataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'image' && value instanceof File) {
-          formDataToSend.append(key, value);
-        } else if (typeof value === 'object' && value !== null) {
-          formDataToSend.append(key, JSON.stringify(value));
-        } else {
-          formDataToSend.append(key, String(value));
-        }
-      });
 
-      await axios.post('/api/events', formDataToSend, {
+      // Event data
+      formDataToSend.append('event[title]', formData.title);
+      formDataToSend.append('event[event_type]', formData.event_type);
+      formDataToSend.append('event[event_level]', formData.event_level);
+      formDataToSend.append('event[start_date]', formData.start_date ? dayjs(formData.start_date).format('YYYY-MM-DD') : '');
+      formDataToSend.append('event[start_time]', formData.start_time ? dayjs(formData.start_time).toISOString() : '');
+      formDataToSend.append('event[end_time]', formData.end_time ? dayjs(formData.end_time).toISOString() : '');
+      formDataToSend.append('event[registration_link]', formData.registration_link);
+      formData.instructor.forEach((instructor, index) => {
+        formDataToSend.append(`event[instructor][${index}]`, instructor);
+      });
+      formDataToSend.append('event[category]', formData.category);
+      formDataToSend.append('event[is_paid]', formData.is_paid.toString());
+      if (formData.is_paid) {
+        formDataToSend.append('event[price][amount]', formData.price.amount.toString());
+        formDataToSend.append('event[price][currency]', formData.price.currency);
+      }
+      formDataToSend.append('event[enrolled_users]', '0');
+      formDataToSend.append('event[status]', 'pending');
+      formDataToSend.append('event[organizer]', formData.organizer);
+
+      // Event details
+      formDataToSend.append('eventDetails[description]', formData.description);
+      formData.skills.forEach((skill, index) => {
+        formDataToSend.append(`eventDetails[skills][${index}][tag]`, skill.tag);
+        formDataToSend.append(`eventDetails[skills][${index}][learning]`, skill.learning);
+      });
+      formData.your_learning.forEach((item, index) => {
+        formDataToSend.append(`eventDetails[your_learning][${index}][tag]`, item.tag);
+        formDataToSend.append(`eventDetails[your_learning][${index}][description]`, item.description);
+      });
+      formData.for_whom.forEach((item, index) => {
+        formDataToSend.append(`eventDetails[for_whom][${index}][tag]`, item.tag);
+        formDataToSend.append(`eventDetails[for_whom][${index}][description]`, item.description);
+      });
+      formData.schedule.forEach((item, index) => {
+        formDataToSend.append(`eventDetails[schedule][${index}][day]`, item.day.toString());
+        formDataToSend.append(`eventDetails[schedule][${index}][time]`, item.time || '');
+        const formattedDate = item.date ? dayjs(item.date).format('YYYY-MM-DD') : '';
+        formDataToSend.append(`eventDetails[schedule][${index}][date]`, formattedDate);
+      });
+      formData.instructor.forEach((instructor, index) => {
+        formDataToSend.append(`eventDetails[instructors][${index}]`, instructor);
+      });
+      formDataToSend.append('eventDetails[is_certificate]', formData.is_certificate.toString());
+      formDataToSend.append('eventDetails[certificate]', formData.certificate);
+      formDataToSend.append('eventDetails[certificate_description]', formData.certificate_description);
+
+      if (formData.image) {
+        formDataToSend.append('event[image]', formData.image);
+      }
+
+      const response = await axios.post('http://localhost:5001/api/event/create', formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      alert('Event created successfully!');
+
+      if (response.data.success) {
+        alert('Event created successfully!');
+        // Reset form or redirect
+      } else {
+        throw new Error(response.data.message || 'Failed to create event');
+      }
     } catch (error) {
-      console.error('Error creating event:', error);
-      alert('Error creating event. Please try again.');
+      if (axios.isAxiosError(error) && error.response) {
+        console.error('Server response:', error.response.data);
+        if (error.response.data.errors) {
+          const serverErrors = error.response.data.errors;
+          const newErrors: FormErrors = {};
+          serverErrors.forEach((err: any) => {
+            const field = err.path.split('.').pop();
+            newErrors[field] = err.msg;
+          });
+          setErrors(newErrors);
+        } else {
+          setSubmitError('An error occurred while creating the event. Please try again.');
+        }
+      } else {
+        console.error('Error creating event:', error);
+        setSubmitError('An unexpected error occurred. Please try again.');
+      }
     }
   };
 
@@ -276,20 +411,19 @@ const CreateAnEvent: React.FC = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box component="form" onSubmit={handleSubmit}>
-        <Card
-          sx={{
-            boxShadow: "none",
-            borderRadius: "7px",
-            mb: "25px",
-            padding: { xs: "18px", sm: "20px", lg: "25px" },
-          }}
-          className="rmui-card"
-        >
-          <Grid
-            container
-            spacing={3}
-            columnSpacing={{ xs: 1, sm: 2, md: 2, lg: 3 }}
-          >
+        <Card sx={{
+          boxShadow: "none",
+          borderRadius: "7px",
+          mb: "25px",
+          padding: { xs: "18px", sm: "20px", lg: "25px" },
+        }} className="rmui-card">
+          <Grid container spacing={3} columnSpacing={{ xs: 1, sm: 2, md: 2, lg: 3 }}>
+            {submitError && (
+              <Grid item xs={12}>
+                <Alert severity="error">{submitError}</Alert>
+              </Grid>
+            )}
+
             <Grid item xs={12} sm={6} lg={6} xl={4}>
               <Box>
                 <FormControl fullWidth>
@@ -305,6 +439,8 @@ const CreateAnEvent: React.FC = () => {
                     value={formData.title}
                     onChange={handleInputChange}
                     required
+                    error={!!errors.title}
+                    helperText={errors.title}
                     sx={inputStyle}
                   />
                 </FormControl>
@@ -316,7 +452,7 @@ const CreateAnEvent: React.FC = () => {
                 <Typography component="label" sx={labelStyle} className="text-black">
                   Event Type
                 </Typography>
-                <FormControl fullWidth>
+                <FormControl fullWidth error={!!errors.event_type}>
                   <Select
                     id="event_type"
                     name="event_type"
@@ -330,6 +466,7 @@ const CreateAnEvent: React.FC = () => {
                       </MenuItem>
                     ))}
                   </Select>
+                  {errors.event_type && <Typography color="error">{errors.event_type}</Typography>}
                 </FormControl>
               </Box>
             </Grid>
@@ -339,7 +476,7 @@ const CreateAnEvent: React.FC = () => {
                 <Typography component="label" sx={labelStyle} className="text-black">
                   Event Level
                 </Typography>
-                <FormControl fullWidth>
+                <FormControl fullWidth error={!!errors.event_level}>
                   <Select
                     id="event_level"
                     name="event_level"
@@ -353,11 +490,12 @@ const CreateAnEvent: React.FC = () => {
                       </MenuItem>
                     ))}
                   </Select>
+                  {errors.event_level && <Typography color="error">{errors.event_level}</Typography>}
                 </FormControl>
               </Box>
             </Grid>
 
-            <Grid item xs={12} sm={6} lg={6} xl={4}>
+            <Grid item xs={12} sm={6} lg={6} xl={3}>
               <Typography component="h5" sx={labelStyle} className="text-black">
                 Start Date
               </Typography>
@@ -368,10 +506,16 @@ const CreateAnEvent: React.FC = () => {
                   width: "100%",
                   ...selectStyle,
                 }}
+                slotProps={{
+                  textField: {
+                    helperText: errors.start_date,
+                    error: !!errors.start_date,
+                  },
+                }}
               />
             </Grid>
 
-            <Grid item xs={12} sm={6} lg={6} xl={4}>
+            <Grid item xs={12} sm={6} lg={6} xl={3}>
               <Typography component="h5" sx={labelStyle} className="text-black">
                 Start Time
               </Typography>
@@ -382,10 +526,16 @@ const CreateAnEvent: React.FC = () => {
                   width: "100%",
                   ...selectStyle,
                 }}
+                slotProps={{
+                  textField: {
+                    helperText: errors.start_time,
+                    error: !!errors.start_time,
+                  },
+                }}
               />
             </Grid>
 
-            <Grid item xs={12} sm={6} lg={6} xl={4}>
+            <Grid item xs={12} sm={6} lg={6} xl={3}>
               <Typography component="h5" sx={labelStyle} className="text-black">
                 End Time
               </Typography>
@@ -396,9 +546,36 @@ const CreateAnEvent: React.FC = () => {
                   width: "100%",
                   ...selectStyle,
                 }}
+                slotProps={{
+                  textField: {
+                    helperText: errors.end_time,
+                    error: !!errors.end_time,
+                  },
+                }}
               />
             </Grid>
-
+            <Grid item xs={12} sm={6} lg={6} xl={3}>
+              <Box>
+                <FormControl fullWidth>
+                  <Typography component="label" sx={labelStyle} className="text-black">
+                    Organizer
+                  </Typography>
+                  <TextField
+                    label="Enter event Organizer"
+                    placeholder="E.g. Media Dynox"
+                    variant="filled"
+                    id="organizer"
+                    name="organizer"
+                    value={formData.organizer}
+                    onChange={handleInputChange}
+                    required
+                    error={!!errors.organizer}
+                    helperText={errors.organizer}
+                    sx={inputStyle}
+                  />
+                </FormControl>
+              </Box>
+            </Grid>
             <Grid item xs={12} sm={6} lg={6} xl={4}>
               <Box>
                 <FormControl fullWidth>
@@ -414,6 +591,8 @@ const CreateAnEvent: React.FC = () => {
                     value={formData.registration_link}
                     onChange={handleInputChange}
                     required
+                    error={!!errors.registration_link}
+                    helperText={errors.registration_link}
                     sx={inputStyle}
                   />
                 </FormControl>
@@ -425,7 +604,7 @@ const CreateAnEvent: React.FC = () => {
                 <Typography component="label" sx={labelStyle} className="text-black">
                   Instructors
                 </Typography>
-                <FormControl fullWidth>
+                <FormControl fullWidth error={!!errors.instructor}>
                   <Select
                     multiple
                     id="instructor"
@@ -441,7 +620,6 @@ const CreateAnEvent: React.FC = () => {
                             <Chip
                               key={value}
                               label={instructor ? `${instructor.first_name} ${instructor.last_name}` : value}
-                              onDelete={() => handleRemoveInstructor(value)}
                             />
                           );
                         })}
@@ -454,17 +632,17 @@ const CreateAnEvent: React.FC = () => {
                       </MenuItem>
                     ))}
                   </Select>
+                  {errors.instructor && <Typography color="error">{errors.instructor}</Typography>}
                 </FormControl>
               </Box>
             </Grid>
-
 
             <Grid item xs={12} sm={6} lg={6} xl={4}>
               <Box>
                 <Typography component="label" sx={labelStyle} className="text-black">
                   Category
                 </Typography>
-                <FormControl fullWidth>
+                <FormControl fullWidth error={!!errors.category}>
                   <Select
                     id="category"
                     name="category"
@@ -478,6 +656,7 @@ const CreateAnEvent: React.FC = () => {
                       </MenuItem>
                     ))}
                   </Select>
+                  {errors.category && <Typography color="error">{errors.category}</Typography>}
                 </FormControl>
               </Box>
             </Grid>
@@ -503,7 +682,7 @@ const CreateAnEvent: React.FC = () => {
                   <Box>
                     <FormControl fullWidth>
                       <Typography component="label" sx={labelStyle} className="text-black">
-                        Price Amount
+                        Price
                       </Typography>
                       <TextField
                         label="Enter price amount"
@@ -555,7 +734,10 @@ const CreateAnEvent: React.FC = () => {
                 </Typography>
                 <RichTextEditor
                   value={formData.description}
-                  onChange={(value) => setFormData((prevData) => ({ ...prevData, description: value }))}
+                  onChange={(value) => {
+                    setFormData((prevData) => ({ ...prevData, description: value }));
+                    validateField('description', value);
+                  }}
                   id="rte"
                   controls={[
                     ["bold", "italic", "underline", "link", "image"],
@@ -567,6 +749,7 @@ const CreateAnEvent: React.FC = () => {
                     minHeight: "200px",
                   }}
                 />
+                {errors.description && <Typography color="error">{errors.description}</Typography>}
               </Box>
             </Grid>
 
@@ -748,7 +931,7 @@ const CreateAnEvent: React.FC = () => {
                   <DatePicker
                     label="Date"
                     value={item.date}
-                    onChange={(date) => handleDateChange(date, 'start_date')}
+                    onChange={(date) => handleScheduleDateChange(date, index)}
                     sx={selectStyle}
                   />
                   <Button onClick={() => handleRemoveArrayItem(index, 'schedule')}>Remove</Button>
