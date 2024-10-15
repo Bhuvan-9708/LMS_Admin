@@ -244,7 +244,7 @@ const Instructors: React.FC = () => {
 
   const fetchInstructors = async () => {
     try {
-      const response = await fetch('https://vstudyonline.com/api/instructor');
+      const response = await fetch('https://lms-v1-xi.vercel.app/api/instructor');
       const data = await response.json();
       if (data.success) {
         setInstructors(data.data);
@@ -286,7 +286,7 @@ const Instructors: React.FC = () => {
     console.log("Instructor ID:", id);
     console.log("Update Data:", updateData);
 
-    const instructorResponse = await fetch(`https://vstudyonline.com/api/instructor/${id}`);
+    const instructorResponse = await fetch(`https://lms-v1-xi.vercel.app/api/instructor/${id}`);
     const instructor = await instructorResponse.json();
 
     const dataToUpdate = {
@@ -294,7 +294,7 @@ const Instructors: React.FC = () => {
       is_active: updateData.isActive !== undefined ? updateData.isActive : instructor.is_active 
     };
     try {
-      const response = await fetch(`https://vstudyonline.com/api/instructor/status/${id}`, {
+      const response = await fetch(`https://lms-v1-xi.vercel.app/api/instructor/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToUpdate),

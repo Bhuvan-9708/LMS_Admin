@@ -955,16 +955,52 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                         className={`sidemenu-link ${pathname === "/cms/templates/" ? "active" : ""
                           }`}
                       >
-                        Page Templates
+                        Email Template Listing
                       </Link>
                     </li>
                     <li className="sidemenu-item">
                       <Link
-                        href="/cms/create-template/"
-                        className={`sidemenu-link ${pathname === "/cms/create-template/"
+                        href="/cms/blog/"
+                        className={`sidemenu-link ${pathname === "/cms/blog/"
                           }`}
                       >
-                        Create Templates
+                        Blog listing
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/about-us/"
+                        className={`sidemenu-link ${pathname === "/cms/about-us/"
+                          }`}
+                      >
+                        AboutUs page
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/banner/"
+                        className={`sidemenu-link ${pathname === "/cms/banner/"
+                          }`}
+                      >
+                        Banner
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/section/"
+                        className={`sidemenu-link ${pathname === "/cms/section/"
+                          }`}
+                      >
+                        Section
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/homepage/"
+                        className={`sidemenu-link ${pathname === "/cms/homepage/"
+                          }`}
+                      >
+                        Homepage
                       </Link>
                     </li>
                   </ul>

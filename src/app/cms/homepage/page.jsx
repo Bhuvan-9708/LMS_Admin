@@ -1,6 +1,7 @@
 import * as React from "react";
+import Grid from "@mui/material/Grid";
 import NextLink from 'next/link';
-import AddTemplate from "@/components/CMS/CreateTemplates";
+import HomePage from "@/components/CMS/Homepage";
 
 export default function Page() {
     return (
@@ -15,11 +16,12 @@ export default function Page() {
                             Dashboard
                         </NextLink>
                     </li>
-                    <li>LMS</li>
-                    <li>Instructors</li>
+                    <li>CMS</li>
+                    <li>HomePage Templates</li>
+                    <li>HomePage Content</li>
                 </ul>
             </div>
-            <AddTemplate />
+            <HomePage />
         </>
     );
 }

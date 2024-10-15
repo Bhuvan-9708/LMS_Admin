@@ -6,7 +6,6 @@ import Templates from "@/components/CMS/TemplateListing";
 export default function Page() {
     return (
         <>
-            {/* Breadcrumb */}
             <div className="breadcrumb-card">
                 <h5>Template Details</h5>
 

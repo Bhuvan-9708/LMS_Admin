@@ -101,7 +101,7 @@ const Courses: React.FC = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch("https://vstudyonline.com/api/v1/course");
+      const response = await fetch("https://lms-v1-xi.vercel.app/api/v1/course");
       if (!response.ok) {
         throw new Error("Failed to fetch courses");
       }
@@ -141,27 +141,29 @@ const Courses: React.FC = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
   const handleUpdateCourseStatus = async (
     id: string,
     updateData: { status?: string; isActive?: boolean }
   ) => {
-    console.log("Coursed ID:", id);
+    console.log("Course ID:", id);
     console.log("Update Data:", updateData);
 
-    const courseResponse = await fetch(`https://vstudyonline.com/api/v1/course/status/${id}`);
-    const event = await courseResponse.json();
+    // Fetch the current course data
+    const courseResponse = await fetch(`https://lms-v1-xi.vercel.app/api/v1/course/status/${id}`);
+    const course = await courseResponse.json();
 
+    // Ensure `is_active` is a boolean value
     const dataToUpdate = {
-      status: updateData.status ?? event.status,
-      is_active: updateData.isActive !== undefined ? updateData.isActive : event.is_active
+      status: updateData.status ?? course.status, // Only update if provided
+      is_active: updateData.isActive !== undefined ? Boolean(updateData.isActive) : Boolean(course.is_active)  // Ensure boolean value
     };
 
+    // Now send both fields in the request body
     try {
-      const response = await fetch(`https://vstudyonline.com/api/v1/course/status/${id}`, {
+      const response = await fetch(`https://lms-v1-xi.vercel.app/api/v1/course/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToUpdate),
+        body: JSON.stringify(dataToUpdate),  // Send both fields in the body
       });
       const result = await response.json();
       if (result.success) {
@@ -179,6 +181,7 @@ const Courses: React.FC = () => {
     }
   };
 
+
   const handleIsActiveChange = (courseId: string, isActive: boolean) => {
     console.log("Calling handleUpdatecourseId with ID:", courseId);
     handleUpdateCourseStatus(courseId, { isActive });
@@ -190,7 +193,7 @@ const Courses: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/courses/${id}`, {
+      const response = await fetch(`https://lms-v1-xi.vercel.app/courses/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {

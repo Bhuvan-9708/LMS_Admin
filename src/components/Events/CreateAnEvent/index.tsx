@@ -117,7 +117,7 @@ const CreateAnEvent: React.FC = () => {
   useEffect(() => {
     const fetchInstructors = async () => {
       try {
-        const response = await fetch('https://lms-v1-mu.vercel.app/api/instructor');
+        const response = await fetch('https://lms-v1-xi.vercel.app/api/instructor');
         const data = await response.json();
         if (data.success) {
           setInstructors(data.data);
@@ -129,7 +129,7 @@ const CreateAnEvent: React.FC = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await fetch('https://vstudyonline.com/api/category/get-all-categories');
+        const response = await fetch('https://lms-v1-xi.vercel.app/api/category/get-all-categories');
         const data = await response.json();
         if (data.success) {
           setCategories(data.data.categories);

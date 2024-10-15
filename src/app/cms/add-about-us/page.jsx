@@ -1,12 +1,12 @@
 import * as React from "react";
 import NextLink from 'next/link';
-import AddTemplate from "@/components/CMS/CreateTemplates";
+import AddAboutUs from "@/components/CMS/AddAboutUs";
 
 export default function Page() {
     return (
         <>
             <div className="breadcrumb-card">
-                <h5>CMS</h5>
+                <h5>Blogs</h5>
 
                 <ul className="breadcrumb">
                     <li>
@@ -15,11 +15,11 @@ export default function Page() {
                             Dashboard
                         </NextLink>
                     </li>
-                    <li>LMS</li>
-                    <li>Instructors</li>
+                    <li>CMS</li>
+                    <li>Add Page Content</li>
                 </ul>
             </div>
-            <AddTemplate />
+            <AddAboutUs />
         </>
     );
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 import NextLink from 'next/link';
-import AddTemplate from "@/components/CMS/CreateTemplates";
+import AddBanner from "@/components/CMS/AddBanner";
 
 export default function Page() {
     return (
@@ -15,11 +15,11 @@ export default function Page() {
                             Dashboard
                         </NextLink>
                     </li>
-                    <li>LMS</li>
-                    <li>Instructors</li>
+                    <li>CMS</li>
+                    <li>Add Banner</li>
                 </ul>
             </div>
-            <AddTemplate />
+            <AddBanner />
         </>
     );
 }
