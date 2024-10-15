@@ -94,7 +94,7 @@ const AboutUsTable: React.FC = () => {
     useEffect(() => {
         const fetchAboutUsPages = async () => {
             try {
-                const response = await fetch("/api/about-us");
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/about-us`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch About Us pages");
                 }
@@ -132,7 +132,7 @@ const AboutUsTable: React.FC = () => {
 
     const handleToggleActive = async (id: string, newStatus: boolean) => {
         try {
-            const response = await fetch(`/api/about-us/status/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/about-us/status/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ is_active: newStatus }),
@@ -158,7 +158,7 @@ const AboutUsTable: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            const response = await fetch(`https://lms-v1-xi.vercel.app/api/about-us/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/about-us/${id}`, {
                 method: "DELETE",
             });
             if (!response.ok) {

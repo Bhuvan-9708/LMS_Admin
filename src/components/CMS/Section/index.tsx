@@ -95,7 +95,7 @@ const SectionTable: React.FC = () => {
     useEffect(() => {
         const fetchSections = async () => {
             try {
-                const response = await fetch("https://lms-v1-xi.vercel.app/api/section/");
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section/`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch Sections");
                 }
@@ -133,7 +133,7 @@ const SectionTable: React.FC = () => {
 
     const handleToggleActive = async (id: string, newStatus: boolean) => {
         try {
-            const response = await fetch(`/api/section/status/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section/status/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ is_active: newStatus }),
@@ -159,7 +159,7 @@ const SectionTable: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            const response = await fetch(`/api/section/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section/${id}`, {
                 method: "DELETE",
             });
             if (!response.ok) {

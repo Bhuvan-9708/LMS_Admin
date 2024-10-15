@@ -51,7 +51,7 @@ export default function EmailTemplateList() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("https://lms-v1-xi.vercel.app/api/template/");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/template/`);
       if (!response.ok) {
         throw new Error("Failed to fetch email templates");
       }
@@ -67,7 +67,7 @@ export default function EmailTemplateList() {
   // Toggle active status
   const handleToggleActive = async (id: string, currentStatus: boolean) => {
     try {
-      const response = await fetch(`/api/email-templates/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/email-templates/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +98,7 @@ export default function EmailTemplateList() {
   // Handle Delete template
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/email-templates/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/email-templates/${id}`, {
         method: "DELETE",
       });
 
@@ -224,10 +224,10 @@ export default function EmailTemplateList() {
                         />
                       </TableCell>
                       <TableCell>
-                        <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/blogs/${template._id}`)}>
+                        <IconButton aria-label="view" color="primary" onClick={() => router.push(`/ cms / blogs / ${template._id}`)}>
                           <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
                         </IconButton>
-                        <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-blog/${template._id}`)}>
+                        <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/ cms / edit - blog / ${template._id}`)}>
                           <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
                         </IconButton>
                         <IconButton aria-label="delete" color="error" onClick={() => handleDelete(template._id)}>

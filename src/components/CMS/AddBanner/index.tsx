@@ -136,7 +136,8 @@ export default function AddBannerForm() {
         });
 
         try {
-            const response = await fetch('https://lms-v1-xi.vercel.app/api/banner/create', {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/banner/create`, {
                 method: 'POST',
                 body: formData,
             });

@@ -81,7 +81,7 @@ export default function CreateBlog() {
         const fetchInstructors = async () => {
             try {
                 const response = await fetch(
-                    "https://lms-v1-xi.vercel.app/api/instructor"
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/instructor`
                 );
                 const data = await response.json();
                 if (data.success) {
@@ -95,7 +95,7 @@ export default function CreateBlog() {
         const fetchCategories = async () => {
             try {
                 const response = await fetch(
-                    "https://lms-v1-xi.vercel.app/api/category/get-all-categories"
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`
                 );
                 const data = await response.json();
                 if (data.success) {
@@ -189,7 +189,7 @@ export default function CreateBlog() {
                 }
             });
 
-            const response = await fetch("https://lms-v1-xi.vercel.app/api/blog/create", {
+            const response = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/blog/create`, {
                 method: "POST",
                 body: formData,
             });

@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -23,6 +23,7 @@ import dynamic from "next/dynamic";
 
 const RichTextEditor = dynamic(() => import("@mantine/rte"), {
   ssr: false,
+  loading: () => <p>Loading editor...</p>
 });
 
 interface Category {
@@ -32,42 +33,73 @@ interface Category {
 
 interface Instructor {
   _id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
 }
 
 interface CourseData {
   title: string;
-  price: number;
+  price: string;
+  special_price?: string;
+  duration?: string;
+  special_price_from?: Date;
+  special_price_to?: Date;
+  slug: string;
+  image?: string;
+  syllabus: string;
+  instructor: string[];
   is_active: boolean;
-  special_price: number;
-  special_price_from: string;
-  special_price_to: string;
-  course_level: string;
+  course_level: 'all' | 'beginner' | 'intermediate' | 'expert';
   course_category: string[];
   sessions: number;
-  instructor: string[];
-  duration: string;
+  status: 'pending' | 'approved' | 'rejected';
+  is_featured?: boolean;
+  is_popular?: boolean;
+  is_new?: boolean;
+  is_upcoming?: boolean;
+  enrolled_users?: number;
+  averageRating?: number;
+  totalReviews?: number;
+  reviews?: string[];
 }
 
 interface CourseDetails {
   description: string;
-  duration: string;
   start_time: string;
+  is_upcoming: boolean;
+  start_date: string;
   prerequisites: string[];
-  technical: string[];
   resources: string[];
-  what_you_will_learn: {
-    skills_you_learn: string[];
-    special_for: string[];
-  };
+  video_url: string;
   who_this_course_for: {
     general: string[];
     your_learning: string[];
   };
+  what_you_will_learn: {
+    skills_you_learn: string[];
+    special_for: string[];
+  };
+  learning_path: Array<{ title: string; description: string }>;
   certificate_description: string[];
+  certificate_image: string;
   languages: string[];
   tools_and_technology: string[];
-  learning_path: Array<{ title: string; description: string }>;
+  tags: string[];
+  meta_title: string;
+  meta_description: string;
+  meta_keywords: string;
+  course_structure: string[];
+  admission_details: {
+    description: string;
+    application_submit: string;
+    application_review: string;
+    application_acceptance: string;
+  };
+  placement: any;
+  placement_opportunity: any;
+  company_placement: string[];
+  course_includes: any;
+  curriculum: any;
   projects: Array<{
     level: string;
     title: string;
@@ -75,60 +107,76 @@ interface CourseDetails {
     image: string;
   }>;
   faq: Array<{ title: string; description: string }>;
-  admission_details: {
-    description: string;
-    application_submit: string;
-    application_review: string;
-    application_acceptance: string;
-  };
-  is_new: boolean;
-  start_date: string;
+  technical: string[];
 }
 
 const CreateCourse: React.FC = () => {
   const [course, setCourse] = useState<CourseData>({
     title: '',
-    price: 0,
+    price: '',
+    special_price: '',
+    duration: '',
+    special_price_from: undefined,
+    special_price_to: undefined,
+    slug: '',
+    image: '',
+    syllabus: '',
+    instructor: [],
     is_active: true,
-    special_price: 0,
-    special_price_from: '',
-    special_price_to: '',
     course_level: 'beginner',
     course_category: [],
-    sessions: 0,
-    instructor: [],
-    duration: '',
+    sessions: 1,
+    status: 'pending',
+    is_featured: true,
+    is_popular: true,
+    is_new: true,
+    is_upcoming: true,
+    enrolled_users: 0,
+    averageRating: 0,
+    totalReviews: 0,
+    reviews: [],
   });
 
   const [courseDetails, setCourseDetails] = useState<CourseDetails>({
     description: '',
-    duration: '',
     start_time: '',
+    is_upcoming: false,
+    start_date: '',
     prerequisites: [],
-    technical: [],
     resources: [],
-    what_you_will_learn: {
-      skills_you_learn: [],
-      special_for: [],
-    },
+    video_url: '',
     who_this_course_for: {
       general: [],
       your_learning: [],
     },
+    what_you_will_learn: {
+      skills_you_learn: [],
+      special_for: [],
+    },
+    learning_path: [],
     certificate_description: [],
+    certificate_image: '',
     languages: [],
     tools_and_technology: [],
-    learning_path: [],
-    projects: [],
-    faq: [],
+    tags: [],
+    meta_title: '',
+    meta_description: '',
+    meta_keywords: '',
+    course_structure: [],
     admission_details: {
       description: '',
       application_submit: '',
       application_review: '',
       application_acceptance: '',
     },
-    is_new: false,
-    start_date: '',
+    placement: {},
+    placement_opportunity: {},
+    company_placement: [],
+    course_includes: {},
+    curriculum: {},
+    projects: [],
+    faq: [],
+    technical: [],
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -136,32 +184,30 @@ const CreateCourse: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchInstructors = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('https://lms-v1-xi.vercel.app/api/instructor');
-        const data = await response.json();
-        if (data.success) {
-          setInstructors(data.data);
+        const [instructorsResponse, categoriesResponse] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/instructor`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`)
+        ]);
+
+        const instructorsData = await instructorsResponse.json();
+        const categoriesData = await categoriesResponse.json();
+
+        if (instructorsData.success) {
+          setInstructors(instructorsData.data);
+        }
+        if (categoriesData.success) {
+          setCategories(categoriesData.data.categories);
         }
       } catch (error) {
-        console.error('Error fetching instructors:', error);
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch('https://lms-v1-xi.vercel.app/api/category/get-all-categories');
-        const data = await response.json();
-        if (data.success) {
-          setCategories(data.data.categories);
-        }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-
-    fetchInstructors();
-    fetchCategories();
+    fetchData();
   }, []);
 
   const handleCourseChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -235,18 +281,31 @@ const CreateCourse: React.FC = () => {
 
   const handleAddArrayItem = (field: keyof CourseDetails | keyof CourseData, subfield?: string) => {
     if (field in course) {
-      setCourse(prevCourse => ({
-        ...prevCourse,
-        [field]: [...(prevCourse[field as keyof CourseData] as any[]), '']
-      }));
+      setCourse(prevCourse => {
+        const currentField = prevCourse[field as keyof CourseData];
+
+        if (Array.isArray(currentField)) {
+          return {
+            ...prevCourse,
+            [field]: [...currentField, '']
+          };
+        } else {
+          console.warn(`${field} is not an array.`);
+          return prevCourse;
+        }
+      });
     } else {
       setCourseDetails(prevDetails => {
-        const updatedField = [...(prevDetails[field as keyof CourseDetails] as any[])];
+        const updatedField = Array.isArray(prevDetails[field as keyof CourseDetails])
+          ? [...prevDetails[field as keyof CourseDetails]]
+          : [];
+
         if (subfield) {
           updatedField.push({ [subfield]: '' });
         } else {
           updatedField.push('');
         }
+
         return { ...prevDetails, [field]: updatedField };
       });
     }
@@ -313,7 +372,7 @@ const CreateCourse: React.FC = () => {
     });
 
     try {
-      const response = await fetch('/api/courses', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`, {
         method: 'POST',
         body: formData,
       });
@@ -324,10 +383,8 @@ const CreateCourse: React.FC = () => {
 
       const result = await response.json();
       console.log('Course created successfully:', result);
-      // Handle success (e.g., show a success message, redirect to course list)
     } catch (error) {
       console.error('Error creating course:', error);
-      // Handle error (e.g., show an error message)
     }
   };
 
@@ -376,14 +433,51 @@ const CreateCourse: React.FC = () => {
               <DatePicker
                 label="Special Price From"
                 value={course.special_price_from ? new Date(course.special_price_from) : null}
-                onChange={(date) => setCourse({ ...course, special_price_from: date ? date.toISOString().split('T')[0] : '' })}
+                onChange={(date) => setCourse({
+                  ...course,
+                  special_price_from: date ? date : undefined
+                })}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <DatePicker
                 label="Special Price To"
                 value={course.special_price_to ? new Date(course.special_price_to) : null}
-                onChange={(date) => setCourse({ ...course, special_price_to: date ? date.toISOString().split('T')[0] : '' })}
+                onChange={(date) => setCourse({
+                  ...course,
+                  special_price_to: date ? date : undefined
+                })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                fullWidth
+                label="Slug"
+                name="slug"
+                value={course.slug}
+                onChange={handleCourseChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Image URL"
+                name="image"
+                value={course.image}
+                onChange={handleCourseChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                label="Syllabus"
+                name="syllabus"
+                multiline
+                rows={4}
+                value={course.syllabus}
+                onChange={handleCourseChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -395,6 +489,7 @@ const CreateCourse: React.FC = () => {
                   value={course.course_level}
                   onChange={handleSelectChange}
                 >
+                  <MenuItem value="all">All</MenuItem>
                   <MenuItem value="beginner">Beginner</MenuItem>
                   <MenuItem value="intermediate">Intermediate</MenuItem>
                   <MenuItem value="expert">Expert</MenuItem>
@@ -442,7 +537,7 @@ const CreateCourse: React.FC = () => {
                 >
                   {instructors.map((instructor) => (
                     <MenuItem key={instructor._id} value={instructor._id}>
-                      {instructor.name}
+                      {`${instructor.first_name} ${instructor.last_name}`}
                     </MenuItem>
                   ))}
                 </Select>
@@ -460,6 +555,54 @@ const CreateCourse: React.FC = () => {
                 label="Is Active"
               />
             </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={course.is_featured}
+                    onChange={(e) => setCourse({ ...course, is_featured: e.target.checked })}
+                    name="is_featured"
+                  />
+                }
+                label="Is Featured"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={course.is_popular}
+                    onChange={(e) => setCourse({ ...course, is_popular: e.target.checked })}
+                    name="is_popular"
+                  />
+                }
+                label="Is Popular"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={course.is_new}
+                    onChange={(e) => setCourse({ ...course, is_new: e.target.checked })}
+                    name="is_new"
+                  />
+                }
+                label="Is New"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={course.is_upcoming}
+                    onChange={(e) => setCourse({ ...course, is_upcoming: e.target.checked })}
+                    name="is_upcoming"
+                  />
+                }
+                label="Is Upcoming"
+              />
+            </Grid>
           </Grid>
         </Card>
 
@@ -475,21 +618,40 @@ const CreateCourse: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Duration"
-                name="duration"
-                value={course.duration}
-                onChange={handleCourseChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
                 label="Start Time"
                 name="start_time"
                 type="time"
                 value={courseDetails.start_time}
                 onChange={handleCourseDetailsChange}
                 InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={courseDetails.is_upcoming}
+                    onChange={(e) => setCourseDetails({ ...courseDetails, is_upcoming: e.target.checked })}
+                    name="is_upcoming"
+                  />
+                }
+                label="Is Upcoming"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DatePicker
+                label="Start Date"
+                value={courseDetails.start_date ? new Date(courseDetails.start_date) : null}
+                onChange={(date) => setCourseDetails({ ...courseDetails, start_date: date ? date.toISOString().split('T')[0] : '' })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Video URL"
+                name="video_url"
+                value={courseDetails.video_url}
+                onChange={handleCourseDetailsChange}
               />
             </Grid>
             {courseDetails.prerequisites.map((prerequisite, index) => (
@@ -506,20 +668,6 @@ const CreateCourse: React.FC = () => {
             <Grid item xs={12}>
               <Button onClick={() => handleAddArrayItem('prerequisites')}>Add Prerequisite</Button>
             </Grid>
-            {courseDetails.technical.map((tech, index) => (
-              <Grid item xs={12} key={index}>
-                <TextField
-                  fullWidth
-                  label={`Technical ${index + 1}`}
-                  value={tech}
-                  onChange={(e) => handleArrayChange(e, index, 'technical')}
-                />
-                <Button onClick={() => handleRemoveArrayItem(index, 'technical')}>Remove</Button>
-              </Grid>
-            ))}
-            <Grid item xs={12}>
-              <Button onClick={() => handleAddArrayItem('technical')}>Add Technical</Button>
-            </Grid>
             {courseDetails.resources.map((resource, index) => (
               <Grid item xs={12} key={index}>
                 <TextField
@@ -533,6 +681,24 @@ const CreateCourse: React.FC = () => {
             ))}
             <Grid item xs={12}>
               <Button onClick={() => handleAddArrayItem('resources')}>Add Resource</Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6">Who This Course Is For</Typography>
+              {/* Check if who_this_course_for and general are defined */}
+              {courseDetails.who_this_course_for?.general?.map((item, index) => (
+                <Grid item xs={12} key={index}>
+                  <TextField
+                    fullWidth
+                    label={`General ${index + 1}`}
+                    value={item}
+                    onChange={(e) => handleNestedArrayChange(e, index, 'who_this_course_for', 'general')}
+                  />
+                  <Button onClick={() => handleRemoveArrayItem(index, 'who_this_course_for')}>Remove</Button>
+                </Grid>
+              ))}
+
+              {/* Add button should be enabled even if the array is not yet initialized */}
+              <Button onClick={() => handleAddArrayItem('who_this_course_for', 'general')}>Add General</Button>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="h6">What You Will Learn</Typography>
@@ -549,20 +715,48 @@ const CreateCourse: React.FC = () => {
               ))}
               <Button onClick={() => handleAddArrayItem('what_you_will_learn', 'skills_you_learn')}>Add Skill</Button>
             </Grid>
+            {courseDetails.learning_path.map((path, index) => (
+              <Grid item xs={12} key={index}>
+                <TextField
+                  fullWidth
+                  label={`Learning Path Title ${index + 1}`}
+                  value={path.title}
+                  onChange={(e) => handleArrayChange(e, index, 'learning_path', 'title')}
+                />
+                <TextField
+                  fullWidth
+                  label={`Learning Path Description ${index + 1}`}
+                  value={path.description}
+                  onChange={(e) => handleArrayChange(e, index, 'learning_path', 'description')}
+                />
+                <Button onClick={() => handleRemoveArrayItem(index, 'learning_path')}>Remove</Button>
+              </Grid>
+            ))}
             <Grid item xs={12}>
-              <Typography variant="h6">Who This Course Is For</Typography>
-              {courseDetails.who_this_course_for.general.map((item, index) => (
-                <Grid item xs={12} key={index}>
-                  <TextField
-                    fullWidth
-                    label={`General ${index + 1}`}
-                    value={item}
-                    onChange={(e) => handleNestedArrayChange(e, index, 'who_this_course_for', 'general')}
-                  />
-                  <Button onClick={() => handleRemoveArrayItem(index, 'who_this_course_for')}>Remove</Button>
-                </Grid>
-              ))}
-              <Button onClick={() => handleAddArrayItem('who_this_course_for', 'general')}>Add General</Button>
+              <Button onClick={() => handleAddArrayItem('learning_path')}>Add Learning Path</Button>
+            </Grid>
+            {courseDetails.certificate_description.map((desc, index) => (
+              <Grid item xs={12} key={index}>
+                <TextField
+                  fullWidth
+                  label={`Certificate Description ${index + 1}`}
+                  value={desc}
+                  onChange={(e) => handleArrayChange(e, index, 'certificate_description')}
+                />
+                <Button onClick={() => handleRemoveArrayItem(index, 'certificate_description')}>Remove</Button>
+              </Grid>
+            ))}
+            <Grid item xs={12}>
+              <Button onClick={() => handleAddArrayItem('certificate_description')}>Add Certificate Description</Button>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Certificate Image URL"
+                name="certificate_image"
+                value={courseDetails.certificate_image}
+                onChange={handleCourseDetailsChange}
+              />
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
@@ -572,7 +766,7 @@ const CreateCourse: React.FC = () => {
                   multiple
                   name="languages"
                   value={courseDetails.languages}
-                  onChange={handleSelectChange}
+                  onChange={(e) => setCourseDetails({ ...courseDetails, languages: e.target.value as string[] })}
                 >
                   {['English', 'Spanish', 'French', 'German', 'Chinese'].map((language) => (
                     <MenuItem key={language} value={language}>
@@ -596,25 +790,157 @@ const CreateCourse: React.FC = () => {
             <Grid item xs={12}>
               <Button onClick={() => handleAddArrayItem('tools_and_technology')}>Add Tool/Technology</Button>
             </Grid>
-            {courseDetails.learning_path.map((path, index) => (
+            {courseDetails.tags.map((tag, index) => (
               <Grid item xs={12} key={index}>
                 <TextField
                   fullWidth
-                  label={`Learning Path Title ${index + 1}`}
-                  value={path.title}
-                  onChange={(e) => handleArrayChange(e, index, 'learning_path', 'title')}
+                  label={`Tag ${index + 1}`}
+                  value={tag}
+                  onChange={(e) => handleArrayChange(e, index, 'tags')}
                 />
-                <TextField
-                  fullWidth
-                  label={`Learning Path Description ${index + 1}`}
-                  value={path.description}
-                  onChange={(e) => handleArrayChange(e, index, 'learning_path', 'description')}
-                />
-                <Button onClick={() => handleRemoveArrayItem(index, 'learning_path')}>Remove</Button>
+                <Button onClick={() => handleRemoveArrayItem(index, 'tags')}>Remove</Button>
               </Grid>
             ))}
             <Grid item xs={12}>
-              <Button onClick={() => handleAddArrayItem('learning_path')}>Add Learning Path</Button>
+              <Button onClick={() => handleAddArrayItem('tags')}>Add Tag</Button>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Meta Title"
+                name="meta_title"
+                value={courseDetails.meta_title}
+                onChange={handleCourseDetailsChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Meta Description"
+                name="meta_description"
+                value={courseDetails.meta_description}
+                onChange={handleCourseDetailsChange}
+                multiline
+                rows={3}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Meta Keywords"
+                name="meta_keywords"
+                value={courseDetails.meta_keywords}
+                onChange={handleCourseDetailsChange}
+              />
+            </Grid>
+            {courseDetails.course_structure.map((structure, index) => (
+              <Grid item xs={12} key={index}>
+                <TextField
+                  fullWidth
+                  label={`Course Structure ${index + 1}`}
+                  value={structure}
+                  onChange={(e) => handleArrayChange(e, index, 'course_structure')}
+                />
+                <Button onClick={() => handleRemoveArrayItem(index, 'course_structure')}>Remove</Button>
+              </Grid>
+            ))}
+            <Grid item xs={12}>
+              <Button onClick={() => handleAddArrayItem('course_structure')}>Add Course Structure</Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6">Admission Details</Typography>
+              <TextField
+                fullWidth
+                label="Description"
+                name="admission_details.description"
+                value={courseDetails.admission_details.description}
+                onChange={handleCourseDetailsChange}
+                multiline
+                rows={3}
+              />
+              <TextField
+                fullWidth
+                label="Application Submit"
+                name="admission_details.application_submit"
+                value={courseDetails.admission_details.application_submit}
+                onChange={handleCourseDetailsChange}
+              />
+              <TextField
+                fullWidth
+                label="Application Review"
+                name="admission_details.application_review"
+                value={courseDetails.admission_details.application_review}
+                onChange={handleCourseDetailsChange}
+              />
+              <TextField
+                fullWidth
+                label="Application Acceptance"
+                name="admission_details.application_acceptance"
+                value={courseDetails.admission_details.application_acceptance}
+                onChange={handleCourseDetailsChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6">Placement</Typography>
+              <TextField
+                fullWidth
+                label="Placement Details"
+                name="placement"
+                value={JSON.stringify(courseDetails.placement)}
+                onChange={(e) => setCourseDetails({ ...courseDetails, placement: JSON.parse(e.target.value) })}
+                multiline
+                rows={3}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6">Placement Opportunity</Typography>
+              <TextField
+                fullWidth
+                label="Placement Opportunity Details"
+                name="placement_opportunity"
+                value={JSON.stringify(courseDetails.placement_opportunity)}
+                onChange={(e) => setCourseDetails({ ...courseDetails, placement_opportunity: JSON.parse(e.target.value) })}
+                multiline
+                rows={3}
+              />
+            </Grid>
+            {courseDetails.company_placement.map((company, index) => (
+              <Grid item xs={12} key={index}>
+                <TextField
+                  fullWidth
+                  label={`Company Placement ${index + 1}`}
+                  value={company}
+                  onChange={(e) => handleArrayChange(e, index, 'company_placement')}
+                />
+                <Button onClick={() => handleRemoveArrayItem(index, 'company_placement')}>Remove</Button>
+              </Grid>
+            ))}
+            <Grid item xs={12}>
+              <Button onClick={() => handleAddArrayItem('company_placement')}>Add Company Placement</Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6">Course Includes</Typography>
+              <TextField
+                fullWidth
+                label="Course Includes Details"
+                name="course_includes"
+                value={JSON.stringify(courseDetails.course_includes)}
+                onChange={(e) => setCourseDetails({ ...courseDetails, course_includes: JSON.parse(e.target.value) })}
+                multiline
+                rows={3}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6">Curriculum</Typography>
+              <TextField
+                fullWidth
+                label="Curriculum Details"
+                name="curriculum"
+                value={JSON.stringify(courseDetails.curriculum)}
+                onChange={(e) => setCourseDetails({ ...courseDetails, curriculum: JSON.parse(e.target.value) })}
+                multiline
+                rows={3}
+              />
             </Grid>
             {courseDetails.projects.map((project, index) => (
               <Grid item xs={12} key={index}>
@@ -671,57 +997,19 @@ const CreateCourse: React.FC = () => {
             <Grid item xs={12}>
               <Button onClick={() => handleAddArrayItem('faq')}>Add FAQ</Button>
             </Grid>
+            {courseDetails.technical.map((tech, index) => (
+              <Grid item xs={12} key={index}>
+                <TextField
+                  fullWidth
+                  label={`Technical Requirement ${index + 1}`}
+                  value={tech}
+                  onChange={(e) => handleArrayChange(e, index, 'technical')}
+                />
+                <Button onClick={() => handleRemoveArrayItem(index, 'technical')}>Remove</Button>
+              </Grid>
+            ))}
             <Grid item xs={12}>
-              <Typography variant="h6">Admission Details</Typography>
-              <TextField
-                fullWidth
-                label="Description"
-                name="admission_details.description"
-                value={courseDetails.admission_details.description}
-                onChange={handleCourseDetailsChange}
-                multiline
-                rows={2}
-              />
-              <TextField
-                fullWidth
-                label="Application Submit"
-                name="admission_details.application_submit"
-                value={courseDetails.admission_details.application_submit}
-                onChange={handleCourseDetailsChange}
-              />
-              <TextField
-                fullWidth
-                label="Application Review"
-                name="admission_details.application_review"
-                value={courseDetails.admission_details.application_review}
-                onChange={handleCourseDetailsChange}
-              />
-              <TextField
-                fullWidth
-                label="Application Acceptance"
-                name="admission_details.application_acceptance"
-                value={courseDetails.admission_details.application_acceptance}
-                onChange={handleCourseDetailsChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={courseDetails.is_new}
-                    onChange={(e) => setCourseDetails({ ...courseDetails, is_new: e.target.checked })}
-                    name="is_new"
-                  />
-                }
-                label="Is New"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <DatePicker
-                label="Start Date"
-                value={courseDetails.start_date ? new Date(courseDetails.start_date) : null}
-                onChange={(date) => setCourseDetails({ ...courseDetails, start_date: date ? date.toISOString().split('T')[0] : '' })}
-              />
+              <Button onClick={() => handleAddArrayItem('technical')}>Add Technical Requirement</Button>
             </Grid>
           </Grid>
         </Card>

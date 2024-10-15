@@ -244,7 +244,8 @@ const Instructors: React.FC = () => {
 
   const fetchInstructors = async () => {
     try {
-      const response = await fetch('https://lms-v1-xi.vercel.app/api/instructor');
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/instructor`);
       const data = await response.json();
       if (data.success) {
         setInstructors(data.data);
@@ -286,29 +287,35 @@ const Instructors: React.FC = () => {
     console.log("Instructor ID:", id);
     console.log("Update Data:", updateData);
 
-    const instructorResponse = await fetch(`https://lms-v1-xi.vercel.app/api/instructor/${id}`);
-    const instructor = await instructorResponse.json();
-
-    const dataToUpdate = {
-      status: updateData.status ?? instructor.status, 
-      is_active: updateData.isActive !== undefined ? updateData.isActive : instructor.is_active 
-    };
     try {
-      const response = await fetch(`https://lms-v1-xi.vercel.app/api/instructor/status/${id}`, {
+      const instructorResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/instructor/${id}`);
+      if (!instructorResponse.ok) {
+        throw new Error('Failed to fetch instructor data');
+      }
+      const instructor = await instructorResponse.json();
+
+      const dataToUpdate = {
+        status: updateData.status ?? instructor.status,
+        is_active: updateData.isActive !== undefined ? updateData.isActive : instructor.is_active,
+      };
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/instructor/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToUpdate),
       });
+
       const result = await response.json();
-      if (result.success) {
+      if (response.ok && result.success) {
         setSnackbarMessage('Instructor updated successfully');
         setSnackbarSeverity('success');
         setSnackbarOpen(true);
-        fetchInstructors();
+        fetchInstructors(); // Ensure this function is defined in the component
       } else {
-        throw new Error('Failed to update instructor');
+        throw new Error(result.message || 'Failed to update instructor');
       }
     } catch (error) {
+      console.error('Error updating instructor:', error);
       setSnackbarMessage('Error updating instructor');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);

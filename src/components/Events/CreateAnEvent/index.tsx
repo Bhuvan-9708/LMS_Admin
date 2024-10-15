@@ -117,7 +117,8 @@ const CreateAnEvent: React.FC = () => {
   useEffect(() => {
     const fetchInstructors = async () => {
       try {
-        const response = await fetch('https://lms-v1-xi.vercel.app/api/instructor');
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/instructor`);
         const data = await response.json();
         if (data.success) {
           setInstructors(data.data);
@@ -129,7 +130,8 @@ const CreateAnEvent: React.FC = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await fetch('https://lms-v1-xi.vercel.app/api/category/get-all-categories');
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`);
         const data = await response.json();
         if (data.success) {
           setCategories(data.data.categories);
@@ -349,7 +351,7 @@ const CreateAnEvent: React.FC = () => {
         formDataToSend.append('event[image]', formData.image);
       }
 
-      const response = await axios.post('http://localhost:5001/api/event/create', formDataToSend, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/event/create`, formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
@@ -619,7 +621,7 @@ const CreateAnEvent: React.FC = () => {
                           return (
                             <Chip
                               key={value}
-                              label={instructor ? `${instructor.first_name} ${instructor.last_name}` : value}
+                              label={instructor ? `${instructor.first_name} ${instructor.last_name} ` : value}
                             />
                           );
                         })}
@@ -628,7 +630,7 @@ const CreateAnEvent: React.FC = () => {
                   >
                     {instructors.map((instructor) => (
                       <MenuItem key={instructor._id} value={instructor._id}>
-                        {`${instructor.first_name} ${instructor.last_name}`}
+                        {`${instructor.first_name} ${instructor.last_name} `}
                       </MenuItem>
                     ))}
                   </Select>

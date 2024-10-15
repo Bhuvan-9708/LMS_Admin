@@ -93,7 +93,8 @@ export default function CreateAboutUs() {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            const response = await fetch('https://lms-v1-xi.vercel.app/api/about-us/create', {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/about-us/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

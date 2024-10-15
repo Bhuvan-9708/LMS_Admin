@@ -88,7 +88,8 @@ export default function AddEmailTemplate() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
-            const response = await fetch('https://lms-v1-xi.vercel.app/api/template/create', {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/template/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -153,8 +154,8 @@ export default function AddEmailTemplate() {
                         required
                     />
                     <RichTextEditor
-                        value={template.description} 
-                        onChange={(value) => setTemplate(prev => ({ ...prev, description: value }))} 
+                        value={template.description}
+                        onChange={(value) => setTemplate(prev => ({ ...prev, description: value }))}
                     />
                     <FormControlLabel
                         control={

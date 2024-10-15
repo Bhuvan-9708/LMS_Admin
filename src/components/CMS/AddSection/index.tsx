@@ -63,7 +63,8 @@ export default function AddSectionForm() {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            const response = await fetch('https://lms-v1-xi.vercel.app/api/section/create', {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/section/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

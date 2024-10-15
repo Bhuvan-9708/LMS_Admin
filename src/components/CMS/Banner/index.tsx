@@ -95,7 +95,7 @@ const BannerTable: React.FC = () => {
     useEffect(() => {
         const fetchBanners = async () => {
             try {
-                const response = await fetch("https://lms-v1-xi.vercel.app/api/banner/");
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner/`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch Banners");
                 }
@@ -134,7 +134,7 @@ const BannerTable: React.FC = () => {
     const handleToggleActive = async (id: string, isChecked: boolean) => {
         const newStatus = isChecked ? "active" : "inactive"; // Map the checked state to status
         try {
-            const response = await fetch(`https://lms-v1-xi.vercel.app/api/banner/status/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner/status/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: newStatus }), // Update with the new status
@@ -161,7 +161,7 @@ const BannerTable: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            const response = await fetch(`https://lms-v1-xi.vercel.app/api/banner/delete/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL} / api / banner / delete/${id}`, {
                 method: "DELETE",
             });
             if (!response.ok) {

@@ -241,7 +241,7 @@ export default function AddCourseLandingPage() {
                 ...prev,
                 [section]: {
                     ...(prev[section] as any),
-                    [field]: [...fieldValue, {}], 
+                    [field]: [...fieldValue, {}],
                 },
             };
         });
@@ -304,7 +304,8 @@ export default function AddCourseLandingPage() {
         }
 
         try {
-            const response = await fetch('https://lms-v1-xi.vercel.app/api/landing-page/course/create', {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course/create`, {
                 method: 'POST',
                 body: formData,
             });

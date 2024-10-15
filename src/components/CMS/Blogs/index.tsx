@@ -96,7 +96,7 @@ const BlogTable: React.FC = () => {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const response = await fetch("https://lms-v1-xi.vercel.app/api/blog/");
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch blogs");
                 }
@@ -135,7 +135,7 @@ const BlogTable: React.FC = () => {
 
     const handleToggleActive = async (id: string, newStatus: boolean) => {
         try {
-            const response = await fetch(`https://lms-v1-xi.vercel.app/api/blog/status/${id}`, {
+            const response = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/blog/status/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ is_active: newStatus }),
@@ -161,7 +161,7 @@ const BlogTable: React.FC = () => {
 
     const handleStatusChange = async (id: string, newStatus: string) => {
         try {
-            const response = await fetch(`https://lms-v1-xi.vercel.app/api/blog/status/${id}`, {
+            const response = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/blog/status/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: newStatus }),
@@ -188,7 +188,7 @@ const BlogTable: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            const response = await fetch(`https://lms-v1-xi.vercel.app/api/blog/${id}`, {
+            const response = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/blog/${id}`, {
                 method: "DELETE",
             });
             if (!response.ok) {

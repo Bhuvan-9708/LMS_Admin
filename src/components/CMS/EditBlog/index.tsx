@@ -82,7 +82,7 @@ export default function EditBlog({ blogId }: { blogId: string }) {
     useEffect(() => {
         const fetchBlogPost = async () => {
             try {
-                const response = await fetch(`https://lms-v1-xi.vercel.app/api/blogs/${blogId}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs/${blogId}`);
                 const data = await response.json();
                 if (data.success) {
                     setBlogPost(data.data);
@@ -95,7 +95,7 @@ export default function EditBlog({ blogId }: { blogId: string }) {
 
         const fetchInstructors = async () => {
             try {
-                const response = await fetch("https://lms-v1-xi.vercel.app/api/instructor");
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/instructor`);
                 const data = await response.json();
                 if (data.success) {
                     setInstructors(data.data);
@@ -107,7 +107,7 @@ export default function EditBlog({ blogId }: { blogId: string }) {
 
         const fetchCategories = async () => {
             try {
-                const response = await fetch("https://lms-v1-xi.vercel.app/api/category/get-all-categories");
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`);
                 const data = await response.json();
                 if (data.success) {
                     setCategories(data.data.categories);
@@ -188,7 +188,7 @@ export default function EditBlog({ blogId }: { blogId: string }) {
             }
             formData.append("blogData", JSON.stringify(blogPost));
 
-            const response = await fetch(`https://lms-v1-xi.vercel.app/api/blogs/${blogId}`, {
+            const response = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/blogs/${blogId}`, {
                 method: "PUT",
                 body: formData,
             });

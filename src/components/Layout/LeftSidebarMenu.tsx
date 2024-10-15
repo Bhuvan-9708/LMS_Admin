@@ -920,7 +920,15 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                         Edit Course
                       </Link>
                     </li>
-
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/lms/enroll-courses/"
+                        className={`sidemenu-link ${pathname === "/lms/enroll-courses/" ? "active" : ""
+                          }`}
+                      >
+                        Enrolled Courses
+                      </Link>
+                    </li>
                     <li className="sidemenu-item">
                       <Link
                         href="/lms/instructors/"

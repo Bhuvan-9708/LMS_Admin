@@ -101,7 +101,7 @@ const Courses: React.FC = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch("https://lms-v1-xi.vercel.app/api/v1/course");
+      const response = await fetch("https://lms-v1-update.vercel.app/api/v1/course");
       if (!response.ok) {
         throw new Error("Failed to fetch courses");
       }
@@ -149,7 +149,7 @@ const Courses: React.FC = () => {
     console.log("Update Data:", updateData);
 
     // Fetch the current course data
-    const courseResponse = await fetch(`https://lms-v1-xi.vercel.app/api/v1/course/status/${id}`);
+    const courseResponse = await fetch(`https://lms-v1-update.vercel.app/api/v1/course/status/${id}`);
     const course = await courseResponse.json();
 
     // Ensure `is_active` is a boolean value
@@ -160,7 +160,7 @@ const Courses: React.FC = () => {
 
     // Now send both fields in the request body
     try {
-      const response = await fetch(`https://lms-v1-xi.vercel.app/api/v1/course/status/${id}`, {
+      const response = await fetch(`https://lms-v1-update.vercel.app/api/v1/course/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToUpdate),  // Send both fields in the body
@@ -193,7 +193,7 @@ const Courses: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`https://lms-v1-xi.vercel.app/courses/${id}`, {
+      const response = await fetch(`https://lms-v1-update.vercel.app/courses/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
