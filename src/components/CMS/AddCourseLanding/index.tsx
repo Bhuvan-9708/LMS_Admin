@@ -20,6 +20,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useRouter } from 'next/navigation';
 
 interface CourseLandingPage {
+    course_id: string
     logo: File | null;
     title: string;
     tag_line: string;
@@ -114,6 +115,7 @@ interface CourseLandingPage {
 
 export default function AddCourseLandingPage() {
     const [courseLandingPage, setCourseLandingPage] = useState<CourseLandingPage>({
+        course_id: '',
         logo: null,
         title: '',
         tag_line: '',
@@ -261,7 +263,6 @@ export default function AddCourseLandingPage() {
         event.preventDefault();
         const formData = new FormData();
 
-        // Append all text fields
         Object.entries(courseLandingPage).forEach(([key, value]) => {
             if (typeof value === 'string' || typeof value === 'boolean') {
                 formData.append(key, value.toString());
@@ -276,29 +277,39 @@ export default function AddCourseLandingPage() {
             }
         });
 
-        // Append nested file fields
+        // Safely append nested file fields if they exist
         if (courseLandingPage.logo) formData.append('logo', courseLandingPage.logo);
         if (courseLandingPage.image) formData.append('image', courseLandingPage.image);
-        if (courseLandingPage.course_highlights.image)
+
+        if (courseLandingPage.course_highlights && courseLandingPage.course_highlights.image)
             formData.append('course_highlights.image', courseLandingPage.course_highlights.image);
 
-        courseLandingPage.user_learning.points.forEach((point, index) => {
-            if (point.image_icon) formData.append(`user_learning.points[${index}].image_icon`, point.image_icon);
-        });
+        // Nested fields with image files (safe checks for existence)
+        if (courseLandingPage.user_learning && courseLandingPage.user_learning.points) {
+            courseLandingPage.user_learning.points.forEach((point, index) => {
+                if (point.image_icon) formData.append(`user_learning.points[${index}].image_icon`, point.image_icon);
+            });
+        }
 
-        courseLandingPage.for_whom.content.forEach((content, index) => {
-            if (content.logo) formData.append(`for_whom.content[${index}].logo`, content.logo);
-        });
+        if (courseLandingPage.for_whom && courseLandingPage.for_whom.content) {
+            courseLandingPage.for_whom.content.forEach((content, index) => {
+                if (content.logo) formData.append(`for_whom.content[${index}].logo`, content.logo);
+            });
+        }
 
-        courseLandingPage.course_working.points.forEach((point, index) => {
-            if (point.image_icon) formData.append(`course_working.points[${index}].image_icon`, point.image_icon);
-        });
+        if (courseLandingPage.course_working && courseLandingPage.course_working.points) {
+            courseLandingPage.course_working.points.forEach((point, index) => {
+                if (point.image_icon) formData.append(`course_working.points[${index}].image_icon`, point.image_icon);
+            });
+        }
 
-        courseLandingPage.course_highlights.points.forEach((point, index) => {
-            if (point.image_icon) formData.append(`course_highlights.points[${index}].image_icon`, point.image_icon);
-        });
+        if (courseLandingPage.course_highlights && courseLandingPage.course_highlights.points) {
+            courseLandingPage.course_highlights.points.forEach((point, index) => {
+                if (point.image_icon) formData.append(`course_highlights.points[${index}].image_icon`, point.image_icon);
+            });
+        }
 
-        // Log the form data for debugging
+        // Log form data for debugging
         for (let [key, value] of formData.entries()) {
             console.log(key, value);
         }
@@ -320,9 +331,10 @@ export default function AddCourseLandingPage() {
             router.push('/cms/course-landing-pages');
         } catch (error) {
             console.error('Error creating course landing page:', error);
-            // You might want to show an error message to the user here
+            // Show an error message to the user if needed
         }
     };
+
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -355,6 +367,14 @@ export default function AddCourseLandingPage() {
                             label="Title"
                             name="title"
                             value={courseLandingPage.title}
+                            onChange={handleInputChange}
+                            margin="normal"
+                        />
+                        <TextField
+                            fullWidth
+                            label="Courses"
+                            name="course_id"
+                            value={courseLandingPage.course_id}
                             onChange={handleInputChange}
                             margin="normal"
                         />

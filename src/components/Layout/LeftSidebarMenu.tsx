@@ -1011,6 +1011,24 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                         Homepage
                       </Link>
                     </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/course-landing/"
+                        className={`sidemenu-link ${pathname === "/cms/course-landing/"
+                          }`}
+                      >
+                        Course Landing Page
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/event-landing/"
+                        className={`sidemenu-link ${pathname === "/cms/event-landing/"
+                          }`}
+                      >
+                        Event Landing Page
+                      </Link>
+                    </li>
                   </ul>
                 </AccordionDetails>
               </Accordion>

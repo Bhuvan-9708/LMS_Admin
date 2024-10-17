@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Button,
     Card,
@@ -10,101 +10,192 @@ import {
     Checkbox,
     FormControlLabel,
     Box,
+    IconButton,
 } from '@mui/material';
+import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
-const RichTextEditor = dynamic(() => import("@mantine/rte"), {
+const RichTextEditor = dynamic(() => import('@mantine/rte'), {
     ssr: false,
     loading: () => <p>Loading editor...</p>,
 });
 
 interface AboutUs {
+    title: string;
     about_us_text: string;
     about_us_heading: string;
-    about_us_image: string;
+    image: File | null;
     about_us_sub_heading: string;
     about_us_description: { title: string; description: string }[];
+    section_working: string;
+    points_title: string;
+    points_heading: string;
+    points_sub_title: string;
+    points_description: { title: string; description: string; image: File | null }[];
+    community_text: string;
+    community_description: string;
+    coummnity_banner_image: File | null;
+    team_heading: string;
+    team_description: {
+        name: string;
+        position: string;
+        image: File | null;
+        description: string;
+        social_media: { name: string; link: string }[];
+    }[];
+    banner: string;
     is_active: boolean;
     meta_title: string;
     meta_description: string;
     meta_keywords: string[];
     seo_url: string;
-    slug: string;
 }
 
 export default function CreateAboutUs() {
     const [aboutUs, setAboutUs] = useState<AboutUs>({
+        title: '',
         about_us_text: '',
         about_us_heading: '',
-        about_us_image: '',
+        image: null,
         about_us_sub_heading: '',
         about_us_description: [{ title: '', description: '' }],
+        section_working: '',
+        points_title: '',
+        points_heading: '',
+        points_sub_title: '',
+        points_description: [{ title: '', description: '', image: null }],
+        community_text: '',
+        community_description: '',
+        coummnity_banner_image: null,
+        team_heading: '',
+        team_description: [
+            {
+                name: '',
+                position: '',
+                image: null,
+                description: '',
+                social_media: [{ name: '', link: '' }],
+            },
+        ],
+        banner: '',
         is_active: true,
         meta_title: '',
         meta_description: '',
         meta_keywords: [''],
         seo_url: '',
-        slug: '',
     });
 
     const router = useRouter();
+    const [banners, setBanners] = useState<any[]>([]);
+    const [section, setSection] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetchBanners();
+        fetchSection();
+    }, []);
+
+    const fetchBanners = async () => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/banner/`
+            );
+            if (!response.ok) {
+                throw new Error("Failed to fetch banners");
+            }
+            const data = await response.json();
+            setBanners(data.data);
+        } catch (error) {
+            console.error('Error fetching banners:', error);
+        }
+    };
+    const fetchSection = async () => {  
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/section-working/`
+            );
+            if (!response.ok) {
+                throw new Error("Failed to fetch section-working");
+            }
+            const data = await response.json();
+            setSection(data.data);
+        } catch (error) {
+            console.error('Error fetching section-working:', error);
+        }
+    };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        setAboutUs(prev => ({ ...prev, [name]: value }));
+        setAboutUs((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleDescriptionChange = (index: number, field: 'title' | 'description', value: string) => {
-        const newDescriptions = [...aboutUs.about_us_description];
-        newDescriptions[index][field] = value;
-        setAboutUs(prev => ({ ...prev, about_us_description: newDescriptions }));
+    const handleRichTextChange = (field: keyof AboutUs, value: string) => {
+        setAboutUs((prev) => ({ ...prev, [field]: value }));
     };
 
-    const handleAddDescription = () => {
-        setAboutUs(prev => ({
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>, field: keyof AboutUs) => {
+        if (event.target.files && event.target.files[0]) {
+            setAboutUs((prev) => ({ ...prev, [field]: event.target.files![0] }));
+        }
+    };
+
+    const handleArrayChange = (index: number, field: string, value: any, arrayField: keyof AboutUs) => {
+        setAboutUs((prev) => {
+            const newArray = [...prev[arrayField] as any[]];
+            newArray[index] = { ...newArray[index], [field]: value };
+            return { ...prev, [arrayField]: newArray };
+        });
+    };
+
+    const handleAddArrayItem = (arrayField: keyof AboutUs, newItem: any) => {
+        setAboutUs((prev) => ({
             ...prev,
-            about_us_description: [...prev.about_us_description, { title: '', description: '' }]
+            [arrayField]: [...prev[arrayField] as any[], newItem],
         }));
     };
 
-    const handleRemoveDescription = (index: number) => {
-        const newDescriptions = [...aboutUs.about_us_description];
-        newDescriptions.splice(index, 1);
-        setAboutUs(prev => ({ ...prev, about_us_description: newDescriptions }));
-    };
-
-    const handleMetaKeywordsChange = (index: number, value: string) => {
-        const newKeywords = [...aboutUs.meta_keywords];
-        newKeywords[index] = value;
-        setAboutUs(prev => ({ ...prev, meta_keywords: newKeywords }));
-    };
-
-    const handleAddMetaKeyword = () => {
-        setAboutUs(prev => ({ ...prev, meta_keywords: [...prev.meta_keywords, ''] }));
-    };
-
-    const handleRemoveMetaKeyword = (index: number) => {
-        const newKeywords = [...aboutUs.meta_keywords];
-        newKeywords.splice(index, 1);
-        setAboutUs(prev => ({ ...prev, meta_keywords: newKeywords }));
+    const handleRemoveArrayItem = (index: number, arrayField: keyof AboutUs) => {
+        setAboutUs((prev) => ({
+            ...prev,
+            [arrayField]: (prev[arrayField] as any[]).filter((_, i) => i !== index),
+        }));
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        const formData = new FormData();
+
+        // Append all text fields
+        Object.entries(aboutUs).forEach(([key, value]) => {
+            if (typeof value === 'string' || typeof value === 'boolean') {
+                formData.append(key, value.toString());
+            } else if (Array.isArray(value)) {
+                formData.append(key, JSON.stringify(value));
+            }
+        });
+
+        // Append file fields
+        if (aboutUs.image) formData.append('image', aboutUs.image);
+        if (aboutUs.coummnity_banner_image) formData.append('coummnity_banner_image', aboutUs.coummnity_banner_image);
+
+        // Append points_description images
+        aboutUs.points_description.forEach((point, index) => {
+            if (point.image) formData.append(`points_description[${index}].image`, point.image);
+        });
+
+        // Append team_description images
+        aboutUs.team_description.forEach((member, index) => {
+            if (member.image) formData.append(`team_description[${index}].image`, member.image);
+        });
+
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/about-us/create`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/about-us/create`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(aboutUs),
+                body: formData,
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to create About Us entry');
-            }
+            if (!response.ok) throw new Error('Failed to create About Us entry');
 
             const result = await response.json();
             console.log('About Us entry created successfully:', result);
@@ -121,12 +212,20 @@ export default function CreateAboutUs() {
                 <form onSubmit={handleSubmit}>
                     <TextField
                         fullWidth
+                        label="Title"
+                        name="title"
+                        value={aboutUs.title}
+                        onChange={handleInputChange}
+                        margin="normal"
+                        required
+                    />
+                    <TextField
+                        fullWidth
                         label="About Us Heading"
                         name="about_us_heading"
                         value={aboutUs.about_us_heading}
                         onChange={handleInputChange}
                         margin="normal"
-                        required
                     />
                     <TextField
                         fullWidth
@@ -136,42 +235,251 @@ export default function CreateAboutUs() {
                         onChange={handleInputChange}
                         margin="normal"
                     />
-                    <TextField
-                        fullWidth
-                        label="About Us Image URL"
-                        name="about_us_image"
-                        value={aboutUs.about_us_image}
-                        onChange={handleInputChange}
-                        margin="normal"
-                    />
-                    <Typography variant="h6" gutterBottom>About Us Text</Typography>
+                    <Box sx={{ mb: 2 }}>
+                        <Typography variant="subtitle1">About Us Image</Typography>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageChange(e, 'image')}
+                        />
+                    </Box>
+                    <Typography variant="subtitle1">About Us Text</Typography>
                     <RichTextEditor
                         value={aboutUs.about_us_text}
-                        onChange={(value) => setAboutUs(prev => ({ ...prev, about_us_text: value }))}
+                        onChange={(value) => handleRichTextChange('about_us_text', value)}
                     />
                     <Typography variant="h6" gutterBottom>About Us Descriptions</Typography>
                     {aboutUs.about_us_description.map((desc, index) => (
-                        <Box key={index} sx={{ mb: 2 }}>
+                        <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
                             <TextField
                                 fullWidth
-                                label={`Description ${index + 1} Title`}
+                                label="Title"
                                 value={desc.title}
-                                onChange={(e) => handleDescriptionChange(index, 'title', e.target.value)}
+                                onChange={(e) => handleArrayChange(index, 'title', e.target.value, 'about_us_description')}
                                 margin="normal"
                             />
                             <TextField
                                 fullWidth
-                                label={`Description ${index + 1} Content`}
+                                label="Description"
                                 value={desc.description}
-                                onChange={(e) => handleDescriptionChange(index, 'description', e.target.value)}
+                                onChange={(e) => handleArrayChange(index, 'description', e.target.value, 'about_us_description')}
                                 margin="normal"
                                 multiline
                                 rows={3}
                             />
-                            <Button onClick={() => handleRemoveDescription(index)}>Remove Description</Button>
+                            <Button onClick={() => handleRemoveArrayItem(index, 'about_us_description')}>Remove</Button>
                         </Box>
                     ))}
-                    <Button onClick={handleAddDescription}>Add Description</Button>
+                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('about_us_description', { title: '', description: '' })}>
+                        Add Description
+                    </Button>
+                    <TextField
+                        fullWidth
+                        label="Section Working ID"
+                        name="section_working"
+                        value={aboutUs.section_working}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Points Title"
+                        name="points_title"
+                        value={aboutUs.points_title}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Points Heading"
+                        name="points_heading"
+                        value={aboutUs.points_heading}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Points Sub Title"
+                        name="points_sub_title"
+                        value={aboutUs.points_sub_title}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
+                    <Typography variant="h6" gutterBottom>Points Description</Typography>
+                    {aboutUs.points_description.map((point, index) => (
+                        <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
+                            <TextField
+                                fullWidth
+                                label="Title"
+                                value={point.title}
+                                onChange={(e) => handleArrayChange(index, 'title', e.target.value, 'points_description')}
+                                margin="normal"
+                            />
+                            <TextField
+                                fullWidth
+                                label="Description"
+                                value={point.description}
+                                onChange={(e) => handleArrayChange(index, 'description', e.target.value, 'points_description')}
+                                margin="normal"
+                                multiline
+                                rows={3}
+                            />
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="subtitle2">Image</Typography>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                            handleArrayChange(index, 'image', e.target.files[0], 'points_description');
+                                        }
+                                    }}
+                                />
+                            </Box>
+                            <Button onClick={() => handleRemoveArrayItem(index, 'points_description')}>Remove</Button>
+                        </Box>
+                    ))}
+                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('points_description', { title: '', description: '', image: null })}>
+                        Add Point
+                    </Button>
+                    <TextField
+                        fullWidth
+                        label="Community Text"
+                        name="community_text"
+                        value={aboutUs.community_text}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Community Description"
+                        name="community_description"
+                        value={aboutUs.community_description}
+                        onChange={handleInputChange}
+                        margin="normal"
+                        multiline
+                        rows={3}
+                    />
+                    <Box sx={{ mb: 2 }}>
+                        <Typography variant="subtitle1">Community Banner Image</Typography>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageChange(e, 'coummnity_banner_image')}
+                        />
+                    </Box>
+                    <TextField
+                        fullWidth
+                        label="Team Heading"
+                        name="team_heading"
+                        value={aboutUs.team_heading}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
+                    <Typography variant="h6" gutterBottom>Team Description</Typography>
+                    {aboutUs.team_description.map((member, index) => (
+                        <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
+                            <TextField
+                                fullWidth
+                                label="Name"
+                                value={member.name}
+                                onChange={(e) => handleArrayChange(index, 'name', e.target.value, 'team_description')}
+                                margin="normal"
+                            />
+                            <TextField
+                                fullWidth
+                                label="Position"
+                                value={member.position}
+                                onChange={(e) => handleArrayChange(index, 'position', e.target.value, 'team_description')}
+                                margin="normal"
+                            />
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="subtitle2">Image</Typography>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                            handleArrayChange(index, 'image', e.target.files[0], 'team_description');
+                                        }
+                                    }}
+                                />
+                            </Box>
+                            <TextField
+                                fullWidth
+                                label="Description"
+                                value={member.description}
+                                onChange={(e) => handleArrayChange(index, 'description', e.target.value, 'team_description')}
+                                margin="normal"
+                                multiline
+                                rows={3}
+                            />
+                            <Typography variant="subtitle2">Social Media</Typography>
+                            {member.social_media.map((social, socialIndex) => (
+                                <Box key={socialIndex} sx={{ display: 'flex', gap: 2, mb: 1 }}>
+                                    <TextField
+                                        label="Name"
+                                        value={social.name}
+                                        onChange={(e) => {
+                                            const newSocialMedia = [...member.social_media];
+                                            newSocialMedia[socialIndex].name = e.target.value;
+                                            handleArrayChange(index, 'social_media', newSocialMedia, 'team_description');
+                                        }}
+                                    />
+                                    <TextField
+                                        label="Link"
+                                        value={social.link}
+                                        onChange={(e) => {
+                                            const newSocialMedia = [...member.social_media];
+                                            newSocialMedia[socialIndex].link = e.target.value;
+                                            handleArrayChange(index, 'social_media', newSocialMedia, 'team_description');
+                                        }}
+                                    />
+                                    <IconButton onClick={() => {
+                                        const newSocialMedia = member.social_media.filter((_, i) => i !== socialIndex);
+                                        handleArrayChange(index, 'social_media', newSocialMedia, 'team_description');
+                                    }}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </Box>
+                            ))}
+                            <Button onClick={() => {
+                                const newSocialMedia = [...member.social_media, { name: '', link: '' }];
+                                handleArrayChange(index, 'social_media', newSocialMedia, 'team_description');
+                            }}>
+                                Add Social Media
+                            </Button>
+                            <Button onClick={() =>
+                                handleRemoveArrayItem(index, 'team_description')}>Remove Team Member</Button>
+                        </Box>
+                    ))}
+                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('team_description', {
+                        name: '',
+                        position: '',
+                        image: null,
+                        description: '',
+                        social_media: []
+                    })}>
+                        Add Team Member
+                    </Button>
+                    <TextField
+                        fullWidth
+                        label="Banner ID"
+                        name="banner"
+                        value={aboutUs.banner}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={aboutUs.is_active}
+                                onChange={(e) => setAboutUs(prev => ({ ...prev, is_active: e.target.checked }))}
+                                name="is_active"
+                            />
+                        }
+                        label="Is Active"
+                    />
                     <TextField
                         fullWidth
                         label="Meta Title"
@@ -197,13 +505,21 @@ export default function CreateAboutUs() {
                                 fullWidth
                                 label={`Keyword ${index + 1}`}
                                 value={keyword}
-                                onChange={(e) => handleMetaKeywordsChange(index, e.target.value)}
+                                onChange={(e) => {
+                                    const newKeywords = [...aboutUs.meta_keywords];
+                                    newKeywords[index] = e.target.value;
+                                    setAboutUs(prev => ({ ...prev, meta_keywords: newKeywords }));
+                                }}
                                 margin="normal"
                             />
-                            <Button onClick={() => handleRemoveMetaKeyword(index)}>Remove</Button>
+                            <IconButton onClick={() => handleRemoveArrayItem(index, 'meta_keywords')}>
+                                <DeleteIcon />
+                            </IconButton>
                         </Box>
                     ))}
-                    <Button onClick={handleAddMetaKeyword}>Add Keyword</Button>
+                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('meta_keywords', '')}>
+                        Add Keyword
+                    </Button>
                     <TextField
                         fullWidth
                         label="SEO URL"
@@ -211,25 +527,6 @@ export default function CreateAboutUs() {
                         value={aboutUs.seo_url}
                         onChange={handleInputChange}
                         margin="normal"
-                    />
-                    <TextField
-                        fullWidth
-                        label="Slug"
-                        name="slug"
-                        value={aboutUs.slug}
-                        onChange={handleInputChange}
-                        margin="normal"
-                        required
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={aboutUs.is_active}
-                                onChange={(e) => setAboutUs(prev => ({ ...prev, is_active: e.target.checked }))}
-                                name="is_active"
-                            />
-                        }
-                        label="Is Active"
                     />
                     <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
                         Create About Us Entry

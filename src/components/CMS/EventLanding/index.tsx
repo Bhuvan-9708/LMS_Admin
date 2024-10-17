@@ -114,7 +114,7 @@ const CourseLandingPageList: React.FC = () => {
     }, []);
 
     const handleAddLandingPage = () => {
-        router.push('/cms/add-course-landing');
+        router.push('/cms/add-event-landing');
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -100,11 +100,12 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 
 interface Contact {
   _id: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string;
   message: string;
+  subject: string
 }
 const Contacts: React.FC = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -119,7 +120,7 @@ const Contacts: React.FC = () => {
     const fetchContacts = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/contact/get-all-mail`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/contact/`
         );
         const result = await response.json();
         if (result && Array.isArray(result.data)) {
@@ -148,8 +149,8 @@ const Contacts: React.FC = () => {
 
     const filtered = contacts.filter(
       (contact) =>
-        contact.firstName.toLowerCase().includes(searchValue) ||
-        contact.lastName.toLowerCase().includes(searchValue)
+        contact.first_name.toLowerCase().includes(searchValue) ||
+        contact.last_name.toLowerCase().includes(searchValue)
     );
     setFilteredContacts(filtered);
     setPage(0);
@@ -342,7 +343,7 @@ const Contacts: React.FC = () => {
                       sx={{ padding: "15px 20px", fontSize: "14px" }}
                       className="border-bottom"
                     >
-                      {contact.firstName} {contact.lastName}
+                      {contact.first_name} {contact.last_name}
                     </TableCell>
                     <TableCell
                       sx={{ padding: "15px 20px", fontSize: "14px" }}
