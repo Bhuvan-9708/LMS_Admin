@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "postinstall": "next build"
+    "export": "next export",
+    "serve": "npx serve out", 
+    "lint": "next lint"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
