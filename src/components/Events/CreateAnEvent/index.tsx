@@ -23,6 +23,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import dayjs, { Dayjs } from 'dayjs';
+import { useRouter } from 'next/navigation';
 
 import dynamic from "next/dynamic";
 const RichTextEditor = dynamic(() => import("@mantine/rte"), {
@@ -108,7 +109,7 @@ const CreateAnEvent: React.FC = () => {
     schedule: [{ day: 0, time: '', date: null }],
     organizer: ''
   });
-
+  const router = useRouter();
   const [instructors, setInstructors] = useState<Instructor[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -357,7 +358,7 @@ const CreateAnEvent: React.FC = () => {
 
       if (response.data.success) {
         alert('Event created successfully!');
-        // Reset form or redirect
+        router.push('/events/list');
       } else {
         throw new Error(response.data.message || 'Failed to create event');
       }
