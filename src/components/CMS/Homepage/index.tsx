@@ -72,8 +72,8 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
     );
 }
 
-const BannerTable: React.FC = () => {
-    const [banners, setBanners] = useState<any[]>([]);
+const HomepageTable: React.FC = () => {
+    const [homepage, serHomepage] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null | string>(null);
     const [searchTerm, setSearchTerm] = useState<string>('');
@@ -88,19 +88,19 @@ const BannerTable: React.FC = () => {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
     });
 
-    const handleAddBanner = () => {
+    const handleAddHomepage = () => {
         router.push('/cms/add-homepage');
     }
 
     useEffect(() => {
-        const fetchBanners = async () => {
+        const fetchHomepage = async () => {
             try {
-                const response = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/banner/`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/home/`);
                 if (!response.ok) {
-                    throw new Error("Failed to fetch Banners");
+                    throw new Error("Failed to fetch Home");
                 }
                 const data = await response.json();
-                setBanners(data.data);
+                serHomepage(data.data);
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -108,19 +108,19 @@ const BannerTable: React.FC = () => {
             }
         };
 
-        fetchBanners();
+        fetchHomepage();
     }, []);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
-    const filteredBanners = banners.filter(banner =>
-        banner.title.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredHomepages = homepage.filter(homepage =>
+        homepage.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // Table pagination
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredBanners.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredHomepages.length) : 0;
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -133,7 +133,7 @@ const BannerTable: React.FC = () => {
 
     const handleToggleActive = async (id: string, newStatus: boolean) => {
         try {
-            const response = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/banner/status/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/home/status/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ is_active: newStatus }),
@@ -141,17 +141,17 @@ const BannerTable: React.FC = () => {
             if (!response.ok) {
                 throw new Error("Failed to update active status");
             }
-            setBanners(prevBanners =>
-                prevBanners.map(banner =>
-                    banner._id === id ? { ...banner, is_active: newStatus } : banner
+            serHomepage(prevHomepages =>
+                prevHomepages.map(homepage =>
+                    homepage._id === id ? { ...homepage, is_active: newStatus } : homepage
                 )
             );
-            setSnackbarMessage('Banner active status updated successfully!');
+            setSnackbarMessage('Homepage active status updated successfully!');
             setSnackbarSeverity('success');
             setSnackbarOpen(true);
         } catch (error) {
-            console.error("Failed to update Banner active status", error);
-            setSnackbarMessage('Failed to update Banner active status');
+            console.error("Failed to update Homepage active status", error);
+            setSnackbarMessage('Failed to update Homepage active status');
             setSnackbarSeverity('error');
             setSnackbarOpen(true);
         }
@@ -159,19 +159,19 @@ const BannerTable: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            const response = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/banner/delete/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/home/delete/${id}`, {
                 method: "DELETE",
             });
             if (!response.ok) {
-                throw new Error("Failed to delete Banner");
+                throw new Error("Failed to delete Homepage");
             }
-            setBanners(prevBanners => prevBanners.filter(banner => banner._id !== id));
-            setSnackbarMessage('Banner deleted successfully!');
+            serHomepage(prevHomepages => prevHomepages.filter(homepage => homepage._id !== id));
+            setSnackbarMessage('Homepage deleted successfully!');
             setSnackbarSeverity('success');
             setSnackbarOpen(true);
         } catch (error) {
-            console.error("Failed to delete Banner", error);
-            setSnackbarMessage('Failed to delete Banner');
+            console.error("Failed to delete Homepage", error);
+            setSnackbarMessage('Failed to delete Homepage');
             setSnackbarSeverity('error');
             setSnackbarOpen(true);
         }
@@ -217,14 +217,14 @@ const BannerTable: React.FC = () => {
                         <input
                             type="text"
                             className={styles.inputSearch}
-                            placeholder="Search Banner here..."
+                            placeholder="Search Homepage here..."
                             onChange={handleSearchChange}
                         />
                     </Box>
 
                     <Box sx={{ padding: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <Button variant="contained" color="primary" onClick={handleAddBanner}>
-                            Add Banner
+                        <Button variant="contained" color="primary" onClick={handleAddHomepage}>
+                            Add Homepage
                         </Button>
                     </Box>
                 </Box>
@@ -236,10 +236,10 @@ const BannerTable: React.FC = () => {
                     }}
                 >
                     <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="banners table">
+                        <Table sx={{ minWidth: 650 }} aria-label="homepage table">
                             <TableHead className="bg-primary-50">
                                 <TableRow>
-                                    {["ID", "Title", "Type", "Position", "Active", "Action"].map((header, index) => (
+                                    {["ID", "Title", "Header Text", "Active", "Action"].map((header, index) => (
                                         <TableCell
                                             key={index}
                                             sx={{
@@ -256,32 +256,26 @@ const BannerTable: React.FC = () => {
                             </TableHead>
 
                             <TableBody>
-                                {filteredBanners.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((banner, index) => (
-                                    <TableRow key={banner._id}>
+                                {filteredHomepages.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((homepage, index) => (
+                                    <TableRow key={homepage._id}>
                                         <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                                        <TableCell>{banner.title}</TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={banner.type}
-                                                color={banner.type === 'image' ? 'primary' : 'secondary'}
-                                            />
-                                        </TableCell>
-                                        <TableCell>{banner.position}</TableCell>
+                                        <TableCell>{homepage.title}</TableCell>
+                                        <TableCell>{homepage.header_text}</TableCell>
                                         <TableCell>
                                             <Switch
-                                                checked={banner.is_active}
-                                                onChange={(e) => handleToggleActive(banner._id, e.target.checked)}
+                                                checked={homepage.is_active}
+                                                onChange={(e) => handleToggleActive(homepage._id, e.target.checked)}
                                                 inputProps={{ "aria-label": "controlled" }}
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/banners/${banner._id}`)}>
+                                            <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/homepage/${homepage._id}`)}>
                                                 <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
                                             </IconButton>
-                                            <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-banner/${banner._id}`)}>
+                                            <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-homepage/${homepage._id}`)}>
                                                 <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
                                             </IconButton>
-                                            <IconButton aria-label="delete" color="error" onClick={() => handleDelete(banner._id)}>
+                                            <IconButton aria-label="delete" color="error" onClick={() => handleDelete(homepage._id)}>
                                                 <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>delete</i>
                                             </IconButton>
                                         </TableCell>
@@ -298,7 +292,7 @@ const BannerTable: React.FC = () => {
                                     <TablePagination
                                         rowsPerPageOptions={[10, 25, 50]}
                                         colSpan={6}
-                                        count={banners.length}
+                                        count={homepage.length}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
                                         SelectProps={{
@@ -330,4 +324,4 @@ const BannerTable: React.FC = () => {
     );
 };
 
-export default BannerTable;
+export default HomepageTable;

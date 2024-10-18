@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -14,10 +14,8 @@ import {
     Select,
     MenuItem,
     IconButton,
-    List,
-    ListItem,
-    ListItemText,
-    ListItemSecondaryAction,
+    FormControlLabel,
+    Switch,
 } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -28,23 +26,9 @@ interface NavigationBar {
     link: string;
 }
 
-interface WhatYouCanDo {
-    title: string;
-    image_icon: File | null;
-    short_description: string;
-    description: string;
-    image: File | null;
-}
-
-interface AboutUsDescription {
-    title: string;
-    description: string;
-}
-
-interface PointsDescription {
-    title: string;
-    description: string;
-    image: File | null;
+interface PopularCategory {
+    category: string;
+    background_color: string;
 }
 
 interface FAQ {
@@ -59,35 +43,30 @@ interface Homepage {
     sub_title: string;
     navigation_bars: NavigationBar[];
     image: File | null;
-    what_you_can_do_heading: string;
-    what_you_can_do_text: string;
-    what_you_can_do: WhatYouCanDo[];
+    section_working: string;
     popular_category_heading: string;
     popular_category_text: string;
-    popular_categories: string[];
+    popular_categories: PopularCategory[];
+    popular_course_title: string;
     popular_course_heading: string;
     popular_course_text: string;
     popular_courses: string[];
+    upcoming_course_title: string;
     upcoming_course_heading: string;
     upcoming_course_text: string;
     upcoming_courses: string[];
+    upcoming_webinar_title: string;
     upcoming_webinar_heading: string;
     upcoming_webinar_text: string;
     upcoming_webinar: string[];
     banner: string[];
-    about_us_text: string;
-    about_us_heading: string;
-    about_us_image: File | null;
-    about_us_sub_heading: string;
-    about_us_description: AboutUsDescription[];
-    points_title: string;
-    points_heading: string;
-    points_sub_title: string;
-    points_description: PointsDescription[];
+    about: string;
+    article_main: string;
     article_title: string;
     article_heading: string;
     article_description: string;
     articles: string[];
+    testimonials_title: string;
     testimonials_heading: string;
     testimonials_sub_title: string;
     testimonials: string[];
@@ -99,6 +78,7 @@ interface Homepage {
     meta_description: string;
     meta_keywords: string[];
     seo_url: string;
+    slug: string;
 }
 
 export default function AddHomepageForm() {
@@ -109,35 +89,30 @@ export default function AddHomepageForm() {
         sub_title: '',
         navigation_bars: [],
         image: null,
-        what_you_can_do_heading: '',
-        what_you_can_do_text: '',
-        what_you_can_do: [],
+        section_working: '',
         popular_category_heading: '',
         popular_category_text: '',
         popular_categories: [],
+        popular_course_title: '',
         popular_course_heading: '',
         popular_course_text: '',
         popular_courses: [],
+        upcoming_course_title: '',
         upcoming_course_heading: '',
         upcoming_course_text: '',
         upcoming_courses: [],
+        upcoming_webinar_title: '',
         upcoming_webinar_heading: '',
         upcoming_webinar_text: '',
         upcoming_webinar: [],
         banner: [],
-        about_us_text: '',
-        about_us_heading: '',
-        about_us_image: null,
-        about_us_sub_heading: '',
-        about_us_description: [],
-        points_title: '',
-        points_heading: '',
-        points_sub_title: '',
-        points_description: [],
+        about: '',
+        article_main: '',
         article_title: '',
         article_heading: '',
         article_description: '',
         articles: [],
+        testimonials_title: '',
         testimonials_heading: '',
         testimonials_sub_title: '',
         testimonials: [],
@@ -149,6 +124,7 @@ export default function AddHomepageForm() {
         meta_description: '',
         meta_keywords: [],
         seo_url: '',
+        slug: '',
     });
 
     const [categories, setCategories] = useState<any[]>([]);
@@ -157,6 +133,8 @@ export default function AddHomepageForm() {
     const [banners, setBanners] = useState<any[]>([]);
     const [blogs, setBlogs] = useState<any[]>([]);
     const [courseReviews, setCourseReviews] = useState<any[]>([]);
+    const [sectionWorkings, setSectionWorkings] = useState<any[]>([]);
+    const [aboutUs, setAboutUs] = useState<any[]>([]);
 
     const router = useRouter();
 
@@ -167,13 +145,13 @@ export default function AddHomepageForm() {
         fetchBanners();
         fetchBlogs();
         fetchCourseReviews();
+        fetchSectionWorkings();
+        fetchAboutUs();
     }, []);
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`
-            );
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`);
             const data = await response.json();
             if (data.success) {
                 setCategories(data.data.categories);
@@ -185,9 +163,7 @@ export default function AddHomepageForm() {
 
     const fetchCourses = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/v1/course`
-            );
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course`);
             const data = await response.json();
             if (data.success) {
                 setCourses(data.data);
@@ -199,9 +175,7 @@ export default function AddHomepageForm() {
 
     const fetchEvents = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/event/get-all-events`
-            );
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/event/get-all-events`);
             const data = await response.json();
             if (data.success) {
                 setEvents(data.data);
@@ -213,9 +187,7 @@ export default function AddHomepageForm() {
 
     const fetchBanners = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/banner`
-            );
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner`);
             if (!response.ok) {
                 throw new Error("Failed to fetch banners");
             }
@@ -228,9 +200,7 @@ export default function AddHomepageForm() {
 
     const fetchBlogs = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/blog/`
-            );
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/`);
             const data = await response.json();
             setBlogs(data.data.blogs);
         } catch (error) {
@@ -240,9 +210,7 @@ export default function AddHomepageForm() {
 
     const fetchCourseReviews = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/reviews/`
-            );
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/`);
             const data = await response.json();
             if (data.success && data.data) {
                 setCourseReviews(data.data);
@@ -251,6 +219,26 @@ export default function AddHomepageForm() {
             }
         } catch (error) {
             console.error('Error fetching course reviews:', error);
+        }
+    };
+
+    const fetchSectionWorkings = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section-working/`);
+            const data = await response.json();
+            setSectionWorkings(data.data);
+        } catch (error) {
+            console.error('Error fetching section workings:', error);
+        }
+    };
+
+    const fetchAboutUs = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/about-us/`);
+            const data = await response.json();
+            setAboutUs(data.data);
+        } catch (error) {
+            console.error('Error fetching about us:', error);
         }
     };
 
@@ -264,7 +252,7 @@ export default function AddHomepageForm() {
         setHomepage(prev => ({ ...prev, [field]: file }));
     };
 
-    const handleArrayInputChange = (index: number, field: keyof Homepage, subField: string, value: string | File) => {
+    const handleArrayInputChange = (index: number, field: keyof Homepage, subField: string, value: string) => {
         setHomepage(prev => {
             const newArray = [...(prev[field] as any[])];
             newArray[index] = { ...newArray[index], [subField]: value };
@@ -272,10 +260,10 @@ export default function AddHomepageForm() {
         });
     };
 
-    const handleAddArrayItem = (field: keyof Homepage) => {
+    const handleAddArrayItem = (field: keyof Homepage, newItem: any = {}) => {
         setHomepage(prev => ({
             ...prev,
-            [field]: [...(prev[field] as any[]), {}]
+            [field]: [...(prev[field] as any[]), newItem]
         }));
     };
 
@@ -299,32 +287,37 @@ export default function AddHomepageForm() {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const formData = new FormData();
-
-        // Append all text fields
+    
         Object.entries(homepage).forEach(([key, value]) => {
-            if (typeof value === 'string' || typeof value === 'boolean') {
-                formData.append(key, value.toString());
+            if (value instanceof File) {
+                // If the value is a File, append it directly
+                formData.append(key, value);
             } else if (Array.isArray(value)) {
-                formData.append(key, JSON.stringify(value));
+                // For arrays of objects, append each object property individually
+                value.forEach((item, index) => {
+                    if (typeof item === 'object' && item !== null) {
+                        // Append each key-value pair within the object
+                        Object.entries(item).forEach(([subKey, subValue]) => {
+                            if (typeof subValue === 'string' || subValue instanceof Blob) {
+                                formData.append(`${key}[${index}][${subKey}]`, subValue);
+                            } else if (subValue !== null && subValue !== undefined) {
+                                formData.append(`${key}[${index}][${subKey}]`, String(subValue));
+                            }
+                        });
+                    } else {
+                        // If not an object, append as a simple array element
+                        formData.append(`${key}[]`, String(item));
+                    }
+                });
+            } else if (typeof value === 'boolean') {
+                // Convert boolean to string
+                formData.append(key, value.toString());
+            } else if (value !== null && value !== undefined) {
+                // Append other non-null values directly
+                formData.append(key, value);
             }
         });
-
-        // Append file fields
-        if (homepage.header_logo) formData.append('header_logo', homepage.header_logo);
-        if (homepage.image) formData.append('image', homepage.image);
-        if (homepage.about_us_image) formData.append('about_us_image', homepage.about_us_image);
-
-        // Append What You Can Do images
-        homepage.what_you_can_do.forEach((item, index) => {
-            if (item.image_icon) formData.append(`what_you_can_do[${index}][image_icon]`, item.image_icon);
-            if (item.image) formData.append(`what_you_can_do[${index}][image]`, item.image);
-        });
-
-        // Append Points Description images
-        homepage.points_description.forEach((item, index) => {
-            if (item.image) formData.append(`points_description[${index}][image]`, item.image);
-        });
-
+    
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/api/home/create`,
@@ -333,11 +326,11 @@ export default function AddHomepageForm() {
                     body: formData,
                 }
             );
-
+    
             if (!response.ok) {
                 throw new Error('Failed to create homepage');
             }
-
+    
             const result = await response.json();
             console.log('Homepage created successfully:', result);
             router.push('/cms/homepage');
@@ -410,7 +403,7 @@ export default function AddHomepageForm() {
                             </IconButton>
                         </Box>
                     ))}
-                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('navigation_bars')}>
+                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('navigation_bars', { name: '', link: '' })}>
                         Add Navigation Bar
                     </Button>
 
@@ -430,99 +423,17 @@ export default function AddHomepageForm() {
                         {homepage.image && <Typography variant="body2">{homepage.image.name}</Typography>}
                     </Box>
 
-                    <TextField
-                        fullWidth
-                        label="What You Can Do Heading"
-                        name="what_you_can_do_heading"
-                        value={homepage.what_you_can_do_heading}
-                        onChange={handleInputChange}
-                        margin="normal"
-                    />
-                    <TextField
-                        fullWidth
-                        label="What You Can Do Text"
-                        name="what_you_can_do_text"
-                        value={homepage.what_you_can_do_text}
-                        onChange={handleInputChange}
-                        margin="normal"
-                    />
-
-                    <Typography variant="h6" gutterBottom>What You Can Do</Typography>
-                    {homepage.what_you_can_do.map((item, index) => (
-                        <Box key={index} sx={{ border: '1px solid #ccc', p: 2, mb: 2 }}>
-                            <TextField
-                                fullWidth
-                                label="Title"
-                                value={item.title}
-                                onChange={(e) => handleArrayInputChange(index, 'what_you_can_do', 'title', e.target.value)}
-                                margin="normal"
-                            />
-                            <Box sx={{ mb: 2 }}>
-                                <input
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    id={`what - you - can -do -icon - ${index}`}
-                                    type="file"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            handleArrayInputChange(index, 'what_you_can_do', 'image_icon', file);
-                                        }
-                                    }
-                                    }
-                                />
-                                <label htmlFor={`what - you - can -do -icon - ${index}`}>
-                                    <Button variant="contained" component="span">
-                                        Upload Icon
-                                    </Button>
-                                </label>
-                                {item.image_icon && <Typography variant="body2">{item.image_icon.name}</Typography>}
-                            </Box>
-                            <TextField
-                                fullWidth
-                                label="Short Description"
-                                value={item.short_description}
-
-                                onChange={(e) => handleArrayInputChange(index, 'what_you_can_do', 'short_description', e.target.value)}
-                                margin="normal"
-                            />
-                            <TextField
-                                fullWidth
-                                label="Description"
-                                value={item.description}
-                                onChange={(e) => handleArrayInputChange(index, 'what_you_can_do', 'description', e.target.value)}
-                                margin="normal"
-                                multiline
-                                rows={3}
-                            />
-                            <Box sx={{ mb: 2 }}>
-                                <input
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    id={`what - you - can -do -image - ${index}`}
-                                    type="file"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            handleArrayInputChange(index, 'what_you_can_do', 'image', file);
-                                        }
-                                    }}
-                                />
-                                <label htmlFor={`what - you - can -do -image - ${index}`}>
-                                    <Button variant="contained" component="span">
-                                        Upload Image
-                                    </Button>
-                                </label>
-                                {item.image && <Typography variant="body2">{item.image.name}</Typography>}
-                            </Box>
-                            <IconButton onClick={() => handleRemoveArrayItem('what_you_can_do', index)}>
-                                <DeleteIcon />
-                            </IconButton>
-                        </Box>
-                    ))}
-                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('what_you_can_do')}>
-                        Add What You Can Do Item
-                    </Button>
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel>Section Working</InputLabel>
+                        <Select
+                            value={homepage.section_working}
+                            onChange={(e) => setHomepage(prev => ({ ...prev, section_working: e.target.value }))}
+                        >
+                            {sectionWorkings.map((section) => (
+                                <MenuItem key={section._id} value={section._id}>{section.title}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
                     <TextField
                         fullWidth
@@ -541,28 +452,43 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
 
-                    <FormControl fullWidth margin="normal">
-                        <InputLabel>Popular Categories</InputLabel>
-                        <Select
-                            multiple
-                            value={homepage.popular_categories}
-                            onChange={(e) => handleMultiSelectChange(e, 'popular_categories')}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {(selected as string[]).map((value) => (
-                                        <Chip key={value} label={categories.find(cat => cat._id === value)?.name || value} />
-                                    ))}
-                                </Box>
-                            )}
-                        >
-                            {categories.map((category) => (
-                                <MenuItem key={category._id} value={category._id}>
-                                    {category.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    <Typography variant="h6" gutterBottom>Popular Categories</Typography>
+                    {homepage.popular_categories.map((cat, index) => (
+                        <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
 
+                            <FormControl fullWidth>
+                                <InputLabel>Category</InputLabel>
+                                <Select
+                                    value={cat.category}
+                                    onChange={(e) => handleArrayInputChange(index, 'popular_categories', 'category', e.target.value)}
+                                >
+                                    {categories.map((category) => (
+                                        <MenuItem key={category._id} value={category._id}>{category.name}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <TextField
+                                label="Background Color"
+                                value={cat.background_color}
+                                onChange={(e) => handleArrayInputChange(index, 'popular_categories', 'background_color', e.target.value)}
+                            />
+                            <IconButton onClick={() => handleRemoveArrayItem('popular_categories', index)}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </Box>
+                    ))}
+                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('popular_categories', { category: '', background_color: '' })}>
+                        Add Popular Category
+                    </Button>
+
+                    <TextField
+                        fullWidth
+                        label="Popular Course Title"
+                        name="popular_course_title"
+                        value={homepage.popular_course_title}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
                     <TextField
                         fullWidth
                         label="Popular Course Heading"
@@ -595,13 +521,19 @@ export default function AddHomepageForm() {
                             )}
                         >
                             {courses.map((course) => (
-                                <MenuItem key={course._id} value={course._id}>
-                                    {course.title}
-                                </MenuItem>
+                                <MenuItem key={course._id} value={course._id}>{course.title}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
 
+                    <TextField
+                        fullWidth
+                        label="Upcoming Course Title"
+                        name="upcoming_course_title"
+                        value={homepage.upcoming_course_title}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
                     <TextField
                         fullWidth
                         label="Upcoming Course Heading"
@@ -634,13 +566,19 @@ export default function AddHomepageForm() {
                             )}
                         >
                             {courses.map((course) => (
-                                <MenuItem key={course._id} value={course._id}>
-                                    {course.title}
-                                </MenuItem>
+                                <MenuItem key={course._id} value={course._id}>{course.title}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
 
+                    <TextField
+                        fullWidth
+                        label="Upcoming Webinar Title"
+                        name="upcoming_webinar_title"
+                        value={homepage.upcoming_webinar_title}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
                     <TextField
                         fullWidth
                         label="Upcoming Webinar Heading"
@@ -673,9 +611,7 @@ export default function AddHomepageForm() {
                             )}
                         >
                             {events.map((event) => (
-                                <MenuItem key={event._id} value={event._id}>
-                                    {event.title}
-                                </MenuItem>
+                                <MenuItem key={event._id} value={event._id}>{event.title}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -695,148 +631,31 @@ export default function AddHomepageForm() {
                             )}
                         >
                             {banners.map((banner) => (
-                                <MenuItem key={banner._id} value={banner._id}>
-                                    {banner.title}
-                                </MenuItem>
+                                <MenuItem key={banner._id} value={banner._id}>{banner.title}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel>About Us</InputLabel>
+                        <Select
+                            value={homepage.about}
+                            onChange={(e) => setHomepage(prev => ({ ...prev, about: e.target.value }))}
+                        >
+                            {aboutUs.map((about) => (
+                                <MenuItem key={about._id} value={about._id}>{about.title}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
 
                     <TextField
                         fullWidth
-                        label="About Us Text"
-                        name="about_us_text"
-                        value={homepage.about_us_text}
+                        label="Article Main"
+                        name="article_main"
+                        value={homepage.article_main}
                         onChange={handleInputChange}
                         margin="normal"
                     />
-                    <TextField
-                        fullWidth
-                        label="About Us Heading"
-                        name="about_us_heading"
-                        value={homepage.about_us_heading}
-                        onChange={handleInputChange}
-                        margin="normal"
-                    />
-                    <Box sx={{ mb: 2, mt: 2 }}>
-                        <input
-                            accept="image/*"
-                            style={{ display: 'none' }}
-                            id="about-us-image-upload"
-                            type="file"
-                            onChange={(e) => handleFileChange(e, 'about_us_image')}
-                        />
-                        <label htmlFor="about-us-image-upload">
-                            <Button variant="contained" component="span">
-                                Upload About Us Image
-                            </Button>
-                        </label>
-                        {homepage.about_us_image && <Typography variant="body2">{homepage.about_us_image.name}</Typography>}
-                    </Box>
-                    <TextField
-                        fullWidth
-                        label="About Us Sub Heading"
-                        name="about_us_sub_heading"
-                        value={homepage.about_us_sub_heading}
-                        onChange={handleInputChange}
-                        margin="normal"
-                    />
-
-                    <Typography variant="h6" gutterBottom>About Us Description</Typography>
-                    {homepage.about_us_description.map((item, index) => (
-                        <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                            <TextField
-                                label="Title"
-                                value={item.title}
-                                onChange={(e) => handleArrayInputChange(index, 'about_us_description', 'title', e.target.value)}
-                            />
-                            <TextField
-                                label="Description"
-                                value={item.description}
-                                onChange={(e) => handleArrayInputChange(index, 'about_us_description', 'description', e.target.value)}
-                            />
-                            <IconButton onClick={() => handleRemoveArrayItem('about_us_description', index)}>
-                                <DeleteIcon />
-                            </IconButton>
-                        </Box>
-                    ))}
-                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('about_us_description')}>
-                        Add About Us Description
-                    </Button>
-
-                    <TextField
-                        fullWidth
-                        label="Points Title"
-                        name="points_title"
-                        value={homepage.points_title}
-                        onChange={handleInputChange}
-                        margin="normal"
-                    />
-                    <TextField
-                        fullWidth
-                        label="Points Heading"
-                        name="points_heading"
-                        value={homepage.points_heading}
-                        onChange={handleInputChange}
-                        margin="normal"
-                    />
-                    <TextField
-                        fullWidth
-                        label="Points Sub Title"
-                        name="points_sub_title"
-                        value={homepage.points_sub_title}
-                        onChange={handleInputChange}
-                        margin="normal"
-                    />
-
-                    <Typography variant="h6" gutterBottom>Points Description</Typography>
-                    {homepage.points_description.map((item, index) => (
-                        <Box key={index} sx={{ border: '1px solid #ccc', p: 2, mb: 2 }}>
-                            <TextField
-                                fullWidth
-                                label="Title"
-                                value={item.title}
-                                onChange={(e) => handleArrayInputChange(index, 'points_description', 'title', e.target.value)}
-                                margin="normal"
-                            />
-                            <TextField
-                                fullWidth
-                                label="Description"
-                                value={item.description}
-                                onChange={(e) => handleArrayInputChange(index, 'points_description', 'description', e.target.value)}
-                                margin="normal"
-                                multiline
-                                rows={3}
-                            />
-                            <Box sx={{ mb: 2 }}>
-                                <input
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    id={`points - description - image - ${index} `}
-                                    type="file"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            handleArrayInputChange(index, 'points_description', 'image', file);
-                                        }
-                                    }}
-                                />
-                                <label htmlFor={`points - description - image - ${index} `}>
-                                    <Button variant="contained" component="span">
-                                        Upload Image
-                                    </Button>
-                                </label>
-                                {item.image && <Typography variant="body2">{item.image.name}</Typography>}
-                            </Box>
-                            <IconButton onClick={() => handleRemoveArrayItem('points_description', index)}>
-                                <DeleteIcon />
-                            </IconButton>
-                        </Box>
-                    ))}
-                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('points_description')}>
-                        Add Points Description
-                    </Button>
-
                     <TextField
                         fullWidth
                         label="Article Title"
@@ -879,13 +698,19 @@ export default function AddHomepageForm() {
                             )}
                         >
                             {blogs.map((blog) => (
-                                <MenuItem key={blog._id} value={blog._id}>
-                                    {blog.title}
-                                </MenuItem>
+                                <MenuItem key={blog._id} value={blog._id}>{blog.title}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
 
+                    <TextField
+                        fullWidth
+                        label="Testimonials Title"
+                        name="testimonials_title"
+                        value={homepage.testimonials_title}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
                     <TextField
                         fullWidth
                         label="Testimonials Heading"
@@ -904,20 +729,15 @@ export default function AddHomepageForm() {
                     />
 
                     <FormControl fullWidth margin="normal">
-        //                 <InputLabel>Testimonials</InputLabel>
-        //                 <Select
+                        <InputLabel>Testimonials</InputLabel>
+                        <Select
                             multiple
-                            value={homepage.testimonials}  // Ensure this state stores the selected testimonial IDs
+                            value={homepage.testimonials}
                             onChange={(e) => handleMultiSelectChange(e, 'testimonials')}
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                     {(selected as string[]).map((value) => (
-                                        <Chip
-                                            key={value}
-                                            label={
-                                                courseReviews.find(review => review._id === value)?.review || value
-                                            }
-                                        />
+                                        <Chip key={value} label={courseReviews.find(review => review._id === value)?.review || value} />
                                     ))}
                                 </Box>
                             )}
@@ -965,9 +785,20 @@ export default function AddHomepageForm() {
                             </IconButton>
                         </Box>
                     ))}
-                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('faqs')}>
+                    <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('faqs', { question: '', answer: '' })}>
                         Add FAQ
                     </Button>
+
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={homepage.is_active}
+                                onChange={(e) => setHomepage(prev => ({ ...prev, is_active: e.target.checked }))}
+                                name="is_active"
+                            />
+                        }
+                        label="Is Active"
+                    />
 
                     <TextField
                         fullWidth
@@ -1023,6 +854,17 @@ export default function AddHomepageForm() {
                         onChange={handleInputChange}
                         margin="normal"
                     />
+
+                    <TextField
+                        fullWidth
+                        label="Slug"
+                        name="slug"
+                        value={homepage.slug}
+                        onChange={handleInputChange}
+                        margin="normal"
+                        required
+                    />
+
                     <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
                         Create Homepage
                     </Button>

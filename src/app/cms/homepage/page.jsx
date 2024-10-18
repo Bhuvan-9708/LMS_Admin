@@ -7,7 +7,7 @@ export default function Page() {
     return (
         <>
             <div className="breadcrumb-card">
-                <h5>CMS</h5>
+                <h5>Homepage</h5>
 
                 <ul className="breadcrumb">
                     <li>
@@ -17,8 +17,7 @@ export default function Page() {
                         </NextLink>
                     </li>
                     <li>CMS</li>
-                    <li>HomePage Templates</li>
-                    <li>HomePage Content</li>
+                    <li>HomePage</li>
                 </ul>
             </div>
             <HomePage />
