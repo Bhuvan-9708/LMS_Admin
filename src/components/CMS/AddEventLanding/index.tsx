@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     Button,
     Card,
@@ -26,36 +26,33 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useRouter } from 'next/navigation';
 
-interface Instructor {
-    _id: string;
-    first_name: string;
-    last_name: string;
-}
-
 interface Event {
     _id: string;
     title: string;
 }
-
+interface ToolImage {
+    image_icon: File | null;
+}
+interface Tool {
+    title: string;
+    image: ToolImage[];
+}
 interface EventLandingPage {
     event_id: string;
-    event_logo?: File | null;
+    event_logo: File | null;
     tag_line: string;
     title: string;
-    image?: File | null;
+    image: File | null;
     reservation_text: string;
-    reservation_url: string;
-    instructor_id: string;
-    instructor_occupation: string;
+    instructor_name: string;
     event_date: Date | null;
-    event_time: Date | null;
+    event_time: string;
     pro: {
         title: string;
         description: string;
         points: Array<{
             title: string;
             description: string;
-            image_icon: File | string | null;
         }>;
     };
     syllabus: {
@@ -70,15 +67,23 @@ interface EventLandingPage {
             }>;
         }>;
     };
-    for_whom: {
+    for_whom_title: string;
+    for_whom_text: string;
+    for_whom: Array<{ tags: string }>;
+    download_syllabus_link: string;
+    instructor_details: {
+        image: File | null;
+        description: string;
+    };
+    skills_learn: Array<{ tags: string }>;
+    tools: Tool[];
+    certification_title: string;
+    certification_heading: string;
+    certification_details: Array<{
         title: string;
         description: string;
-        content: Array<{
-            logo: File | string | null;
-            title: string;
-            description: string;
-        }>;
-    };
+    }>;
+    certificate_image: File | null;
     feedbacks: {
         title: string;
         description: string;
@@ -113,38 +118,24 @@ export default function AddEventLandingPage() {
         title: '',
         image: null,
         reservation_text: '',
-        reservation_url: '',
-        instructor_id: '',
-        instructor_occupation: '',
+        instructor_name: '',
         event_date: null,
-        event_time: null,
-        pro: {
-            title: '',
-            description: '',
-            points: [],
-        },
-        syllabus: {
-            title: '',
-            description: '',
-            detailed_description: [],
-        },
-        for_whom: {
-            title: '',
-            description: '',
-            content: [],
-        },
-        feedbacks: {
-            title: '',
-            description: '',
-            join_now_text: '',
-            join_now_url: '',
-            feedbacks: [],
-        },
-        faq: {
-            title: '',
-            description: '',
-            content: [],
-        },
+        event_time: '',
+        pro: { title: '', description: '', points: [] },
+        syllabus: { title: '', description: '', detailed_description: [] },
+        for_whom_title: '',
+        for_whom_text: '',
+        for_whom: [],
+        download_syllabus_link: '',
+        instructor_details: { image: null, description: '' },
+        skills_learn: [],
+        tools: [],
+        certification_title: '',
+        certification_heading: '',
+        certification_details: [],
+        certificate_image: null,
+        feedbacks: { title: '', description: '', join_now_text: '', join_now_url: '', feedbacks: [] },
+        faq: { title: '', description: '', content: [] },
         is_active: true,
         meta_title: '',
         meta_description: '',
@@ -152,27 +143,12 @@ export default function AddEventLandingPage() {
         seo_url: '',
     });
 
-    const [instructors, setInstructors] = useState<Instructor[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
     const router = useRouter();
-    const [eventLogo, setEventLogo] = useState(null);
-    const [image, setImage] = useState(null);
 
     useEffect(() => {
-        fetchInstructors();
         fetchEvents();
     }, []);
-
-    const fetchInstructors = async () => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/instructor/`);
-            if (!response.ok) throw new Error('Failed to fetch instructors');
-            const data = await response.json();
-            setInstructors(data.data);
-        } catch (error) {
-            console.error('Error fetching instructors:', error);
-        }
-    };
 
     const fetchEvents = async () => {
         try {
@@ -185,164 +161,237 @@ export default function AddEventLandingPage() {
         }
     };
 
-    const handleChange = (
+    const handleChange = useCallback((
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
     ) => {
         const { name, value } = event.target as HTMLInputElement | HTMLTextAreaElement | { name: string; value: string };
+        setEventLandingPage((prev) => ({ ...prev, [name]: value }));
+    }, []);
 
-        setEventLandingPage((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    const handleNestedChange = (
+    const handleNestedChange = useCallback((
         section: keyof EventLandingPage,
         field: string,
         value: any
     ) => {
-        setEventLandingPage((prev) => {
-            const currentSection = prev[section];
+        setEventLandingPage((prev) => ({
+            ...prev,
+            [section]: {
+                ...(prev[section] as Record<string, any>),
+                [field]: value,
+            },
+        }));
+    }, []);
 
-            if (currentSection && typeof currentSection === 'object') {
-                return {
-                    ...prev,
-                    [section]: {
-                        ...currentSection,
-                        [field]: value,
-                    },
-                };
-            } else {
-                console.error(`Invalid section: ${section}`);
+    const handleArrayInputChange = useCallback((path: string, index: number, field: string, value: any) => {
+        setEventLandingPage((prev) => {
+            const newState = { ...prev };
+            const pathArray = path.split('.');
+            let current: any = newState;
+
+            for (let i = 0; i < pathArray.length - 1; i++) {
+                if (!current[pathArray[i]]) {
+                    current[pathArray[i]] = Array.isArray(current) ? [] : {};
+                }
+                current = current[pathArray[i]];
+            }
+
+            const lastKey = pathArray[pathArray.length - 1];
+            if (!Array.isArray(current[lastKey])) {
+                current[lastKey] = [];
+            }
+
+            if (!current[lastKey][index]) {
+                current[lastKey][index] = {};
+            }
+
+            current[lastKey][index][field] = value;
+
+            return newState;
+        });
+    }, []);
+
+    const handleAddArrayItem = useCallback((path: string, newItem: any) => {
+        setEventLandingPage((prev) => {
+            const newState = { ...prev };
+            const pathArray = path.split('.');
+            let current: any = newState;
+
+            for (let i = 0; i < pathArray.length - 1; i++) {
+                const key = pathArray[i];
+                if (!current[key]) {
+                    current[key] = Array.isArray(current) ? [] : {};
+                }
+                current = current[key];
+            }
+
+            const finalKey = pathArray[pathArray.length - 1];
+            if (!Array.isArray(current[finalKey])) {
+                current[finalKey] = [];
+            }
+
+            current[finalKey].push(newItem);
+            return newState;
+        });
+    }, []);
+
+    const handleRemoveArrayItem = useCallback((path: string, index: number) => {
+        setEventLandingPage((prev) => {
+            const newState = { ...prev };
+            const pathArray = path.split('.');
+            let current: any = newState;
+
+            for (let i = 0; i < pathArray.length - 1; i++) {
+                if (!current[pathArray[i]]) {
+                    return prev;
+                }
+                current = current[pathArray[i]];
+            }
+
+            const lastKey = pathArray[pathArray.length - 1];
+            if (!Array.isArray(current[lastKey])) {
                 return prev;
             }
-        });
-    };
 
-    const handleArrayInputChange = (path: string, index: number, field: string, value: any) => {
-        setEventLandingPage((prev) => {
-            const newState = { ...prev };
-            const pathArray = path.split('.');
-            let current: any = newState;
-            for (let i = 0; i < pathArray.length - 1; i++) {
-                current = current[pathArray[i]];
-            }
-            current[pathArray[pathArray.length - 1]][index][field] = value;
+            current[lastKey].splice(index, 1);
             return newState;
         });
-    };
+    }, []);
 
-    const handleAddArrayItem = (path: string, newItem: any) => {
-        setEventLandingPage((prev) => {
-            const newState = { ...prev };
-            const pathArray = path.split('.');
-            let current: any = newState;
-            for (let i = 0; i < pathArray.length - 1; i++) {
-                current = current[pathArray[i]];
-            }
-            current[pathArray[pathArray.length - 1]].push(newItem);
-            return newState;
-        });
-    };
-
-    const handleRemoveArrayItem = (path: string, index: number) => {
-        setEventLandingPage((prev) => {
-            const newState = { ...prev };
-            const pathArray = path.split('.');
-            let current: any = newState;
-            for (let i = 0; i < pathArray.length - 1; i++) {
-                current = current[pathArray[i]];
-            }
-            current[pathArray[pathArray.length - 1]].splice(index, 1);
-            return newState;
-        });
-    };
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, field: keyof EventLandingPage) => {
+    const handleFileChange = useCallback((
+        event: React.ChangeEvent<HTMLInputElement>,
+        field: keyof EventLandingPage | string
+    ) => {
         const file = event.target.files?.[0] || null;
-        setEventLandingPage((prev) => ({ ...prev, [field]: file }));
-    };
 
-    const handleProPointFileUpload = (event: React.ChangeEvent<HTMLInputElement>, section: string, index: number, field: string) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            setEventLandingPage((prev) => {
-                const updatedState = { ...prev };
-
-                if (section === 'for_whom.content') {
-                    updatedState.for_whom.content[index] = {
-                        ...updatedState.for_whom.content[index],
-                        [field]: file,
-                    };
-                } else if (section === 'pro.points') {
-                    updatedState.pro.points[index] = {
-                        ...updatedState.pro.points[index],
-                        [field]: file, // Assign the file to the specified field (e.g., 'image_icon')
-                    };
-                }
-                return updatedState;
-            });
+        if (field.includes('.')) {
+            const [section, subField] = field.split('.');
+            setEventLandingPage((prev) => ({
+                ...prev,
+                [section]: {
+                    ...((prev[section as keyof EventLandingPage] as Record<string, any>) || {}),
+                    [subField]: file,
+                },
+            }));
+        } else {
+            setEventLandingPage((prev) => ({ ...prev, [field]: file }));
         }
-    };
+    }, []);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         const formData = new FormData();
 
-        // Append JSON data (excluding images)
-        const jsonData = {
-            title: eventLandingPage.title,
-            tag_line: eventLandingPage.tag_line,
-            reservation_text: eventLandingPage.reservation_text,
-            reservation_url: eventLandingPage.reservation_url,
-            instructor_id: eventLandingPage.instructor_id,
-            instructor_occupation: eventLandingPage.instructor_occupation,
-            event_date: eventLandingPage.event_date,
-            event_time: eventLandingPage.event_time,
-            meta_title: eventLandingPage.meta_title,
-            meta_description: eventLandingPage.meta_description,
-            meta_keywords: eventLandingPage.meta_keywords,
-            seo_url: eventLandingPage.seo_url,
-            pro: eventLandingPage.pro,
-            syllabus: eventLandingPage.syllabus,
+        // Function to convert event_date to YYYY-MM-DD format
+        const formatEventDate = (date: Date | null) => {
+            if (date) {
+                const formattedDate = new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD format
+                return formattedDate;
+            }
+            return null;
         };
 
-        // Append JSON data as a string
-        formData.append('data', JSON.stringify(jsonData));
-
-        // Append image files to formData
-        if (eventLandingPage.event_logo instanceof File) {
-            formData.append('event_logo', eventLandingPage.event_logo);
-        }
-
-        if (eventLandingPage.image instanceof File) {
-            formData.append('image', eventLandingPage.image);
-        }
-
-        // Append pro section image files
-        eventLandingPage.pro.points.forEach((point, index) => {
-            if (point.image_icon instanceof File) {
-                formData.append(`pro[points][${index}][image_icon]`, point.image_icon);
+        // Safely handle entries in the main object
+        Object.entries(eventLandingPage).forEach(([key, value]) => {
+            if (value instanceof File) {
+                formData.append(key, value);
+            } else if (typeof value === 'object' && value !== null) {
+                // Handle specific cases like 'pro', 'syllabus', and other nested objects
+                if (key === 'pro' || key === 'syllabus') {
+                    Object.entries(value || {}).forEach(([nestedKey, nestedValue]) => {
+                        if (Array.isArray(nestedValue)) {
+                            nestedValue.forEach((item, index) => {
+                                formData.append(`${key}[${nestedKey}][${index}]`, JSON.stringify(item)); // Stringify array items
+                            });
+                        } else {
+                            formData.append(`${key}[${nestedKey}]`, JSON.stringify(nestedValue)); // Stringify nested object
+                        }
+                    });
+                } else if (Array.isArray(value)) {
+                    // Handle arrays
+                    value.forEach((item, index) => {
+                        formData.append(`${key}[${index}]`, JSON.stringify(item)); // Stringify each array item
+                    });
+                } else {
+                    // For other objects
+                    formData.append(key, JSON.stringify(value)); // Stringify the object
+                }
+            } else if (key === 'event_date') {
+                // Correctly format the event date
+                const formattedDate = formatEventDate(value as Date); // Ensure value is treated as a Date
+                if (formattedDate) {
+                    formData.append(key, formattedDate);
+                }
+            } else {
+                formData.append(key, String(value));
             }
         });
+
+        // Handle tools array with additional checks
+        if (Array.isArray(eventLandingPage.tools)) {
+            eventLandingPage.tools.forEach((tool, toolIndex) => {
+                if (tool && typeof tool === 'object' && tool.title) {
+                    formData.append(`tools[${toolIndex}][title]`, tool.title); // Add tool title
+
+                    if (Array.isArray(tool.image)) {
+                        // Loop through the image array for each tool
+                        tool.image.forEach((toolImage, imageIndex) => {
+                            if (toolImage && toolImage.image_icon instanceof File) {
+                                formData.append(`tools[${toolIndex}][image][${imageIndex}][image_icon]`, toolImage.image_icon); // Add image icon
+                            }
+                        });
+                    }
+                }
+            });
+        } else {
+            console.warn('tools is not an array:', eventLandingPage.tools); // Debugging
+        }
+
+        // Handle instructor details with null check
+        if (eventLandingPage.instructor_details?.image instanceof File) {
+            formData.append('instructor_details[image]', eventLandingPage.instructor_details.image); // Add instructor image
+        } else {
+            console.warn('instructor_details or image is missing:', eventLandingPage.instructor_details);
+        }
+
+        // Handle feedbacks array with null checks
+        if (
+            eventLandingPage.feedbacks &&
+            Array.isArray(eventLandingPage.feedbacks.feedbacks)
+        ) {
+            eventLandingPage.feedbacks.feedbacks.forEach((feedback, index) => {
+                if (feedback) {
+                    formData.append(`feedbacks[feedbacks][${index}]`, JSON.stringify(feedback)); // Stringify feedback
+                } else {
+                    console.warn(`feedback at index ${index} is undefined or null`, feedback);
+                }
+            });
+        } else {
+            console.warn('feedbacks is not an array or is missing:', eventLandingPage.feedbacks);
+        }
+
+        console.log('Form Data:', Object.fromEntries(formData.entries())); // Log the data being sent
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/webinar/create`, {
                 method: 'POST',
-                body: formData,  
+                body: formData,
             });
 
             if (!response.ok) {
-                throw new Error('Failed to create event landing page');
+                const errorData = await response.json();
+                console.error('Error creating event landing page:', errorData);
+                return;
             }
 
             const result = await response.json();
             console.log('Event landing page created:', result);
+            router.push('/cms/event-landing');
         } catch (error) {
             console.error('Error creating event landing page:', error);
         }
     };
+
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -351,7 +400,8 @@ export default function AddEventLandingPage() {
                     <Typography variant="h5" gutterBottom>Add Event Landing Page</Typography>
                     <form onSubmit={handleSubmit}>
                         <Grid container spacing={3}>
-                            <Grid item xs={12} sm={12}>
+                            {/* Event selection */}
+                            <Grid item xs={12}>
                                 <FormControl fullWidth>
                                     <InputLabel>Event</InputLabel>
                                     <Select
@@ -366,26 +416,17 @@ export default function AddEventLandingPage() {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item xs={12} sm={12}>
-                                <Box sx={{ mb: 2 }}>
-                                    <Input
-                                        id="logo-upload"
-                                        type="file"
-                                        inputProps={{ accept: "image/*" }}
-                                        style={{ display: 'none' }}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'event_logo')}
-                                        fullWidth
-                                    />
-                                    <label htmlFor="logo-upload">
-                                        <Button variant="contained" component="span">
-                                            Upload Logo
-                                        </Button>
-                                    </label>
-                                    {eventLandingPage.event_logo && (
-                                        <Typography variant="body2">{eventLandingPage.event_logo.name}</Typography>
-                                    )}
-                                </Box>
+
+                            {/* Event logo upload */}
+                            <Grid item xs={12}>
+                                <Input
+                                    type="file"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'event_logo')}
+                                />
+                                <label>Event Logo</label>
                             </Grid>
+
+                            {/* Basic information */}
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
@@ -405,67 +446,29 @@ export default function AddEventLandingPage() {
                                     required
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={12}>
-                                <Box sx={{ mb: 2 }}>
-                                    <Input
-                                        id="image-upload"
-                                        type="file"
-                                        inputProps={{ accept: "image/*" }}
-                                        style={{ display: 'none' }}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'image')}
-                                        fullWidth
-                                    />
-                                    <label htmlFor="image-upload">
-                                        <Button variant="contained" component="span">
-                                            Upload Image
-                                        </Button>
-                                    </label>
-                                    {eventLandingPage.image && (
-                                        <Typography variant="body2">{eventLandingPage.image instanceof File ? eventLandingPage.image.name : ''}</Typography>
-                                    )}
-                                </Box>
+                            <Grid item xs={12}>
+                                <Input
+                                    type="file"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'image')}
+                                    required
+                                />
+                                <label>Event Image</label>
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12}>
                                 <TextField
                                     fullWidth
                                     label="Reservation Text"
                                     name="reservation_text"
                                     value={eventLandingPage.reservation_text}
                                     onChange={handleChange}
-                                    required
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12}>
                                 <TextField
                                     fullWidth
-                                    label="Reservation URL"
-                                    name="reservation_url"
-                                    value={eventLandingPage.reservation_url}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel>Instructor</InputLabel>
-                                    <Select
-                                        name="instructor_id"
-                                        value={eventLandingPage.instructor_id}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        {instructors.map((instructor) => (
-                                            <MenuItem key={instructor._id} value={instructor._id}>{instructor.first_name}{instructor.last_name}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Instructor Occupation"
-                                    name="instructor_occupation"
-                                    value={eventLandingPage.instructor_occupation}
+                                    label="Instructor Name"
+                                    name="instructor_name"
+                                    value={eventLandingPage.instructor_name}
                                     onChange={handleChange}
                                 />
                             </Grid>
@@ -477,10 +480,13 @@ export default function AddEventLandingPage() {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <TimePicker
+                                <TextField
+                                    fullWidth
                                     label="Event Time"
+                                    name="event_time"
                                     value={eventLandingPage.event_time}
-                                    onChange={(newValue) => setEventLandingPage((prev) => ({ ...prev, event_time: newValue }))}
+                                    onChange={handleChange}
+                                    required
                                 />
                             </Grid>
 
@@ -519,30 +525,10 @@ export default function AddEventLandingPage() {
                                             onChange={(e) => handleArrayInputChange('pro.points', index, 'description', e.target.value)}
                                             margin="normal"
                                         />
-                                        <Box key={index} sx={{ mb: 2 }}>
-                                            <Input
-                                                id={`pro-point-image-upload-${index}`}
-                                                type="file"
-                                                inputProps={{ accept: "image/*" }}
-                                                style={{ display: 'none' }}
-                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProPointFileUpload(e, 'pro.points', index, 'image_icon')}
-                                                fullWidth
-                                            />
-                                            <label htmlFor={`pro-point-image-upload-${index}`}>
-                                                <Button variant="contained" component="span">
-                                                    Upload Image
-                                                </Button>
-                                            </label>
-                                            {point.image_icon && (
-                                                <Typography variant="body2">
-                                                    {point.image_icon instanceof File ? point.image_icon.name : point.image_icon}
-                                                </Typography>
-                                            )}
-                                        </Box>
                                         <Button onClick={() => handleRemoveArrayItem('pro.points', index)}>Remove Point</Button>
                                     </Box>
                                 ))}
-                                <Button onClick={() => handleAddArrayItem('pro.points', { title: '', description: '', image_icon: '' })}>
+                                <Button onClick={() => handleAddArrayItem('pro.points', { title: '', description: '' })}>
                                     Add Pro Point
                                 </Button>
                             </Grid>
@@ -554,7 +540,9 @@ export default function AddEventLandingPage() {
                                     fullWidth
                                     label="Syllabus Title"
                                     value={eventLandingPage.syllabus.title}
-                                    onChange={(e) => handleNestedChange('syllabus', 'title', e.target.value)}
+                                    onChange={(e) => handleNestedChange('syllabus', 'title',
+
+                                        e.target.value)}
                                     margin="normal"
                                 />
                                 <TextField
@@ -575,7 +563,7 @@ export default function AddEventLandingPage() {
                                             onChange={(e) => handleArrayInputChange('syllabus.detailed_description', index, 'title', e.target.value)}
                                             margin="normal"
                                         />
-                                        {desc.heading?.map((heading, headingIndex) => (
+                                        {desc.heading.map((heading, headingIndex) => (
                                             <Box key={headingIndex} sx={{ ml: 2, mb: 1 }}>
                                                 <TextField
                                                     label="Heading Title"
@@ -636,60 +624,169 @@ export default function AddEventLandingPage() {
                                 <TextField
                                     fullWidth
                                     label="For Whom Title"
-                                    value={eventLandingPage.for_whom.title}
-                                    onChange={(e) => handleNestedChange('for_whom', 'title', e.target.value)}
+                                    name="for_whom_title"
+                                    value={eventLandingPage.for_whom_title}
+                                    onChange={handleChange}
                                     margin="normal"
                                 />
                                 <TextField
                                     fullWidth
-                                    label="For Whom Description"
-                                    value={eventLandingPage.for_whom.description}
-                                    onChange={(e) => handleNestedChange('for_whom', 'description', e.target.value)}
+                                    label="For Whom Text"
+                                    name="for_whom_text"
+                                    value={eventLandingPage.for_whom_text}
+                                    onChange={handleChange}
                                     margin="normal"
                                     multiline
                                     rows={3}
                                 />
-                                {eventLandingPage.for_whom.content.map((item, index) => (
+                                {eventLandingPage.for_whom.map((item, index) => (
                                     <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
-                                        <Input
-                                            style={{ display: 'none' }}
-                                            inputProps={{ accept: "image/*" }}
-                                            id={`logo-upload-${index}`}
-                                            type="file"
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProPointFileUpload(e, 'for_whom.content', index, 'logo')}
-                                        />
-                                        <label htmlFor={`logo-upload-${index}`}>
-                                            <Button variant="contained" component="span">
-                                                Upload Logo
-                                            </Button>
-                                        </label>
-                                        {item.logo && (
-                                            <Typography variant="body2">
-                                                {item.logo instanceof File ? item.logo.name : item.logo}
-                                            </Typography>
-                                        )}
                                         <TextField
                                             fullWidth
-                                            label="Title"
-                                            value={item.title}
-                                            onChange={(e) => handleArrayInputChange('for_whom.content', index, 'title', e.target.value)}
+                                            label="Tags"
+                                            value={item.tags}
+                                            onChange={(e) => handleArrayInputChange('for_whom', index, 'tags', e.target.value)}
+                                            margin="normal"
+                                        />
+                                        <Button onClick={() => handleRemoveArrayItem('for_whom', index)}>Remove Tag</Button>
+                                    </Box>
+                                ))}
+                                <Button onClick={() => handleAddArrayItem('for_whom', { tags: '' })}>
+                                    Add For Whom Tag
+                                </Button>
+                            </Grid>
+
+                            {/* Download Syllabus Link */}
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Download Syllabus Link"
+                                    name="download_syllabus_link"
+                                    value={eventLandingPage.download_syllabus_link}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+
+                            {/* Instructor Details */}
+                            <Grid item xs={12}>
+                                <Typography variant="h6">Instructor Details</Typography>
+                                <Input
+                                    type="file"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'instructor_details.image')}
+                                />
+                                <label>Instructor Image</label>
+                                <TextField
+                                    fullWidth
+                                    label="Instructor Description"
+                                    value={eventLandingPage.instructor_details.description}
+                                    onChange={(e) => handleNestedChange('instructor_details', 'description', e.target.value)}
+                                    margin="normal"
+                                    multiline
+                                    rows={3}
+                                />
+                            </Grid>
+
+                            {/* Skills Learn */}
+                            <Grid item xs={12}>
+                                <Typography variant="h6">Skills to Learn</Typography>
+                                {eventLandingPage.skills_learn.map((skill, index) => (
+                                    <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
+                                        <TextField
+                                            fullWidth
+                                            label="Skill Tag"
+                                            value={skill.tags}
+                                            onChange={(e) => handleArrayInputChange('skills_learn', index, 'tags', e.target.value)}
+                                            margin="normal"
+                                        />
+                                        <Button onClick={() => handleRemoveArrayItem('skills_learn', index)}>Remove Skill</Button>
+                                    </Box>
+                                ))}
+                                <Button onClick={() => handleAddArrayItem('skills_learn', { tags: '' })}>
+                                    Add Skill
+                                </Button>
+                            </Grid>
+
+                            {/* Tools */}
+                            <Grid item xs={12}>
+                                <Typography variant="h6">Tools</Typography>
+                                {eventLandingPage.tools.map((tool, index) => (
+                                    <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
+                                        <TextField
+                                            label="Tool Title"
+                                            value={tool.title} // Add title field
+                                            onChange={(e) => {
+                                                const newTools = [...eventLandingPage.tools];
+                                                newTools[index] = { ...newTools[index], title: e.target.value }; // Update title
+                                                setEventLandingPage(prev => ({ ...prev, tools: newTools }));
+                                            }}
+                                            fullWidth
+                                        />
+                                        <Input
+                                            type="file"
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                const file = e.target.files?.[0] || null;
+                                                const newTools = [...eventLandingPage.tools];
+                                                newTools[index].image[0] = { image_icon: file }; // Update image array
+                                                setEventLandingPage(prev => ({ ...prev, tools: newTools }));
+                                            }}
+                                        />
+                                        <label>Tool Icon</label>
+                                        <Button onClick={() => handleRemoveArrayItem('tools', index)}>Remove Tool</Button>
+                                    </Box>
+                                ))}
+                                <Button onClick={() => handleAddArrayItem('tools', { title: '', image: [{ image_icon: null }] })}>
+                                    Add Tool
+                                </Button>
+                            </Grid>
+
+                            {/* Certification */}
+                            <Grid item xs={12}>
+                                <Typography variant="h6">Certification</Typography>
+                                <TextField
+                                    fullWidth
+                                    label="Certification Title"
+                                    name="certification_title"
+                                    value={eventLandingPage.certification_title}
+                                    onChange={handleChange}
+                                    margin="normal"
+                                />
+                                <TextField
+                                    fullWidth
+                                    label="Certification Heading"
+                                    name="certification_heading"
+                                    value={eventLandingPage.certification_heading}
+                                    onChange={handleChange}
+                                    margin="normal"
+                                />
+                                {eventLandingPage.certification_details.map((detail, index) => (
+                                    <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
+                                        <TextField
+                                            fullWidth
+                                            label="Detail Title"
+                                            value={detail.title}
+                                            onChange={(e) => handleArrayInputChange('certification_details', index, 'title', e.target.value)}
                                             margin="normal"
                                         />
                                         <TextField
                                             fullWidth
-                                            label="Description"
-                                            value={item.description}
-                                            onChange={(e) => handleArrayInputChange('for_whom.content', index, 'description', e.target.value)}
+                                            label="Detail Description"
+                                            value={detail.description}
+                                            onChange={(e) => handleArrayInputChange('certification_details', index, 'description', e.target.value)}
                                             margin="normal"
                                             multiline
                                             rows={2}
                                         />
-                                        <Button onClick={() => handleRemoveArrayItem('for_whom.content', index)}>Remove Item</Button>
+                                        <Button onClick={() => handleRemoveArrayItem('certification_details', index)}>Remove Detail</Button>
                                     </Box>
                                 ))}
-                                <Button onClick={() => handleAddArrayItem('for_whom.content', { logo: '', title: '', description: '' })}>
-                                    Add For Whom Item
+                                <Button onClick={() => handleAddArrayItem('certification_details', { title: '', description: '' })}>
+                                    Add Certification Detail
                                 </Button>
+                                <Input
+                                    type="file"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'certificate_image')}
+                                />
+                                <label>Certificate Image</label>
                             </Grid>
 
                             {/* Feedbacks Section */}

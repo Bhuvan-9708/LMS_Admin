@@ -97,7 +97,7 @@ const CourseLandingPageList: React.FC = () => {
     useEffect(() => {
         const fetchLandingPages = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course/`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/webinar/`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch Course Landing Pages');
                 }
@@ -137,7 +137,7 @@ const CourseLandingPageList: React.FC = () => {
 
     const handleToggleActive = async (id: string, isChecked: boolean) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course/status/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/webinar/status/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ is_active: isChecked }),
@@ -163,7 +163,7 @@ const CourseLandingPageList: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course/delete/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/webinar/delete/${id}`, {
                 method: 'DELETE',
             });
             if (!response.ok) {
@@ -196,7 +196,7 @@ const CourseLandingPageList: React.FC = () => {
                     <Box component="form" sx={{ width: { sm: '265px' } }}>
                         <input
                             type="text"
-                            placeholder="Search Landing Page here..."
+                            placeholder="Search Event Landing Page here..."
                             onChange={handleSearchChange}
                             style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
                         />
@@ -204,7 +204,7 @@ const CourseLandingPageList: React.FC = () => {
 
                     <Box sx={{ padding: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Button variant="contained" color="primary" onClick={handleAddLandingPage}>
-                            Add Landing Page
+                            Add Event Landing Page
                         </Button>
                     </Box>
                 </Box>
@@ -213,7 +213,7 @@ const CourseLandingPageList: React.FC = () => {
                     <Table sx={{ minWidth: 650 }} aria-label="course landing pages table">
                         <TableHead>
                             <TableRow>
-                                {['ID', 'Course', 'Title', 'Created At', 'Status', 'Action'].map((header, index) => (
+                                {['ID', 'Event', 'Title', 'Created At', 'Status', 'Action'].map((header, index) => (
                                     <TableCell key={index} sx={{ fontWeight: '500', padding: '10px 24px', fontSize: '14px' }}>
                                         {header}
                                     </TableCell>
@@ -226,7 +226,6 @@ const CourseLandingPageList: React.FC = () => {
                                 .map((landingPage, index) => (
                                     <TableRow key={landingPage._id}>
                                         <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                                        {/* <TableCell>{landingPage.course_id}</TableCell> */}
                                         <TableCell>{landingPage.title}</TableCell>
                                         <TableCell>{new Date(landingPage.createdAt).toLocaleDateString()}</TableCell>
                                         <TableCell>

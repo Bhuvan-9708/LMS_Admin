@@ -1,13 +1,14 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import NextLink from 'next/link';
-import AboutUs from "@/components/CMS/AboutUs";
+import Footer from "@/components/CMS/Footer";
 
 export default function Page() {
     return (
         <>
+            {/* Breadcrumb */}
             <div className="breadcrumb-card">
-                <h5>About Us</h5>
+                <h5>Footer</h5>
 
                 <ul className="breadcrumb">
                     <li>
@@ -17,10 +18,10 @@ export default function Page() {
                         </NextLink>
                     </li>
                     <li>CMS</li>
-                    <li>About Us</li>
+                    <li>Footer</li>
                 </ul>
             </div>
-            <AboutUs />
+            <Footer />
         </>
     );
 }

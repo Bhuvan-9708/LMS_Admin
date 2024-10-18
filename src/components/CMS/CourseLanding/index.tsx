@@ -196,7 +196,7 @@ const CourseLandingPageList: React.FC = () => {
                     <Box component="form" sx={{ width: { sm: '265px' } }}>
                         <input
                             type="text"
-                            placeholder="Search Landing Page here..."
+                            placeholder="Search Course Landing Page here..."
                             onChange={handleSearchChange}
                             style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
                         />
@@ -204,7 +204,7 @@ const CourseLandingPageList: React.FC = () => {
 
                     <Box sx={{ padding: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Button variant="contained" color="primary" onClick={handleAddLandingPage}>
-                            Add Landing Page
+                            Add Course Landing Page
                         </Button>
                     </Box>
                 </Box>

@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -11,6 +11,10 @@ import {
     FormControlLabel,
     Box,
     IconButton,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -50,6 +54,17 @@ interface AboutUs {
     meta_description: string;
     meta_keywords: string[];
     seo_url: string;
+    slug: string;
+}
+
+interface Banner {
+    _id: string;
+    title: string;
+}
+
+interface SectionWorking {
+    _id: string;
+    title: string;
 }
 
 export default function CreateAboutUs() {
@@ -84,22 +99,21 @@ export default function CreateAboutUs() {
         meta_description: '',
         meta_keywords: [''],
         seo_url: '',
+        slug: '',
     });
 
     const router = useRouter();
-    const [banners, setBanners] = useState<any[]>([]);
-    const [section, setSection] = useState<any[]>([]);
+    const [banners, setBanners] = useState<Banner[]>([]);
+    const [sections, setSections] = useState<SectionWorking[]>([]);
 
     useEffect(() => {
         fetchBanners();
-        fetchSection();
+        fetchSections();
     }, []);
 
     const fetchBanners = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/banner/`
-            );
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner/`);
             if (!response.ok) {
                 throw new Error("Failed to fetch banners");
             }
@@ -109,16 +123,15 @@ export default function CreateAboutUs() {
             console.error('Error fetching banners:', error);
         }
     };
-    const fetchSection = async () => {  
+
+    const fetchSections = async () => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/section-working/`
-            );
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section-working/`);
             if (!response.ok) {
                 throw new Error("Failed to fetch section-working");
             }
             const data = await response.json();
-            setSection(data.data);
+            setSections(data.data);
         } catch (error) {
             console.error('Error fetching section-working:', error);
         }
@@ -170,12 +183,26 @@ export default function CreateAboutUs() {
         Object.entries(aboutUs).forEach(([key, value]) => {
             if (typeof value === 'string' || typeof value === 'boolean') {
                 formData.append(key, value.toString());
-            } else if (Array.isArray(value)) {
-                formData.append(key, JSON.stringify(value));
+            }
+            // Handle arrays like points_description and team_description
+            else if (Array.isArray(value)) {
+                if (key === 'points_description' || key === 'team_description') {
+                    value.forEach((item, index) => {
+                        Object.entries(item).forEach(([subKey, subValue]) => {
+                            if (typeof subValue === 'string' || typeof subValue === 'boolean' || typeof subValue === 'number') {
+                                formData.append(`${key}[${index}][${subKey}]`, subValue.toString());
+                            } else if (subValue instanceof File) {
+                                formData.append(`${key}[${index}][${subKey}]`, subValue);
+                            }
+                        });
+                    });
+                } else {
+                    formData.append(key, JSON.stringify(value)); // For any other arrays
+                }
             }
         });
 
-        // Append file fields
+        // Append file fields (if they exist)
         if (aboutUs.image) formData.append('image', aboutUs.image);
         if (aboutUs.coummnity_banner_image) formData.append('coummnity_banner_image', aboutUs.coummnity_banner_image);
 
@@ -208,7 +235,7 @@ export default function CreateAboutUs() {
     return (
         <Card>
             <CardContent>
-                <Typography variant="h5" gutterBottom>Create About Us Entry</Typography>
+                <Typography variant="h5" gutterBottom>Create About Us Page</Typography>
                 <form onSubmit={handleSubmit}>
                     <TextField
                         fullWidth
@@ -273,14 +300,17 @@ export default function CreateAboutUs() {
                     <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('about_us_description', { title: '', description: '' })}>
                         Add Description
                     </Button>
-                    <TextField
-                        fullWidth
-                        label="Section Working ID"
-                        name="section_working"
-                        value={aboutUs.section_working}
-                        onChange={handleInputChange}
-                        margin="normal"
-                    />
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel>Section Working</InputLabel>
+                        <Select
+                            value={aboutUs.section_working}
+                            onChange={(e) => setAboutUs(prev => ({ ...prev, section_working: e.target.value }))}
+                        >
+                            {sections.map((section) => (
+                                <MenuItem key={section._id} value={section._id}>{section.title}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <TextField
                         fullWidth
                         label="Points Title"
@@ -393,6 +423,7 @@ export default function CreateAboutUs() {
                                 onChange={(e) => handleArrayChange(index, 'position', e.target.value, 'team_description')}
                                 margin="normal"
                             />
+
                             <Box sx={{ mb: 2 }}>
                                 <Typography variant="subtitle2">Image</Typography>
                                 <input
@@ -449,8 +480,7 @@ export default function CreateAboutUs() {
                             }}>
                                 Add Social Media
                             </Button>
-                            <Button onClick={() =>
-                                handleRemoveArrayItem(index, 'team_description')}>Remove Team Member</Button>
+                            <Button onClick={() => handleRemoveArrayItem(index, 'team_description')}>Remove Team Member</Button>
                         </Box>
                     ))}
                     <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('team_description', {
@@ -462,14 +492,17 @@ export default function CreateAboutUs() {
                     })}>
                         Add Team Member
                     </Button>
-                    <TextField
-                        fullWidth
-                        label="Banner ID"
-                        name="banner"
-                        value={aboutUs.banner}
-                        onChange={handleInputChange}
-                        margin="normal"
-                    />
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel>Banner</InputLabel>
+                        <Select
+                            value={aboutUs.banner}
+                            onChange={(e) => setAboutUs(prev => ({ ...prev, banner: e.target.value }))}
+                        >
+                            {banners.map((banner) => (
+                                <MenuItem key={banner._id} value={banner._id}>{banner.title}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <FormControlLabel
                         control={
                             <Checkbox
@@ -527,6 +560,15 @@ export default function CreateAboutUs() {
                         value={aboutUs.seo_url}
                         onChange={handleInputChange}
                         margin="normal"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Slug"
+                        name="slug"
+                        value={aboutUs.slug}
+                        onChange={handleInputChange}
+                        margin="normal"
+                        required
                     />
                     <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
                         Create About Us Entry
