@@ -78,7 +78,6 @@ interface Homepage {
     meta_description: string;
     meta_keywords: string[];
     seo_url: string;
-    slug: string;
 }
 
 export default function AddHomepageForm() {
@@ -124,7 +123,6 @@ export default function AddHomepageForm() {
         meta_description: '',
         meta_keywords: [],
         seo_url: '',
-        slug: '',
     });
 
     const [categories, setCategories] = useState<any[]>([]);
@@ -853,16 +851,6 @@ export default function AddHomepageForm() {
                         value={homepage.seo_url}
                         onChange={handleInputChange}
                         margin="normal"
-                    />
-
-                    <TextField
-                        fullWidth
-                        label="Slug"
-                        name="slug"
-                        value={homepage.slug}
-                        onChange={handleInputChange}
-                        margin="normal"
-                        required
                     />
 
                     <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
