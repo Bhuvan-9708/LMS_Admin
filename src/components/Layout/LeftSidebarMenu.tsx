@@ -39,13 +39,11 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
     transform: "rotate(90deg)",
   },
   "& .MuiAccordionSummary-content": {
-    // marginLeft: theme.spacing(1),
   },
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
-  // borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
 interface LeftSidebarProps {
@@ -885,6 +883,16 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                           }`}
                       >
                         Course Details
+                      </Link>
+                    </li>
+
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/lms/categories/"
+                        className={`sidemenu-link ${pathname === "/lms/categories/" ? "active" : ""
+                          }`}
+                      >
+                        Categories
                       </Link>
                     </li>
 

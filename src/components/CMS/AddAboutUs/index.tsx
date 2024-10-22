@@ -54,7 +54,6 @@ interface AboutUs {
     meta_description: string;
     meta_keywords: string[];
     seo_url: string;
-    slug: string;
 }
 
 interface Banner {
@@ -97,9 +96,8 @@ export default function CreateAboutUs() {
         is_active: true,
         meta_title: '',
         meta_description: '',
-        meta_keywords: [''],
+        meta_keywords: [] as string[],
         seo_url: '',
-        slug: '',
     });
 
     const router = useRouter();
@@ -132,6 +130,10 @@ export default function CreateAboutUs() {
             }
             const data = await response.json();
             setSections(data.data);
+
+            if (data.data.length > 0) {
+                setAboutUs(prev => ({ ...prev, section_working: data.data[0]._id }));
+            }
         } catch (error) {
             console.error('Error fetching section-working:', error);
         }
@@ -179,39 +181,45 @@ export default function CreateAboutUs() {
 
         const formData = new FormData();
 
-        // Append all text fields
         Object.entries(aboutUs).forEach(([key, value]) => {
-            if (typeof value === 'string' || typeof value === 'boolean') {
-                formData.append(key, value.toString());
-            }
-            // Handle arrays like points_description and team_description
-            else if (Array.isArray(value)) {
-                if (key === 'points_description' || key === 'team_description') {
-                    value.forEach((item, index) => {
-                        Object.entries(item).forEach(([subKey, subValue]) => {
-                            if (typeof subValue === 'string' || typeof subValue === 'boolean' || typeof subValue === 'number') {
-                                formData.append(`${key}[${index}][${subKey}]`, subValue.toString());
-                            } else if (subValue instanceof File) {
-                                formData.append(`${key}[${index}][${subKey}]`, subValue);
-                            }
-                        });
+            if (typeof value === 'string' || value instanceof File) {
+                formData.append(key, value); 
+            } else if (Array.isArray(value)) {
+                if (key === 'meta_keywords') {
+                    value.forEach((keyword, index) => {
+                        formData.append(`meta_keywords[${index}]`, keyword); 
                     });
                 } else {
-                    formData.append(key, JSON.stringify(value)); // For any other arrays
+                    value.forEach((item, index) => {
+                        if (typeof item === 'object' && item !== null) {
+                            Object.entries(item).forEach(([subKey, subValue]) => {
+                                if (subValue instanceof File) {
+                                    formData.append(`${key}[${index}][${subKey}]`, subValue);
+                                } else if (typeof subValue === 'string') {
+                                    formData.append(`${key}[${index}][${subKey}]`, subValue);
+                                }
+                            });
+                        } else if (typeof item === 'string') {
+                            formData.append(`${key}[${index}]`, item);
+                        }
+                    });
                 }
+            } else if (typeof value === 'object' && value !== null) {
+                Object.entries(value).forEach(([subKey, subValue]) => {
+                    if (typeof subValue === 'string') {
+                        formData.append(`${key}[${subKey}]`, subValue);
+                    }
+                });
             }
         });
 
-        // Append file fields (if they exist)
         if (aboutUs.image) formData.append('image', aboutUs.image);
         if (aboutUs.coummnity_banner_image) formData.append('coummnity_banner_image', aboutUs.coummnity_banner_image);
 
-        // Append points_description images
         aboutUs.points_description.forEach((point, index) => {
             if (point.image) formData.append(`points_description[${index}].image`, point.image);
         });
 
-        // Append team_description images
         aboutUs.team_description.forEach((member, index) => {
             if (member.image) formData.append(`team_description[${index}].image`, member.image);
         });
@@ -545,7 +553,10 @@ export default function CreateAboutUs() {
                                 }}
                                 margin="normal"
                             />
-                            <IconButton onClick={() => handleRemoveArrayItem(index, 'meta_keywords')}>
+                            <IconButton onClick={() => {
+                                const newKeywords = aboutUs.meta_keywords.filter((_, i) => i !== index);
+                                setAboutUs(prev => ({ ...prev, meta_keywords: newKeywords }));
+                            }}>
                                 <DeleteIcon />
                             </IconButton>
                         </Box>
@@ -560,15 +571,6 @@ export default function CreateAboutUs() {
                         value={aboutUs.seo_url}
                         onChange={handleInputChange}
                         margin="normal"
-                    />
-                    <TextField
-                        fullWidth
-                        label="Slug"
-                        name="slug"
-                        value={aboutUs.slug}
-                        onChange={handleInputChange}
-                        margin="normal"
-                        required
                     />
                     <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
                         Create About Us Entry

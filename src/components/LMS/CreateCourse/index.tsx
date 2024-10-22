@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -37,15 +37,14 @@ interface Instructor {
   last_name: string;
 }
 
-interface CourseData {
+interface Course {
   title: string;
   price: string;
-  special_price?: string;
-  duration?: string;
-  special_price_from?: Date;
-  special_price_to?: Date;
-  slug: string;
-  image?: string;
+  special_price: string;
+  duration: string;
+  special_price_from: Date | null;
+  special_price_to: Date | null;
+  image: string;
   syllabus: string;
   instructor: string[];
   is_active: boolean;
@@ -53,21 +52,18 @@ interface CourseData {
   course_category: string[];
   sessions: number;
   status: 'pending' | 'approved' | 'rejected';
-  is_featured?: boolean;
-  is_popular?: boolean;
-  is_new?: boolean;
-  is_upcoming?: boolean;
-  enrolled_users?: number;
-  averageRating?: number;
-  totalReviews?: number;
-  reviews?: string[];
+  is_featured: boolean;
+  is_popular: boolean;
+  is_new: boolean;
+  is_upcoming: boolean;
+  reviews: string[];
 }
 
 interface CourseDetails {
   description: string;
   start_time: string;
   is_upcoming: boolean;
-  start_date: string;
+  start_date: Date | null;
   prerequisites: string[];
   resources: string[];
   video_url: string;
@@ -111,14 +107,14 @@ interface CourseDetails {
 }
 
 const CreateCourse: React.FC = () => {
-  const [course, setCourse] = useState<CourseData>({
+  const [course, setCourse] = useState<Course>({
     title: '',
     price: '',
+    reviews: [],
     special_price: '',
     duration: '',
-    special_price_from: undefined,
-    special_price_to: undefined,
-    slug: '',
+    special_price_from: null,
+    special_price_to: null,
     image: '',
     syllabus: '',
     instructor: [],
@@ -127,21 +123,17 @@ const CreateCourse: React.FC = () => {
     course_category: [],
     sessions: 1,
     status: 'pending',
-    is_featured: true,
-    is_popular: true,
-    is_new: true,
-    is_upcoming: true,
-    enrolled_users: 0,
-    averageRating: 0,
-    totalReviews: 0,
-    reviews: [],
+    is_featured: false,
+    is_popular: false,
+    is_new: false,
+    is_upcoming: false,
   });
 
   const [courseDetails, setCourseDetails] = useState<CourseDetails>({
     description: '',
     start_time: '',
     is_upcoming: false,
-    start_date: '',
+    start_date: null,
     prerequisites: [],
     resources: [],
     video_url: '',
@@ -182,33 +174,56 @@ const CreateCourse: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [instructors, setInstructors] = useState<Instructor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [placement, setPlacement] = useState<string>('');
+  const [placementOpportunity, setPlacementOpportunity] = useState<string>('');
+  const [courseIncludes, setCourseIncludes] = useState<string>('');
+  const [curriculum, setCurriculum] = useState<string>('');
+  const [courseReviews, setCourseReviews] = useState<any[]>([]);
+  const [sectionWorkings, setSectionWorkings] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [instructorsResponse, categoriesResponse] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/instructor`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`)
-        ]);
-
-        const instructorsData = await instructorsResponse.json();
-        const categoriesData = await categoriesResponse.json();
-
-        if (instructorsData.success) {
-          setInstructors(instructorsData.data);
-        }
-        if (categoriesData.success) {
-          setCategories(categoriesData.data.categories);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const [instructorsResponse, categoriesResponse, coursesResponse, reviewResponse, sectionResponse] = await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/instructor`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section/`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course`)
+      ]);
+
+
+      const instructorsData = await instructorsResponse.json();
+      const categoriesData = await categoriesResponse.json();
+      const reviewData = await reviewResponse.json();
+      const sectionData = await sectionResponse.json();
+      const coursesData = await coursesResponse.json();
+
+      if (instructorsData.success) {
+        setInstructors(instructorsData.data);
+      }
+      if (categoriesData.success) {
+        setCategories(categoriesData.data.categories);
+      }
+      if (reviewData.success) {
+        setCourseReviews(reviewData.data.courseReviews);
+      }
+      if (sectionData.success) {
+        setSectionWorkings(sectionData.data.sectionWorkings);
+      }
+      if (coursesData.success) {
+        setCourses(coursesData.data.courses);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCourseChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = event.target;
@@ -237,13 +252,13 @@ const CreateCourse: React.FC = () => {
   const handleArrayChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number,
-    field: keyof CourseDetails | keyof CourseData,
+    field: keyof CourseDetails | keyof Course,
     subfield?: string
   ) => {
     const { value } = event.target;
     if (field in course) {
       setCourse(prevCourse => {
-        const updatedField = [...(prevCourse[field as keyof CourseData] as any[])];
+        const updatedField = [...(prevCourse[field as keyof Course] as any[])];
         updatedField[index] = value;
         return { ...prevCourse, [field]: updatedField };
       });
@@ -279,42 +294,30 @@ const CreateCourse: React.FC = () => {
     });
   };
 
-  const handleAddArrayItem = (field: keyof CourseDetails | keyof CourseData, subfield?: string) => {
-    if (field in course) {
-      setCourse(prevCourse => {
-        const currentField = prevCourse[field as keyof CourseData];
 
-        if (Array.isArray(currentField)) {
-          return {
-            ...prevCourse,
-            [field]: [...currentField, '']
-          };
-        } else {
-          console.warn(`${field} is not an array.`);
-          return prevCourse;
-        }
-      });
+  const handleAddArrayItem = (field: keyof CourseDetails | keyof Course, subfield?: string) => {
+    if (field in course) {
+      setCourse(prevCourse => ({
+        ...prevCourse,
+        [field]: [...(prevCourse[field as keyof Course] as any[]), '']
+      }));
     } else {
       setCourseDetails(prevDetails => {
-        const updatedField = Array.isArray(prevDetails[field as keyof CourseDetails])
-          ? [...prevDetails[field as keyof CourseDetails]]
-          : [];
-
+        const updatedField = [...(prevDetails[field as keyof CourseDetails] as any[])];
         if (subfield) {
           updatedField.push({ [subfield]: '' });
         } else {
           updatedField.push('');
         }
-
         return { ...prevDetails, [field]: updatedField };
       });
     }
   };
 
-  const handleRemoveArrayItem = (index: number, field: keyof CourseDetails | keyof CourseData) => {
+  const handleRemoveArrayItem = (index: number, field: keyof CourseDetails | keyof Course) => {
     if (field in course) {
       setCourse(prevCourse => {
-        const updatedField = [...(prevCourse[field as keyof CourseData] as any[])];
+        const updatedField = [...(prevCourse[field as keyof Course] as any[])];
         updatedField.splice(index, 1);
         return { ...prevCourse, [field]: updatedField };
       });
@@ -325,6 +328,9 @@ const CreateCourse: React.FC = () => {
         return { ...prevDetails, [field]: updatedField };
       });
     }
+  };
+  const handleMixedFieldChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setter(e.target.value);
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -337,6 +343,8 @@ const CreateCourse: React.FC = () => {
         value.forEach((item, index) => {
           formData.append(`course[${key}][${index}]`, item);
         });
+      } else if (value instanceof Date) {
+        formData.append(`course[${key}]`, value.toISOString());
       } else {
         formData.append(`course[${key}]`, value.toString());
       }
@@ -355,6 +363,8 @@ const CreateCourse: React.FC = () => {
               formData.append(`courseDetails[${key}][${index}]`, item);
             }
           });
+        } else if (value instanceof Date) {
+          formData.append(`courseDetails[${key}]`, value.toISOString());
         } else {
           Object.entries(value).forEach(([subKey, subValue]) => {
             if (Array.isArray(subValue)) {
@@ -371,6 +381,11 @@ const CreateCourse: React.FC = () => {
       }
     });
 
+    formData.append('courseDetails[placement]', placement);
+    formData.append('courseDetails[placement_opportunity]', placementOpportunity);
+    formData.append('courseDetails[course_includes]', courseIncludes);
+    formData.append('courseDetails[curriculum]', curriculum);
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/create-course`, {
         method: 'POST',
@@ -383,10 +398,13 @@ const CreateCourse: React.FC = () => {
 
       const result = await response.json();
       console.log('Course created successfully:', result);
+      // Handle success (e.g., show a success message, redirect to course list, etc.)
     } catch (error) {
       console.error('Error creating course:', error);
+      // Handle error (e.g., show an error message to the user)
     }
   };
+
 
   if (loading) {
     return <CircularProgress />;
@@ -430,36 +448,29 @@ const CreateCourse: React.FC = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Duration"
+                name="duration"
+                value={course.duration}
+                onChange={handleCourseChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <DatePicker
                 label="Special Price From"
-                value={course.special_price_from ? new Date(course.special_price_from) : null}
-                onChange={(date) => setCourse({
-                  ...course,
-                  special_price_from: date ? date : undefined
-                })}
+                value={course.special_price_from}
+                onChange={(date) => setCourse({ ...course, special_price_from: date })}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <DatePicker
                 label="Special Price To"
-                value={course.special_price_to ? new Date(course.special_price_to) : null}
-                onChange={(date) => setCourse({
-                  ...course,
-                  special_price_to: date ? date : undefined
-                })}
+                value={course.special_price_to}
+                onChange={(date) => setCourse({ ...course, special_price_to: date })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                label="Slug"
-                name="slug"
-                value={course.slug}
-                onChange={handleCourseChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Image URL"
@@ -479,51 +490,6 @@ const CreateCourse: React.FC = () => {
                 value={course.syllabus}
                 onChange={handleCourseChange}
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id="course-level-label">Course Level</InputLabel>
-                <Select
-                  labelId="course-level-label"
-                  name="course_level"
-                  value={course.course_level}
-                  onChange={handleSelectChange}
-                >
-                  <MenuItem value="all">All</MenuItem>
-                  <MenuItem value="beginner">Beginner</MenuItem>
-                  <MenuItem value="intermediate">Intermediate</MenuItem>
-                  <MenuItem value="expert">Expert</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                label="Sessions"
-                name="sessions"
-                type="number"
-                value={course.sessions}
-                onChange={handleCourseChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="course-category-label">Course Categories</InputLabel>
-                <Select
-                  labelId="course-category-label"
-                  multiple
-                  name="course_category"
-                  value={course.course_category}
-                  onChange={handleSelectChange}
-                >
-                  {categories.map((category) => (
-                    <MenuItem key={category._id} value={category._id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
@@ -554,6 +520,66 @@ const CreateCourse: React.FC = () => {
                 }
                 label="Is Active"
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel id="course-level-label">Course Level</InputLabel>
+                <Select
+                  labelId="course-level-label"
+                  name="course_level"
+                  value={course.course_level}
+                  onChange={handleSelectChange}
+                >
+                  <MenuItem value="all">All</MenuItem>
+                  <MenuItem value="beginner">Beginner</MenuItem>
+                  <MenuItem value="intermediate">Intermediate</MenuItem>
+                  <MenuItem value="expert">Expert</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="course-category-label">Course Categories</InputLabel>
+                <Select
+                  labelId="course-category-label"
+                  multiple
+                  name="course_category"
+                  value={course.course_category}
+                  onChange={handleSelectChange}
+                >
+                  {categories?.map((category) => (
+                    <MenuItem key={category._id} value={category._id}>
+                      {category.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                fullWidth
+                label="Sessions"
+                name="sessions"
+                type="number"
+                value={course.sessions}
+                onChange={handleCourseChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel id="status-label">Status</InputLabel>
+                <Select
+                  labelId="status-label"
+                  name="status"
+                  value={course.status}
+                  onChange={handleSelectChange}
+                >
+                  <MenuItem value="pending">Pending</MenuItem>
+                  <MenuItem value="approved">Approved</MenuItem>
+                  <MenuItem value="rejected">Rejected</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <FormControlLabel
@@ -641,8 +667,8 @@ const CreateCourse: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <DatePicker
                 label="Start Date"
-                value={courseDetails.start_date ? new Date(courseDetails.start_date) : null}
-                onChange={(date) => setCourseDetails({ ...courseDetails, start_date: date ? date.toISOString().split('T')[0] : '' })}
+                value={courseDetails.start_date}
+                onChange={(date) => setCourseDetails({ ...courseDetails, start_date: date })}
               />
             </Grid>
             <Grid item xs={12}>
@@ -684,8 +710,7 @@ const CreateCourse: React.FC = () => {
             </Grid>
             <Grid item xs={12}>
               <Typography variant="h6">Who This Course Is For</Typography>
-              {/* Check if who_this_course_for and general are defined */}
-              {courseDetails.who_this_course_for?.general?.map((item, index) => (
+              {courseDetails.who_this_course_for.general.map((item, index) => (
                 <Grid item xs={12} key={index}>
                   <TextField
                     fullWidth
@@ -696,8 +721,6 @@ const CreateCourse: React.FC = () => {
                   <Button onClick={() => handleRemoveArrayItem(index, 'who_this_course_for')}>Remove</Button>
                 </Grid>
               ))}
-
-              {/* Add button should be enabled even if the array is not yet initialized */}
               <Button onClick={() => handleAddArrayItem('who_this_course_for', 'general')}>Add General</Button>
             </Grid>
             <Grid item xs={12}>
@@ -884,10 +907,9 @@ const CreateCourse: React.FC = () => {
               <Typography variant="h6">Placement</Typography>
               <TextField
                 fullWidth
-                label="Placement Details"
-                name="placement"
-                value={JSON.stringify(courseDetails.placement)}
-                onChange={(e) => setCourseDetails({ ...courseDetails, placement: JSON.parse(e.target.value) })}
+                label="Placement"
+                value={placement}
+                onChange={handleMixedFieldChange(setPlacement)}
                 multiline
                 rows={3}
               />
@@ -896,10 +918,9 @@ const CreateCourse: React.FC = () => {
               <Typography variant="h6">Placement Opportunity</Typography>
               <TextField
                 fullWidth
-                label="Placement Opportunity Details"
-                name="placement_opportunity"
-                value={JSON.stringify(courseDetails.placement_opportunity)}
-                onChange={(e) => setCourseDetails({ ...courseDetails, placement_opportunity: JSON.parse(e.target.value) })}
+                label="Placement Opportunity"
+                value={placementOpportunity}
+                onChange={handleMixedFieldChange(setPlacementOpportunity)}
                 multiline
                 rows={3}
               />
@@ -922,10 +943,9 @@ const CreateCourse: React.FC = () => {
               <Typography variant="h6">Course Includes</Typography>
               <TextField
                 fullWidth
-                label="Course Includes Details"
-                name="course_includes"
-                value={JSON.stringify(courseDetails.course_includes)}
-                onChange={(e) => setCourseDetails({ ...courseDetails, course_includes: JSON.parse(e.target.value) })}
+                label="Course Includes"
+                value={courseIncludes}
+                onChange={handleMixedFieldChange(setCourseIncludes)}
                 multiline
                 rows={3}
               />
@@ -934,10 +954,9 @@ const CreateCourse: React.FC = () => {
               <Typography variant="h6">Curriculum</Typography>
               <TextField
                 fullWidth
-                label="Curriculum Details"
-                name="curriculum"
-                value={JSON.stringify(courseDetails.curriculum)}
-                onChange={(e) => setCourseDetails({ ...courseDetails, curriculum: JSON.parse(e.target.value) })}
+                label="Curriculum"
+                value={curriculum}
+                onChange={handleMixedFieldChange(setCurriculum)}
                 multiline
                 rows={3}
               />
