@@ -64,6 +64,7 @@ interface EventFormData {
     currency: string;
   };
   image: File | null;
+  status: string;
   description: string;
   skills: { tag: string; learning: string }[];
   your_learning: { tag: string; description: string }[];
@@ -72,6 +73,7 @@ interface EventFormData {
   certificate: string;
   certificate_description: string;
   schedule: Array<{ day: number; time: string; date: Dayjs | null }>;
+  syllabus: string;
 }
 
 interface FormErrors {
@@ -80,6 +82,7 @@ interface FormErrors {
 
 const eventTypes = ['workshop', 'seminar', 'presentation', 'workshop-seminar', 'workshop-presentation'];
 const eventLevels = ['all', 'beginner', 'intermediate', 'expert'];
+const status = ['pending', 'approved', 'rejected'];
 
 const CreateAnEvent: React.FC = () => {
   const [formData, setFormData] = useState<EventFormData>({
@@ -107,7 +110,9 @@ const CreateAnEvent: React.FC = () => {
     certificate: '',
     certificate_description: '',
     schedule: [{ day: 0, time: '', date: null }],
-    organizer: ''
+    organizer: '',
+    status: 'pending',
+    syllabus: ''
   });
   const router = useRouter();
   const [instructors, setInstructors] = useState<Instructor[]>([]);
@@ -317,7 +322,6 @@ const CreateAnEvent: React.FC = () => {
         formDataToSend.append('event[price][amount]', formData.price.amount.toString());
         formDataToSend.append('event[price][currency]', formData.price.currency);
       }
-      formDataToSend.append('event[enrolled_users]', '0');
       formDataToSend.append('event[status]', 'pending');
       formDataToSend.append('event[organizer]', formData.organizer);
 
@@ -942,7 +946,43 @@ const CreateAnEvent: React.FC = () => {
               ))}
               <Button onClick={() => handleAddArrayItem('schedule')}>Add Schedule</Button>
             </Grid>
-
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Syllabus"
+                name="syllabus"
+                value={formData.syllabus}
+                onChange={handleInputChange}
+                multiline
+                rows={4}
+                error={!!errors.syllabus}
+                helperText={errors.syllabus}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} lg={12}>
+              <Box>
+                <Typography component="label" sx={labelStyle} className="text-black">
+                  Status
+                </Typography>
+                <FormControl fullWidth error={!!errors.event_level}>
+                  <Select
+                    id="status"
+                    name="status"
+                    value={formData.status}
+                    onChange={handleSelectChange}
+                    sx={selectStyle}
+                  >
+                    {status.map((level) => (
+                      <MenuItem key={level} value={level}>
+                        {level.charAt(0).toUpperCase() + level.slice(1)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.status && <Typography color="error">{errors.status}</Typography>}
+                </FormControl>
+              </Box>
+            </Grid>
             <Grid item xs={12} sm={12} lg={12} xl={12}>
               <Box
                 sx={{

@@ -324,34 +324,39 @@ export default function AddCourseLandingPage() {
         event.preventDefault();
         const formData = new FormData();
 
-        const appendFormData = (data: any, parentKey = '') => {
-            if (data instanceof File) {
-                formData.append(parentKey, data);
-            } else if (Array.isArray(data)) {
-                data.forEach((item, index) => {
-                    appendFormData(item, `${parentKey}[${index}]`);
+        // Helper function to append data to FormData
+        const appendToFormData = (key: string, value: any) => {
+            if (value instanceof File) {
+                formData.append(key, value);
+            } else if (Array.isArray(value)) {
+                value.forEach((item, index) => {
+                    appendToFormData(`${key}[${index}]`, item);
                 });
-            } else if (typeof data === 'object' && data !== null) {
-                Object.keys(data).forEach(key => {
-                    appendFormData(data[key], parentKey ? `${parentKey}[${key}]` : key);
+            } else if (typeof value === 'object' && value !== null) {
+                Object.keys(value).forEach(nestedKey => {
+                    appendToFormData(`${key}[${nestedKey}]`, value[nestedKey]);
                 });
-            } else {
-                formData.append(parentKey, data == null ? '' : data.toString());
+            } else if (value !== undefined && value !== null) {
+                formData.append(key, value.toString());
             }
         };
 
-        appendFormData(courseLandingPage);
+        // Append all fields to FormData
+        Object.entries(courseLandingPage).forEach(([key, value]) => {
+            appendToFormData(key, value);
+        });
 
-        // Log FormData
-        const logFormData = (formData: FormData) => {
-            const obj: any = {};
-            formData.forEach((value, key) => {
-                obj[key] = value;
-            });
-            console.log('Form Data:', obj);
-        };
+        // Special handling for nested arrays and file uploads
+        courseLandingPage.tools.image.forEach((tool, index) => {
+            if (tool.image_icon instanceof File) {
+                formData.append(`tools[image][${index}]`, tool.image_icon);
+            }
+        });
 
-        logFormData(formData);
+        // Log FormData contents for debugging
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+        }
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course/create`, {
@@ -361,7 +366,7 @@ export default function AddCourseLandingPage() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(`Failed to create course landing page: ${JSON.stringify(errorData)}`);
+                throw new Error(errorData.message || 'Failed to create course landing page');
             }
 
             const result = await response.json();
@@ -369,6 +374,7 @@ export default function AddCourseLandingPage() {
             router.push('/cms/course-landing-pages');
         } catch (error) {
             console.error('Error creating course landing page:', error);
+            alert(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
         }
     };
 
