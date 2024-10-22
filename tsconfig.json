@@ -24,6 +24,6 @@
       "@/*": ["./src/*"]
     },
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/CMS/AddEventLanding/index.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/CMS/AddEventLanding/index.js", "src/app/cms/add-website-front/page.jsx"],
   "exclude": ["node_modules"]
 }
