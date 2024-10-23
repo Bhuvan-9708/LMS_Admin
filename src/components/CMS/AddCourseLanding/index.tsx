@@ -320,7 +320,7 @@ export default function AddCourseLandingPage() {
         });
     }, []);
 
-    const handleSubmit = async (event: React.FormEvent) => {
+   const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const formData = new FormData();
 

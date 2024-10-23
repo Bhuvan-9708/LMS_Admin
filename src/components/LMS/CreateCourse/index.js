@@ -235,6 +235,7 @@ const CreateCourse = () => {
 
       const result = await response.json();
       console.log('Course created successfully:', result);
+      router.push('/lms/courses');
     } catch (error) {
       console.error('Error creating course:', error);
     }

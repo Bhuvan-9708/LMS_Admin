@@ -98,10 +98,16 @@ const Courses: React.FC = () => {
   const handleAddCourses = () => {
     Router.push('/lms/create-course');
   }
+  const handleCourseDetails = () => {
+    Router.push('/lms/add-course-details');
+  }
+  const handleCourseInfo = () => {
+    Router.push('/lms/add-course-info');
+  }
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch("https://lms-v1-update.vercel.app/api/v1/course");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course`);
       if (!response.ok) {
         throw new Error("Failed to fetch courses");
       }
@@ -149,7 +155,7 @@ const Courses: React.FC = () => {
     console.log("Update Data:", updateData);
 
     // Fetch the current course data
-    const courseResponse = await fetch(`https://lms-v1-update.vercel.app/api/v1/course/status/${id}`);
+    const courseResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/status/${id}`);
     const course = await courseResponse.json();
 
     // Ensure `is_active` is a boolean value
@@ -160,7 +166,7 @@ const Courses: React.FC = () => {
 
     // Now send both fields in the request body
     try {
-      const response = await fetch(`https://lms-v1-update.vercel.app/api/v1/course/status/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToUpdate),  // Send both fields in the body
@@ -193,7 +199,7 @@ const Courses: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`https://lms-v1-update.vercel.app/courses/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/courses/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -258,11 +264,18 @@ const Courses: React.FC = () => {
             />
           </Box>
 
-          <Box sx={{ padding: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box sx={{ padding: 2, display: "flex", gap: 2 }}>
             <Button variant="contained" color="primary" onClick={handleAddCourses}>
-              Add Course
+              Create Course
+            </Button>
+            <Button variant="contained" color="secondary" onClick={handleCourseDetails}>
+              Course Details
+            </Button>
+            <Button variant="contained" color="success" onClick={handleCourseInfo}>
+              Course Info
             </Button>
           </Box>
+
         </Box>
 
         <Box
