@@ -24,6 +24,6 @@
       "@/*": ["./src/*"]
     },
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/CMS/AddEventLanding/index.js", "src/app/cms/add-website-front/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/CMS/AddEventLanding/index.js", "src/app/cms/add-website-front/page.jsx", "src/components/LMS/CreateCourse/index.js", "src/app/lms/create-course/page.js"],
   "exclude": ["node_modules"]
 }
