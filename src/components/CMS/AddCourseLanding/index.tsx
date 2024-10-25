@@ -16,6 +16,7 @@ import {
     MenuItem,
     FormControl,
     InputLabel,
+    Input,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -32,7 +33,20 @@ interface SectionWorking {
     _id: string;
     title: string;
 }
-
+interface Heading {
+    title: string;
+    lesson_no: number;
+    time: string;
+}
+interface DetailedDescription {
+    title: string;
+    heading: Heading[];
+}
+interface Syllabus {
+    title: string;
+    description: string;
+    detailed_description: DetailedDescription[];
+}
 interface CourseLandingPage {
     course_id: string;
     logo: File | null;
@@ -63,18 +77,7 @@ interface CourseLandingPage {
     };
     download_syllabus_link_text: string;
     download_syllabus_link: string;
-    syllabus: {
-        title: string;
-        description: string;
-        detailed_description: Array<{
-            title: string;
-            heading: Array<{
-                title: string;
-                lesson_no: number;
-                time: string;
-            }>;
-        }>;
-    };
+    syllabus: Syllabus;
     for_whom: {
         title: string;
         description: string;
@@ -130,6 +133,7 @@ interface CourseLandingPage {
     meta_description: string;
     meta_keywords: string[];
     seo_url: string;
+    [key: string]: any;
 }
 
 export default function AddCourseLandingPage() {
@@ -150,7 +154,11 @@ export default function AddCourseLandingPage() {
         skills_learning: { title: '', tags: [] },
         download_syllabus_link_text: '',
         download_syllabus_link: '',
-        syllabus: { title: '', description: '', detailed_description: [] },
+        syllabus: {
+            title: '',
+            description: '',
+            detailed_description: [],
+        },
         for_whom: { title: '', description: '', content: [] },
         section_working: '',
         course_highlights: { title: '', description: '', image: null, points: [] },
@@ -207,8 +215,9 @@ export default function AddCourseLandingPage() {
     const handleFileChange = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>, field: keyof CourseLandingPage | string) => {
             const file = event.target.files?.[0] || null;
+
             setCourseLandingPage((prev) => {
-                if (field.includes('.')) {
+                if (typeof field === 'string' && field.includes('.')) {
                     const [section, subField] = field.split('.');
 
                     // Ensure section exists and is an object
@@ -222,80 +231,61 @@ export default function AddCourseLandingPage() {
                         },
                     };
                 }
+
                 return { ...prev, [field]: file };
             });
         },
         []
     );
 
-    const handleNestedChange = useCallback(
-        (section: keyof CourseLandingPage, field: string, value: any) => {
-            setCourseLandingPage((prev) => {
-                const currentSection = prev[section as keyof CourseLandingPage] || {};
-
-                return {
-                    ...prev,
-                    [section]: {
-                        ...currentSection,
-                        [field]: value,
-                    },
-                };
-            });
-        },
-        []
-    );
-
-    const handleArrayInputChange = useCallback((path: string, index: number, field: string, value: any) => {
-        setCourseLandingPage((prev) => {
-            const newState = { ...prev };
-            const pathArray = path.split('.');
-            let current: any = newState;
-
-            for (let i = 0; i < pathArray.length - 1; i++) {
-                if (!current[pathArray[i]]) {
-                    current[pathArray[i]] = Array.isArray(current) ? [] : {};
-                }
-                current = current[pathArray[i]];
-            }
-
-            const lastKey = pathArray[pathArray.length - 1];
-            if (!Array.isArray(current[lastKey])) {
-                current[lastKey] = [];
-            }
-
-            if (!current[lastKey][index]) {
-                current[lastKey][index] = {};
-            }
-
-            current[lastKey][index][field] = value;
-
-            return newState;
-        });
+    const handleNestedChange = useCallback((section: keyof CourseLandingPage, field: string, value: any) => {
+        setCourseLandingPage((prev) => ({
+            ...prev,
+            [section]: {
+                ...prev[section],
+                [field]: value,
+            },
+        }));
     }, []);
 
-    const handleAddArrayItem = useCallback((path: string, newItem: any) => {
-        setCourseLandingPage((prev) => {
-            const newState = { ...prev };
-            const pathArray = path.split('.');
-            let current: any = newState;
+    const handleArrayInputChange = (path: string, index: number, field: string, value: any) => {
+        setCourseLandingPage((prevState) => {
+            const paths = path.split('.');
+            const updatedState = { ...prevState };
 
-            for (let i = 0; i < pathArray.length - 1; i++) {
-                const key = pathArray[i];
-                if (!current[key]) {
-                    current[key] = Array.isArray(current) ? [] : {};
-                }
-                current = current[key];
+            let current = updatedState;
+            for (let i = 0; i < paths.length - 1; i++) {
+                current = current[paths[i]];
             }
 
-            const finalKey = pathArray[pathArray.length - 1];
-            if (!Array.isArray(current[finalKey])) {
-                current[finalKey] = [];
+            const fieldArray = current[paths[paths.length - 1]];
+            if (Array.isArray(fieldArray)) {
+                fieldArray[index][field] = value; // Update the specific field
             }
 
-            current[finalKey].push(newItem);
-            return newState;
+            return updatedState;
         });
-    }, []);
+    };
+
+    const handleAddArrayItem = (path: string, newItem: any) => {
+        setCourseLandingPage((prevState) => {
+            const paths = path.split('.');
+            const updatedState = { ...prevState };
+
+            let current = updatedState;
+            for (let i = 0; i < paths.length - 1; i++) {
+                current = current[paths[i]];
+            }
+
+            const fieldArray = current[paths[paths.length - 1]];
+            if (Array.isArray(fieldArray)) {
+                current[paths[paths.length - 1]] = [...fieldArray, newItem]; // Add new item to the array
+            }
+
+            return updatedState;
+        });
+    };
+
 
     const handleRemoveArrayItem = useCallback((path: string, index: number) => {
         setCourseLandingPage((prev) => {
@@ -304,27 +294,23 @@ export default function AddCourseLandingPage() {
             let current: any = newState;
 
             for (let i = 0; i < pathArray.length - 1; i++) {
-                if (!current[pathArray[i]]) {
-                    return prev;
-                }
+                if (!current[pathArray[i]]) return prev;
                 current = current[pathArray[i]];
             }
 
             const lastKey = pathArray[pathArray.length - 1];
-            if (!Array.isArray(current[lastKey])) {
-                return prev;
-            }
+            if (!Array.isArray(current[lastKey])) return prev;
 
-            current[lastKey].splice(index, 1);
+            current[lastKey] = current[lastKey].filter((_: any, idx: number) => idx !== index);
+
             return newState;
         });
     }, []);
 
-   const handleSubmit = async (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const formData = new FormData();
 
-        // Helper function to append data to FormData
         const appendToFormData = (key: string, value: any) => {
             if (value instanceof File) {
                 formData.append(key, value);
@@ -346,18 +332,19 @@ export default function AddCourseLandingPage() {
             appendToFormData(key, value);
         });
 
-        // Special handling for nested arrays and file uploads
-        courseLandingPage.tools.image.forEach((tool, index) => {
-            if (tool.image_icon instanceof File) {
-                formData.append(`tools[image][${index}]`, tool.image_icon);
-            }
-        });
+        if (courseLandingPage.tools && Array.isArray(courseLandingPage.tools.image)) {
+            courseLandingPage.tools.image.forEach((tool, index) => {
+                if (tool.image_icon instanceof File) {
+                    formData.append(`tools[image][${index}]`, tool.image_icon);
+                }
+            });
+        }
 
         // Log FormData contents for debugging
         for (let [key, value] of formData.entries()) {
             console.log(`${key}:`, value);
         }
-
+        console.warn("Data being sent to the backend:", formData);
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course/create`, {
                 method: 'POST',
@@ -577,28 +564,41 @@ export default function AddCourseLandingPage() {
                             onChange={(e) => handleNestedChange('skills_learning', 'title', e.target.value)}
                             margin="normal"
                         />
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                            {courseLandingPage.skills_learning.tags.map((tag, index) => (
+
+                        {/* Input field for adding a new skill tag */}
+                        <TextField
+                            fullWidth
+                            label="New Skill Tag"
+                            id="new-skill-tag"
+                            margin="normal"
+                        />
+
+                        {/* Button to add new skill tag */}
+                        <Button
+                            startIcon={<AddIcon />}
+                            onClick={() => {
+                                const input = document.getElementById('new-skill-tag') as HTMLInputElement;
+                                const newTagValue = input?.value.trim();
+
+                                if (newTagValue) {
+                                    handleAddArrayItem('skills_learning.tags', newTagValue);  // Add the tag to the array
+                                    input.value = '';  // Clear the input field after adding
+                                }
+                            }}
+                        >
+                            Add Skill Tag
+                        </Button>
+
+                        {/* Display added tags */}
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
+                            {courseLandingPage.skills_learning.tags?.map((tag, index) => (
                                 <Chip
                                     key={index}
                                     label={tag}
-                                    onDelete={() => handleRemoveArrayItem('skills_learning.tags', index)}
+                                    onDelete={() => handleRemoveArrayItem('skills_learning.tags', index)}  // Remove tag
                                 />
                             ))}
                         </Box>
-                        <TextField
-                            fullWidth
-                            label="Add Skill Tag"
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    const target = e.target as HTMLInputElement;
-                                    handleAddArrayItem('skills_learning.tags', target.value);
-                                    target.value = '';
-                                }
-                            }}
-                            margin="normal"
-                        />
 
                         <TextField
                             fullWidth
@@ -618,69 +618,102 @@ export default function AddCourseLandingPage() {
                             margin="normal"
                         />
 
-                        <Typography variant="h6" gutterBottom>Syllabus</Typography>
-                        <TextField
-                            fullWidth
-                            label="Title"
-                            value={courseLandingPage.syllabus.title}
-                            onChange={(e) => handleNestedChange('syllabus', 'title', e.target.value)}
-                            margin="normal"
-                        />
-                        <TextField
-                            fullWidth
-                            label="Description"
-                            value={courseLandingPage.syllabus.description}
-                            onChange={(e) => handleNestedChange('syllabus', 'description', e.target.value)}
-                            margin="normal"
-                            multiline
-                            rows={3}
-                        />
-                        {courseLandingPage.syllabus.detailed_description.map((description, index) => (
-                            <Box key={index} sx={{ border: '1px solid #ccc', p: 2, mb: 2 }}>
-                                <TextField
-                                    fullWidth
-                                    label="Title"
-                                    value={description.title}
-                                    onChange={(e) => handleArrayInputChange('syllabus.detailed_description', index, 'title', e.target.value)}
-                                    margin="normal"
-                                />
-                                {description.heading.map((heading, headingIndex) => (
-                                    <Box key={headingIndex} sx={{ ml: 2, mb: 1 }}>
+                        <Card>
+                            <CardContent>
+                                <div>
+                                    <Typography variant="h6">Syllabus Title</Typography>
+                                    <TextField
+                                        id="syllabus-title"
+                                        variant="outlined"
+                                        fullWidth
+                                        value={courseLandingPage.syllabus?.title || ''}
+                                        onChange={(e) => handleNestedChange('syllabus', 'title', e.target.value)}
+                                    />
+                                </div>
+
+                                <div>
+                                    <Typography variant="h6">Syllabus Description</Typography>
+                                    <TextField
+                                        id="syllabus-description"
+                                        variant="outlined"
+                                        multiline
+                                        fullWidth
+                                        rows={3}
+                                        value={courseLandingPage.syllabus?.description || ''}
+                                        onChange={(e) => handleNestedChange('syllabus', 'description', e.target.value)}
+                                    />
+                                </div>
+
+                                {Array.isArray(courseLandingPage.syllabus.detailed_description) && courseLandingPage.syllabus.detailed_description.map((description, index) => (
+                                    <Card key={index} className="p-4">
                                         <TextField
-                                            label="Heading Title"
-                                            value={heading.title}
-                                            onChange={(e) => handleArrayInputChange(`syllabus.detailed_description[${index}].heading`, headingIndex, 'title', e.target.value)}
-                                            margin="dense"
+                                            variant="outlined"
+                                            fullWidth
+                                            value={description.title}
+                                            onChange={(e) => handleArrayInputChange('syllabus.detailed_description', index, 'title', e.target.value)}
+                                            placeholder="Description Title"
                                         />
-                                        <TextField
-                                            label="Lesson Number"
-                                            type="number"
-                                            value={heading.lesson_no}
-                                            onChange={(e) => handleArrayInputChange(`syllabus.detailed_description[${index}].heading`, headingIndex, 'lesson_no', parseInt(e.target.value))}
-                                            margin="dense"
-                                        />
-                                        <TextField
-                                            label="Time"
-                                            value={heading.time}
-                                            onChange={(e) => handleArrayInputChange(`syllabus.detailed_description[${index}].heading`, headingIndex, 'time', e.target.value)}
-                                            margin="dense"
-                                        />
-                                        <IconButton onClick={() => handleRemoveArrayItem(`syllabus.detailed_description[${index}].heading`, headingIndex)}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Box>
+
+                                        {description.heading.map((heading, headingIndex) => (
+                                            <div key={headingIndex} className="ml-4 space-y-2">
+                                                <TextField
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    value={heading.title}
+                                                    onChange={(e) => handleArrayInputChange(`syllabus.detailed_description.${index}.heading`, headingIndex, 'title', e.target.value)}
+                                                    placeholder="Heading Title"
+                                                />
+                                                <TextField
+                                                    variant="outlined"
+                                                    type="number"
+                                                    fullWidth
+                                                    value={heading.lesson_no}
+                                                    onChange={(e) => handleArrayInputChange(`syllabus.detailed_description.${index}.heading`, headingIndex, 'lesson_no', parseInt(e.target.value))}
+                                                    placeholder="Lesson Number"
+                                                />
+                                                <TextField
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    value={heading.time}
+                                                    onChange={(e) => handleArrayInputChange(`syllabus.detailed_description.${index}.heading`, headingIndex, 'time', e.target.value)}
+                                                    placeholder="Time"
+                                                />
+                                                <Button
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    onClick={() => handleRemoveArrayItem(`syllabus.detailed_description.${index}.heading`, headingIndex)}
+                                                >
+                                                    Remove Heading
+                                                </Button>
+                                            </div>
+                                        ))}
+
+                                        <Button
+                                            type="button"
+                                            variant="outlined"
+                                            onClick={() => handleAddArrayItem(`syllabus.detailed_description.${index}.heading`, { title: '', lesson_no: 0, time: '' })}
+                                        >
+                                            Add Heading
+                                        </Button>
+
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            onClick={() => handleRemoveArrayItem('syllabus.detailed_description', index)}
+                                        >
+                                            Remove Description
+                                        </Button>
+                                    </Card>
                                 ))}
-                                <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem(`syllabus.detailed_description[${index}].heading`, { title: '', lesson_no: 0, time: '' })}>
-                                    Add Heading
+
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => handleAddArrayItem('syllabus.detailed_description', { title: '', heading: [] })}
+                                >
+                                    Add Syllabus Description
                                 </Button>
-                                <IconButton onClick={() => handleRemoveArrayItem('syllabus.detailed_description', index)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </Box>
-                        ))}
-                        <Button startIcon={<AddIcon />} onClick={() => handleAddArrayItem('syllabus.detailed_description', { title: '', heading: [] })}>
-                            Add Syllabus Description
-                        </Button>
+                            </CardContent>
+                        </Card>
 
                         <Typography variant="h6" gutterBottom>For Whom</Typography>
                         <TextField
