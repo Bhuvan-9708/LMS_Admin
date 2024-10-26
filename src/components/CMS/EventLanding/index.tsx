@@ -213,7 +213,7 @@ const CourseLandingPageList: React.FC = () => {
                     <Table sx={{ minWidth: 650 }} aria-label="course landing pages table">
                         <TableHead>
                             <TableRow>
-                                {['ID', 'Event', 'Title', 'Created At', 'Status', 'Action'].map((header, index) => (
+                                {['ID', 'Title', 'Created At', 'Status', 'Action'].map((header, index) => (
                                     <TableCell key={index} sx={{ fontWeight: '500', padding: '10px 24px', fontSize: '14px' }}>
                                         {header}
                                     </TableCell>

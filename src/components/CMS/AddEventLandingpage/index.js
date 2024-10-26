@@ -47,7 +47,7 @@ function EventLandingPageForm() {
                 const events = await eventsResponse.json();
                 setEvents(events.data);
 
-                const heroSectionsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page-hero-section/`);
+                const heroSectionsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page-hero-section/?type=event`);
                 const heroSections = await heroSectionsResponse.json();
                 setHeroSections(heroSections.data);
 

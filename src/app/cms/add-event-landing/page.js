@@ -1,7 +1,7 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import NextLink from 'next/link';
-import AddEventLanding from "@/components/CMS/AddEventLanding";
+import AddEventLanding from "@/components/CMS/AddEventLandingDetails";
 
 export default function Page() {
     return (

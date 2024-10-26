@@ -56,6 +56,23 @@ function EventLandingPageDetailsForm() {
 
         fetchData();
     }, []);
+    
+    const handleFaqChange = (e) => {
+        const { name, value } = e.target;
+
+        if (name === 'faq') {
+            const selectedValue = e.target.value;
+            setFormData(prev => ({
+                ...prev,
+                [name]: [...prev[name], selectedValue],
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -201,7 +218,7 @@ function EventLandingPageDetailsForm() {
                 formDataToSend.append(`tools[image][${index}]`, img.image_icon);
             }
         });
-
+        formDataToSend.append('landing_page_id', formData.landing_page_id);
         formDataToSend.append('pro[title]', formData.pro.title);
         formDataToSend.append('pro[description]', formData.pro.description);
         formData.pro.points.forEach((point, index) => {
@@ -214,16 +231,20 @@ function EventLandingPageDetailsForm() {
             formDataToSend.append(`skills_learn[tags][${index}]`, tag);
         });
 
-        formData.faq.forEach((faqId, index) => {
-            formDataToSend.append(`faq[${index}]`, faqId);
-        });
+        if (Array.isArray(formData.faq) && formData.faq.length > 0) {
+            formData.faq.forEach((faqId) => {
+                formDataToSend.append('faq[]', faqId);
+            });
+        } else {
+            console.error("formData.faq is not an array or is empty", formData.faq);
+        }
 
         formData.meta_keywords.forEach((keyword, index) => {
             formDataToSend.append(`meta_keywords[${index}]`, keyword);
         });
 
         try {
-            const response = await fetch('/api/event-landing-page-details', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/webinar-details/v1/create`, {
                 method: 'POST',
                 body: formDataToSend,
             });
@@ -241,6 +262,7 @@ function EventLandingPageDetailsForm() {
 
     return (
         <form onSubmit={handleSubmit}>
+            <Typography variant="h6" gutterBottom>FAQs</Typography>
             <FormControl fullWidth margin="normal" required>
                 <InputLabel>Landing Page</InputLabel>
                 <Select
@@ -255,24 +277,18 @@ function EventLandingPageDetailsForm() {
             </FormControl>
 
             <Typography variant="h6" gutterBottom>FAQs</Typography>
-            {faqs.map(faq => (
-                <FormControlLabel
-                    key={faq._id}
-                    control={
-                        <Checkbox
-                            checked={formData.faq.includes(faq._id)}
-                            onChange={(e) => {
-                                const newFaqs = e.target.checked
-                                    ? [...formData.faq, faq._id]
-                                    : formData.faq.filter(id => id !== faq._id);
-                                setFormData(prevData => ({ ...prevData, faq: newFaqs }));
-                            }}
-                            name={`faq-${faq._id}`}
-                        />
-                    }
-                    label={faq.question}
-                />
-            ))}
+            <FormControl fullWidth margin="normal" required>
+                <InputLabel>Faq</InputLabel>
+                <Select
+                    name="faq"
+                    value={formData.faq}
+                    onChange={handleFaqChange}
+                >
+                    {faqs.map(page => (
+                        <MenuItem key={page._id} value={page._id}>{page.title}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
 
             <Typography variant="h6" gutterBottom>Tools</Typography>
             <TextField
