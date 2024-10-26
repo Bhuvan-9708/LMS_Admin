@@ -116,7 +116,9 @@ const CourseLandingPageList: React.FC = () => {
     const handleAddLandingPage = () => {
         router.push('/cms/add-course-landing');
     };
-
+    const handleAddLandingPageDetails = () => {
+        router.push('/cms/add-course-landing-details');
+    };
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
@@ -202,9 +204,12 @@ const CourseLandingPageList: React.FC = () => {
                         />
                     </Box>
 
-                    <Box sx={{ padding: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ padding: 2, display: "flex", gap: 2 }}>
                         <Button variant="contained" color="primary" onClick={handleAddLandingPage}>
                             Add Course Landing Page
+                        </Button>
+                        <Button variant="contained" color="secondary" onClick={handleAddLandingPageDetails}>
+                            Add Course Landing Details
                         </Button>
                     </Box>
                 </Box>
@@ -213,7 +218,7 @@ const CourseLandingPageList: React.FC = () => {
                     <Table sx={{ minWidth: 650 }} aria-label="course landing pages table">
                         <TableHead>
                             <TableRow>
-                                {['ID', 'Course', 'Title', 'Created At', 'Status', 'Action'].map((header, index) => (
+                                {['ID', 'Title', 'Created At', 'Status', 'Action'].map((header, index) => (
                                     <TableCell key={index} sx={{ fontWeight: '500', padding: '10px 24px', fontSize: '14px' }}>
                                         {header}
                                     </TableCell>

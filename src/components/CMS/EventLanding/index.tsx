@@ -208,7 +208,7 @@ const CourseLandingPageList: React.FC = () => {
                         <Button variant="contained" color="primary" onClick={handleAddLandingPage}>
                             Add Event Landing Page
                         </Button>
-                        <Button variant="contained" color="primary" onClick={handleAddLandingPageDetails}>
+                        <Button variant="contained" color="secondary" onClick={handleAddLandingPageDetails}>
                             Add Event Landing Page Details
                         </Button>
                     </Box>
