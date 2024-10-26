@@ -113,8 +113,11 @@ const CourseLandingPageList: React.FC = () => {
         fetchLandingPages();
     }, []);
 
-    const handleAddLandingPage = () => {
+    const handleAddLandingPageDetails = () => {
         router.push('/cms/add-event-landing');
+    };
+    const handleAddLandingPage = () => {
+        router.push('/cms/add-event-landing-page');
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,10 +204,12 @@ const CourseLandingPageList: React.FC = () => {
                             style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
                         />
                     </Box>
-
-                    <Box sx={{ padding: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ padding: 2, display: "flex", gap: 2 }}>
                         <Button variant="contained" color="primary" onClick={handleAddLandingPage}>
                             Add Event Landing Page
+                        </Button>
+                        <Button variant="contained" color="primary" onClick={handleAddLandingPageDetails}>
+                            Add Event Landing Page Details
                         </Button>
                     </Box>
                 </Box>

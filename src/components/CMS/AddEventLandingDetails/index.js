@@ -21,6 +21,7 @@ function EventLandingPageDetailsForm() {
             title: '',
             image: []
         },
+        certificate: '',
         pro: {
             title: '',
             description: '',
@@ -38,6 +39,7 @@ function EventLandingPageDetailsForm() {
 
     const [landingPages, setLandingPages] = useState([]);
     const [faqs, setFaqs] = useState([]);
+    const [certificate, setCertificate] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -49,6 +51,11 @@ function EventLandingPageDetailsForm() {
                 const faqsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/faq/`);
                 const faqs = await faqsResponse.json();
                 setFaqs(faqs.data);
+
+                const certificateResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/certificate/`);
+                const certificates = await certificateResponse.json();
+                setCertificate(certificates.data);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -56,22 +63,27 @@ function EventLandingPageDetailsForm() {
 
         fetchData();
     }, []);
-    
-    const handleFaqChange = (e) => {
-        const { name, value } = e.target;
 
-        if (name === 'faq') {
-            const selectedValue = e.target.value;
-            setFormData(prev => ({
-                ...prev,
-                [name]: [...prev[name], selectedValue],
-            }));
-        } else {
-            setFormData(prev => ({
-                ...prev,
-                [name]: value,
-            }));
-        }
+    const handleLandingPageIdChange = (e) => {
+        setFormData(prev => ({
+            ...prev,
+            landing_page_id: e.target.value  // Single value
+        }));
+    };
+
+    const handleCertificateChange = (e) => {
+        setFormData(prev => ({
+            ...prev,
+            certificate: e.target.value  // Single value
+        }));
+    };
+
+    const handleFaqChange = (e) => {
+        const selectedValue = e.target.value;
+        setFormData(prev => ({
+            ...prev,
+            faq: [...prev.faq, selectedValue],
+        }));
     };
 
     const handleInputChange = (e) => {
@@ -81,6 +93,7 @@ function EventLandingPageDetailsForm() {
             [name]: value
         }));
     };
+
 
     const handleToolsChange = (e) => {
         const { name, value } = e.target;
@@ -206,19 +219,15 @@ function EventLandingPageDetailsForm() {
         e.preventDefault();
         const formDataToSend = new FormData();
 
-        Object.keys(formData).forEach(key => {
-            if (key !== 'tools' && key !== 'pro' && key !== 'skills_learn' && key !== 'faq' && key !== 'meta_keywords') {
-                formDataToSend.append(key, formData[key]);
-            }
-        });
-
+        formDataToSend.append('certificate', formData.certificate);
+        formDataToSend.append('landing_page_id', formData.landing_page_id);
         formDataToSend.append('tools[title]', formData.tools.title);
         formData.tools.image.forEach((img, index) => {
             if (img.image_icon) {
                 formDataToSend.append(`tools[image][${index}]`, img.image_icon);
             }
         });
-        formDataToSend.append('landing_page_id', formData.landing_page_id);
+
         formDataToSend.append('pro[title]', formData.pro.title);
         formDataToSend.append('pro[description]', formData.pro.description);
         formData.pro.points.forEach((point, index) => {
@@ -262,13 +271,14 @@ function EventLandingPageDetailsForm() {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Typography variant="h6" gutterBottom>FAQs</Typography>
+            <Typography variant="h6" gutterBottom>Event Landing Page Details</Typography>
+
             <FormControl fullWidth margin="normal" required>
                 <InputLabel>Landing Page</InputLabel>
                 <Select
                     name="landing_page_id"
                     value={formData.landing_page_id}
-                    onChange={handleInputChange}
+                    onChange={handleLandingPageIdChange}
                 >
                     {landingPages.map(page => (
                         <MenuItem key={page._id} value={page._id}>{page.title}</MenuItem>
@@ -286,6 +296,20 @@ function EventLandingPageDetailsForm() {
                 >
                     {faqs.map(page => (
                         <MenuItem key={page._id} value={page._id}>{page.title}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <Typography variant="h6" gutterBottom>Certificate</Typography>
+            <FormControl fullWidth margin="normal" required>
+                <InputLabel>Certificate</InputLabel>
+                <Select
+                    name="certificate"
+                    value={formData.certificate}
+                    onChange={handleCertificateChange}
+                >
+                    {certificate.map(page => (
+                        <MenuItem key={page._id} value={page._id}>{page.certification_title}</MenuItem>
                     ))}
                 </Select>
             </FormControl>
