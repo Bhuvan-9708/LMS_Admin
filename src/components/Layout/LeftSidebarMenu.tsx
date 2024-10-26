@@ -1073,6 +1073,51 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                         Hero Section
                       </Link>
                     </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/landing-hero-section/"
+                        className={`sidemenu-link ${pathname === "/cms/landing-hero-section/"
+                          }`}
+                      >
+                        Landing Page Hero Section
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/faq/"
+                        className={`sidemenu-link ${pathname === "/cms/faq/"
+                          }`}
+                      >
+                        Faq
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/syllabus/"
+                        className={`sidemenu-link ${pathname === "/cms/syllabus/"
+                          }`}
+                      >
+                        Syllabus
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/certificate/"
+                        className={`sidemenu-link ${pathname === "/cms/certificate/"
+                          }`}
+                      >
+                        Certificate
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/cms/feedback/"
+                        className={`sidemenu-link ${pathname === "/cms/feedback/"
+                          }`}
+                      >
+                        Feedback
+                      </Link>
+                    </li>
                   </ul>
                 </AccordionDetails>
               </Accordion>
