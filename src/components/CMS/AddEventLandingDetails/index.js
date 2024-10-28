@@ -12,7 +12,7 @@ import {
     Typography,
     Box
 } from '@mui/material';
-
+import { useRouter } from 'next/navigation';
 function EventLandingPageDetailsForm() {
     const [formData, setFormData] = useState({
         landing_page_id: '',

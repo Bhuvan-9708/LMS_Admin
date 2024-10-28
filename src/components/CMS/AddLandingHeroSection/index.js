@@ -14,6 +14,7 @@ import {
     FormControl,
 } from '@mui/material';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const LandingPageHeroSectionForm = () => {
     const [formData, setFormData] = useState({
@@ -34,7 +35,7 @@ const LandingPageHeroSectionForm = () => {
         time: '',
         is_deleted: false,
     });
-
+    const router = useRouter();
     const [events, setEvents] = useState([]);
     const [courses, setCourses] = useState([]);
 
@@ -82,8 +83,8 @@ const LandingPageHeroSectionForm = () => {
                 }
             }
         } else if (selectedType === 'event') {
-            handleChange('course_id', undefined); 
-            handleChange('batch_start_date', ''); 
+            handleChange('course_id', undefined);
+            handleChange('batch_start_date', '');
             handleChange('batch_start_date_text', '');
         }
     };
@@ -117,14 +118,14 @@ const LandingPageHeroSectionForm = () => {
 
         for (const key in formData) {
             const value = formData[key];
-            if (value !== undefined && value !== null) { 
+            if (value !== undefined && value !== null) {
                 if (value instanceof File) {
-                    submitData.append(key, value); 
+                    submitData.append(key, value);
                 } else {
                     submitData.append(key, value);
                 }
             }
-        }    
+        }
 
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page-hero-section/create`, submitData, {
@@ -133,8 +134,7 @@ const LandingPageHeroSectionForm = () => {
                 }
             });
             console.log('Landing page hero section submitted successfully:', response.data);
-
-            // Reset form after submission
+            router.push('/cms/landing-hero-section')
             setFormData({
                 type: '',
                 event_id: '',

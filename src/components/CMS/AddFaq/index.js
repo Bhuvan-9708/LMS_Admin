@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { TextField, Card, CardContent, Box, Button, FormControlLabel, Checkbox, Typography, Grid } from '@mui/material';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const AddFaqForm = () => {
     const [faq, setFaq] = useState({
@@ -12,7 +13,7 @@ const AddFaqForm = () => {
         ],
         is_deleted: false
     });
-
+    router = useRouter();
     const handleChange = (field, value) => {
         setFaq(prev => ({ ...prev, [field]: value }));
     };
@@ -45,6 +46,7 @@ const AddFaqForm = () => {
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/faq/create`, faq);
             console.log('FAQ submitted successfully:', response.data);
+            router.push('/cms/faq')
             setFaq({
                 title: '',
                 description: '',

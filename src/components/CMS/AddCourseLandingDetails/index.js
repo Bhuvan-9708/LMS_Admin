@@ -1,5 +1,4 @@
-'use client'
-
+"use client"
 import React, { useState, useEffect } from 'react';
 import {
   TextField,
@@ -9,8 +8,7 @@ import {
   Select,
   MenuItem,
   Typography,
-  Box,
-  CircularProgress
+  Box
 } from '@mui/material';
 
 function CourseLandingPageDetailsForm() {
@@ -33,73 +31,62 @@ function CourseLandingPageDetailsForm() {
   const [courseLandingPages, setCourseLandingPages] = useState([]);
   const [sectionWorkings, setSectionWorkings] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
       try {
-        const [courseLandingPagesData, sectionWorkingsData, feedbacksData] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course`).then(res => res.json()),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section-working/`).then(res => res.json()),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback`).then(res => res.json())
-        ]);
+        const courseLandingPagesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course`);
+        const courseLandingPagesData = await courseLandingPagesResponse.json();
+        setCourseLandingPages(courseLandingPagesData.data);
 
-        setCourseLandingPages(courseLandingPagesData.data || []);
-        setSectionWorkings(sectionWorkingsData.data || []);
-        setFeedbacks(feedbacksData.data || []);
+        const sectionWorkingsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section-working/`);
+        const sectionWorkingsData = await sectionWorkingsResponse.json();
+        setSectionWorkings(sectionWorkingsData.data);
+
+        const feedbacksResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback`);
+        const feedbacksData = await feedbacksResponse.json();
+        setFeedbacks(feedbacksData.data);
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
-  const handleInputChange = (e, parent = null) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => {
-      if (parent) {
-        return {
-          ...prevData,
-          [parent]: {
-            ...prevData[parent],
-            [name]: value
-          }
-        };
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleNestedInputChange = (section, field, value) => {
+    setFormData(prevData => ({
+      ...prevData,
+      [section]: {
+        ...prevData[section],
+        [field]: value
       }
-      return {
-        ...prevData,
-        [name]: value
-      };
-    });
+    }));
   };
 
   const handleArrayInputChange = (section, index, field, value) => {
     setFormData(prevData => {
-      const [parent, nestedField] = section.split('.');
-      const newArray = [...prevData[parent][nestedField]];
+      const newArray = [...prevData[section]];
       newArray[index] = { ...newArray[index], [field]: value };
       return {
         ...prevData,
-        [parent]: {
-          ...prevData[parent],
-          [nestedField]: newArray
-        }
+        [section]: newArray
       };
     });
   };
 
   const addArrayItem = (section, newItem) => {
-    const [parent, nestedField] = section.split('.');
     setFormData(prevData => ({
       ...prevData,
-      [parent]: {
-        ...prevData[parent],
-        [nestedField]: [...prevData[parent][nestedField], newItem]
-      }
+      [section]: [...prevData[section], newItem]
     }));
   };
 
@@ -118,12 +105,14 @@ function CourseLandingPageDetailsForm() {
     e.preventDefault();
     const formDataToSend = new FormData();
 
-    Object.entries(formData).forEach(([key, value]) => {
+    // Append all text fields
+    Object.keys(formData).forEach(key => {
       if (key !== 'course_highlights' && key !== 'meta_keywords') {
-        formDataToSend.append(key, value);
+        formDataToSend.append(key, formData[key]);
       }
     });
 
+    // Append nested objects and arrays
     formDataToSend.append('course_highlights[title]', formData.course_highlights.title);
     formDataToSend.append('course_highlights[description]', formData.course_highlights.description);
     if (formData.course_highlights.image) {
@@ -142,8 +131,7 @@ function CourseLandingPageDetailsForm() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create course landing page details');
+        throw new Error('Failed to create course landing page details');
       }
 
       const result = await response.json();
@@ -154,10 +142,6 @@ function CourseLandingPageDetailsForm() {
       // Handle error (e.g., show an error message)
     }
   };
-
-  if (isLoading) {
-    return <CircularProgress />;
-  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -180,17 +164,15 @@ function CourseLandingPageDetailsForm() {
       <TextField
         fullWidth
         label="Title"
-        name="title"
         value={formData.course_highlights.title}
-        onChange={(e) => handleInputChange(e, 'course_highlights')}
+        onChange={(e) => handleNestedInputChange('course_highlights', 'title', e.target.value)}
         margin="normal"
       />
       <TextField
         fullWidth
         label="Description"
-        name="description"
         value={formData.course_highlights.description}
-        onChange={(e) => handleInputChange(e, 'course_highlights')}
+        onChange={(e) => handleNestedInputChange('course_highlights', 'description', e.target.value)}
         margin="normal"
         multiline
         rows={4}

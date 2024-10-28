@@ -124,8 +124,7 @@ const CourseLandingPageList: React.FC = () => {
     };
 
     const filteredLandingPages = landingPages.filter(page =>
-        page.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        page.course_id.title.toLowerCase().includes(searchTerm.toLowerCase())
+        page.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {

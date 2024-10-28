@@ -2,62 +2,62 @@
 import React, { useState } from 'react';
 import { TextField, Card, CardContent, Box, Button, FormControlLabel, Checkbox, Typography, Grid } from '@mui/material';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const SyllabusForm = () => {
     const [syllabus, setSyllabus] = useState({
         title: '',
         download_syllabus_link_text: '',
         download_syllabus_link: '',
-        syllabus: {
-            title: '',
-            description: '',
-            detailed_description: [
-                {
-                    title: '',
-                    heading: [
-                        { title: '', lesson_no: 1, time: '' }
-                    ]
-                }
-            ]
-        },
+        description: '',
+        detailed_description: [
+            {
+                title: '',
+                heading: [
+                    { title: '', lesson_no: 1, time: '' }
+                ]
+            }
+        ],
         is_deleted: false
     });
-
+    const router = useRouter();
     const handleChange = (field, value) => {
         setSyllabus(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleSyllabusChange = (field, value) => {
-        setSyllabus(prev => ({
-            ...prev,
-            syllabus: { ...prev.syllabus, [field]: value }
-        }));
-    };
-
     const handleDetailedDescriptionChange = (index, field, value) => {
-        const updatedDetails = [...syllabus.syllabus.detailed_description];
+        const updatedDetails = [...syllabus.detailed_description];
         updatedDetails[index][field] = value;
         setSyllabus(prev => ({
             ...prev,
-            syllabus: { ...prev.syllabus, detailed_description: updatedDetails }
+            detailed_description: updatedDetails
         }));
     };
 
     const handleHeadingChange = (detailedIndex, headingIndex, field, value) => {
-        const updatedDetails = [...syllabus.syllabus.detailed_description];
+        const updatedDetails = [...syllabus.detailed_description];
         updatedDetails[detailedIndex].heading[headingIndex][field] = value;
         setSyllabus(prev => ({
             ...prev,
-            syllabus: { ...prev.syllabus, detailed_description: updatedDetails }
+            detailed_description: updatedDetails
         }));
     };
 
     const addHeading = (detailedIndex) => {
-        const updatedDetails = [...syllabus.syllabus.detailed_description];
+        const updatedDetails = [...syllabus.detailed_description];
         updatedDetails[detailedIndex].heading.push({ title: '', lesson_no: 1, time: '' });
         setSyllabus(prev => ({
             ...prev,
-            syllabus: { ...prev.syllabus, detailed_description: updatedDetails }
+            detailed_description: updatedDetails
+        }));
+    };
+
+    const removeHeading = (detailedIndex, headingIndex) => {
+        const updatedDetails = [...syllabus.detailed_description];
+        updatedDetails[detailedIndex].heading.splice(headingIndex, 1);
+        setSyllabus(prev => ({
+            ...prev,
+            detailed_description: updatedDetails
         }));
     };
 
@@ -66,17 +66,15 @@ const SyllabusForm = () => {
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/syllabus/create`, syllabus);
             console.log('Syllabus submitted successfully:', response.data);
+            router.push('/cms/syllabus');
             setSyllabus({
                 title: '',
                 download_syllabus_link_text: '',
                 download_syllabus_link: '',
-                syllabus: {
-                    title: '',
-                    description: '',
-                    detailed_description: [
-                        { title: '', heading: [{ title: '', lesson_no: 1, time: '' }] }
-                    ]
-                },
+                description: '',
+                detailed_description: [
+                    { title: '', heading: [{ title: '', lesson_no: 1, time: '' }] }
+                ],
                 is_deleted: false
             });
         } catch (error) {
@@ -116,26 +114,17 @@ const SyllabusForm = () => {
                                 onChange={(e) => handleChange('download_syllabus_link', e.target.value)}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Description"
+                                variant="outlined"
+                                fullWidth
+                                value={syllabus.description}
+                                onChange={(e) => handleChange('description', e.target.value)}
+                            />
+                        </Grid>
 
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Syllabus Title"
-                                variant="outlined"
-                                fullWidth
-                                value={syllabus.syllabus.title}
-                                onChange={(e) => handleSyllabusChange('title', e.target.value)}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Syllabus Description"
-                                variant="outlined"
-                                fullWidth
-                                value={syllabus.syllabus.description}
-                                onChange={(e) => handleSyllabusChange('description', e.target.value)}
-                            />
-                        </Grid>
-                        {syllabus.syllabus.detailed_description.map((detail, detailIndex) => (
+                        {syllabus.detailed_description.map((detail, detailIndex) => (
                             <Grid container key={detailIndex} spacing={3}>
                                 <Grid item xs={12}>
                                     <Card className="mt-3" style={{ width: '100%' }}>
@@ -186,6 +175,14 @@ const SyllabusForm = () => {
                                                                 }
                                                             />
                                                         </Box>
+                                                        <Button
+                                                            sx={{ mt: 1 }}
+                                                            variant="outlined"
+                                                            color="error"
+                                                            onClick={() => removeHeading(detailIndex, headingIndex)}
+                                                        >
+                                                            Remove Heading
+                                                        </Button>
                                                     </CardContent>
                                                 </Card>
                                             ))}
@@ -197,6 +194,7 @@ const SyllabusForm = () => {
                                 </Grid>
                             </Grid>
                         ))}
+
                         <FormControlLabel sx={{ m: 2 }}
                             control={
                                 <Checkbox

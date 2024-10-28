@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { TextField, Card, CardContent, Button, FormControlLabel, Checkbox, Typography, Grid } from '@mui/material';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const FeedbackForm = () => {
     const [feedbackData, setFeedbackData] = useState({
@@ -18,7 +19,7 @@ const FeedbackForm = () => {
         ],
         is_deleted: false
     });
-
+    const router = useRouter();
     const handleChange = (field, value) => {
         setFeedbackData(prev => ({ ...prev, [field]: value }));
     };
@@ -46,6 +47,7 @@ const FeedbackForm = () => {
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback/create`, feedbackData);
             console.log('Feedback submitted successfully:', response.data);
+            router.push('/cms/feedback')
             setFeedbackData({
                 title: '',
                 description: '',

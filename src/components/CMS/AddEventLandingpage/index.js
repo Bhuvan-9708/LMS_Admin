@@ -12,7 +12,7 @@ import {
     Typography,
     Box
 } from '@mui/material';
-
+import { useRouter } from 'next/navigation';
 function EventLandingPageForm() {
     const [formData, setFormData] = useState({
         title: '',
@@ -34,7 +34,7 @@ function EventLandingPageForm() {
         feedbacks: '',
         is_active: true,
     });
-
+    const router = useRouter();
     const [syllabus, setSyllabus] = useState([])
     const [events, setEvents] = useState([]);
     const [heroSections, setHeroSections] = useState([]);
@@ -184,6 +184,7 @@ function EventLandingPageForm() {
 
             const result = await response.json();
             console.log('Event landing page created:', result);
+            results.push('/cms/event-landing');
         } catch (error) {
             console.error('Error creating event landing page:', error);
         }

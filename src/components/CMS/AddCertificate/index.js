@@ -12,6 +12,7 @@ import {
     Grid
 } from '@mui/material';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const CertificateForm = () => {
     const [certificateData, setCertificateData] = useState({
@@ -27,6 +28,7 @@ const CertificateForm = () => {
         ],
         is_deleted: false
     });
+    const router = useRouter();
 
     const handleChange = (field, value) => {
         setCertificateData(prev => ({ ...prev, [field]: value }));
@@ -78,7 +80,7 @@ const CertificateForm = () => {
                 }
             });
             console.log('Certificate submitted successfully:', response.data);
-            // Reset form after submission
+            router.push('/cms/certificate')
             setCertificateData({
                 certification_title: '',
                 certification_heading: '',
