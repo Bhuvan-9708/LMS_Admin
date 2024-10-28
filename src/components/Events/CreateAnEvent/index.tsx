@@ -73,7 +73,6 @@ interface EventFormData {
   certificate: string;
   certificate_description: string;
   schedule: Array<{ day: number; time: string; date: Dayjs | null }>;
-  syllabus: string;
 }
 
 interface FormErrors {
@@ -112,7 +111,6 @@ const CreateAnEvent: React.FC = () => {
     schedule: [{ day: 0, time: '', date: null }],
     organizer: '',
     status: 'pending',
-    syllabus: ''
   });
   const router = useRouter();
   const [instructors, setInstructors] = useState<Instructor[]>([]);
@@ -945,20 +943,6 @@ const CreateAnEvent: React.FC = () => {
                 </Box>
               ))}
               <Button onClick={() => handleAddArrayItem('schedule')}>Add Schedule</Button>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Syllabus"
-                name="syllabus"
-                value={formData.syllabus}
-                onChange={handleInputChange}
-                multiline
-                rows={4}
-                error={!!errors.syllabus}
-                helperText={errors.syllabus}
-                required
-              />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Box>
