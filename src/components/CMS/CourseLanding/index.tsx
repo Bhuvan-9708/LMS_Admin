@@ -113,7 +113,6 @@ const CourseLandingPageList: React.FC = () => {
 
         fetchLandingPages();
     }, []);
-
     const handleAddLandingPage = () => {
         router.push('/cms/add-course-landing');
     };
