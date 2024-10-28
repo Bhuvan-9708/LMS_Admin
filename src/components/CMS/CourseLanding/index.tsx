@@ -123,9 +123,9 @@ const CourseLandingPageList: React.FC = () => {
         setSearchTerm(event.target.value);
     };
 
-    const filteredLandingPages = landingPages.filter(page =>
-        page.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredLandingPages = Array.isArray(landingPages)
+        ? landingPages.filter(page => page.title.toLowerCase().includes(searchTerm.toLowerCase()))
+        : [];
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -230,7 +230,6 @@ const CourseLandingPageList: React.FC = () => {
                                 .map((landingPage, index) => (
                                     <TableRow key={landingPage._id}>
                                         <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                                        {/* <TableCell>{landingPage.course_id}</TableCell> */}
                                         <TableCell>{landingPage.title}</TableCell>
                                         <TableCell>{new Date(landingPage.createdAt).toLocaleDateString()}</TableCell>
                                         <TableCell>
