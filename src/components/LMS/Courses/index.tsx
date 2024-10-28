@@ -154,22 +154,19 @@ const Courses: React.FC = () => {
     console.log("Course ID:", id);
     console.log("Update Data:", updateData);
 
-    // Fetch the current course data
     const courseResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/status/${id}`);
     const course = await courseResponse.json();
 
-    // Ensure `is_active` is a boolean value
     const dataToUpdate = {
-      status: updateData.status ?? course.status, // Only update if provided
+      status: updateData.status ?? course.status,
       is_active: updateData.isActive !== undefined ? Boolean(updateData.isActive) : Boolean(course.is_active)  // Ensure boolean value
     };
 
-    // Now send both fields in the request body
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToUpdate),  // Send both fields in the body
+        body: JSON.stringify(dataToUpdate),  
       });
       const result = await response.json();
       if (result.success) {
