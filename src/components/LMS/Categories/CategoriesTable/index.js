@@ -1,0 +1,370 @@
+'use client'
+
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Dialog,
+  Card,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CloseIcon from '@mui/icons-material/Close';
+import styles from "@/components/LMS/Search.module.css";
+
+const CategoryManagement = () => {
+  const [categories, setCategories] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    is_active: true,
+    parent_category: '',
+    image: null,
+    image_icon: null,
+  });
+  const [searchTerm, setSearchTerm] = useState('');
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      const data = await response.json();
+      setCategories(data.data.categories);
+      console.log(data.data.categories);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+  const filteredCategories = categories.filter(category =>
+    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: files[0]
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+
+    Object.keys(formData).forEach(key => {
+      if (key === 'image' || key === 'image_icon') {
+        if (formData[key]) {
+          formDataToSend.append(key === 'image' ? 'category-image' : 'category-image-icon', formData[key]);
+        }
+      } else {
+        formDataToSend.append(key, formData[key]);
+      }
+    });
+
+    try {
+      const url = editingCategory
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/category/update-category/${editingCategory._id}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/category/create`;
+      const method = editingCategory ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method: method,
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save category');
+      }
+
+      const result = await response.json();
+      console.log('Category saved successfully:', result);
+      setOpenDialog(false);
+      setEditingCategory(null);
+      fetchCategories();
+      resetForm();
+    } catch (error) {
+      console.error('Error saving category:', error);
+    }
+  };
+
+  const handleEdit = (category) => {
+    setEditingCategory(category);
+    setFormData({
+      name: category.name,
+      description: category.description,
+      is_active: category.is_active,
+      parent_category: category.parent_category || '',
+      image: null,
+      image_icon: null,
+    });
+    setOpenDialog(true);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+  const handleDelete = async (categoryId) => {
+    if (window.confirm('Are you sure you want to delete this category?')) {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/${categoryId}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete category');
+        }
+
+        fetchCategories();
+      } catch (error) {
+        console.error('Error deleting category:', error);
+      }
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      description: '',
+      is_active: true,
+      parent_category: '',
+      image: null,
+      image_icon: null,
+    });
+  };
+
+  return (
+    <>
+      <Card
+        sx={{
+          boxShadow: "none",
+          borderRadius: "7px",
+          mb: "25px",
+          padding: { xs: "18px", sm: "20px", lg: "25px" },
+        }}
+        className="rmui-card"
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: "25px",
+          }}
+        >
+          <Box
+            component="form"
+            className={styles.searchBox}
+            sx={{
+              width: { sm: "265px" },
+            }}
+          >
+            <label>
+              <i className="material-symbols-outlined">search</i>
+            </label>
+            <input
+              type="text"
+              className={styles.inputSearch}
+              placeholder="Search Banner here..."
+              onChange={handleSearchChange}
+            />
+          </Box>
+          <Box sx={{ padding: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => {
+                resetForm();
+                setEditingCategory(null);
+                setOpenDialog(true);
+              }}
+              sx={{ mb: 2 }}
+            >
+              Add New Category
+            </Button>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            marginLeft: "-25px",
+            marginRight: "-25px",
+          }}
+        >
+        </Box>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="banners table">
+            <TableHead className="bg-primary-50">
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Description</TableCell>
+                <TableCell>Active</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredCategories.map((category) => (
+                <TableRow key={category._id}>
+                  <TableCell>{category.name}</TableCell>
+                  <TableCell>{category.description}</TableCell>
+                  <TableCell>{category.is_active ? 'Yes' : 'No'}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => handleEdit(category)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton onClick={() => handleDelete(category._id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+          <DialogTitle>
+            {editingCategory ? 'Edit Category' : 'Add New Category'}
+            <IconButton
+              aria-label="close"
+              onClick={() => setOpenDialog(false)}
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="name"
+                    label="Name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    id="description"
+                    label="Description"
+                    name="description"
+                    multiline
+                    rows={4}
+                    value={formData.description}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="is-active-label">Is Active</InputLabel>
+                    <Select
+                      labelId="is-active-label"
+                      id="is_active"
+                      name="is_active"
+                      value={formData.is_active}
+                      onChange={handleInputChange}
+                    >
+                      <MenuItem value={true}>Yes</MenuItem>
+                      <MenuItem value={false}>No</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    id="parent_category"
+                    label="Parent Category ID"
+                    name="parent_category"
+                    value={formData.parent_category}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <input
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    id="category-image"
+                    type="file"
+                    name="image"
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="category-image">
+                    <Button variant="contained" component="span">
+                      Upload Category Image
+                    </Button>
+                  </label>
+                  {formData.image && <Typography>{formData.image.name}</Typography>}
+                </Grid>
+                <Grid item xs={12}>
+                  <input
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    id="category-image-icon"
+                    type="file"
+                    name="image_icon"
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="category-image-icon">
+                    <Button variant="contained" component="span">
+                      Upload Category Icon
+                    </Button>
+                  </label>
+                  {formData.image_icon && <Typography>{formData.image_icon.name}</Typography>}
+                </Grid>
+              </Grid>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+            <Button onClick={handleSubmit} variant="contained">
+              {editingCategory ? 'Update' : 'Create'}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Card >
+    </>
+  );
+};
+
+export default CategoryManagement;

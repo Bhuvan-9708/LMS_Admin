@@ -83,7 +83,6 @@ const BannerTable: React.FC = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
     const router = useRouter();
-
     const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
     });
@@ -237,86 +236,87 @@ const BannerTable: React.FC = () => {
                         marginRight: "-25px",
                     }}
                 >
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="banners table">
-                            <TableHead className="bg-primary-50">
-                                <TableRow>
-                                    {["ID", "Title", "Type", "Status", "Action"].map((header, index) => (
-                                        <TableCell
-                                            key={index}
-                                            sx={{
-                                                fontWeight: "500",
-                                                padding: "10px 24px",
-                                                fontSize: "14px",
-                                            }}
-                                            className="text-black border-bottom"
-                                        >
-                                            {header}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-
-                            <TableBody>
-                                {filteredBanners.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((banner, index) => (
-                                    <TableRow key={banner._id}>
-                                        <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                                        <TableCell>{banner.title}</TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={banner.type}
-                                                color={banner.type === 'image' ? 'primary' : 'secondary'}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Switch
-                                                checked={banner.status === "active"}
-                                                onChange={(e) => handleToggleActive(banner._id, e.target.checked)}
-                                                inputProps={{ "aria-label": "controlled" }}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/banners/${banner._id}`)}>
-                                                <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
-                                            </IconButton>
-                                            <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-banner/${banner._id}`)}>
-                                                <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
-                                            </IconButton>
-                                            <IconButton aria-label="delete" color="error" onClick={() => handleDelete(banner._id)}>
-                                                <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>delete</i>
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                                {emptyRows > 0 && (
-                                    <TableRow style={{ height: 53 * emptyRows }}>
-                                        <TableCell colSpan={6} />
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                            <TableFooter>
-                                <TableRow>
-                                    <TablePagination
-                                        rowsPerPageOptions={[10, 25, 50]}
-                                        colSpan={6}
-                                        count={banners.length}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        SelectProps={{
-                                            inputProps: {
-                                                "aria-label": "rows per page",
-                                            },
-                                            native: true,
-                                        }}
-                                        onPageChange={handleChangePage}
-                                        onRowsPerPageChange={handleChangeRowsPerPage}
-                                        ActionsComponent={TablePaginationActions}
-                                    />
-                                </TableRow>
-                            </TableFooter>
-                        </Table>
-                    </TableContainer>
                 </Box>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="banners table">
+                        <TableHead className="bg-primary-50">
+                            <TableRow>
+                                {["ID", "Title", "Type", "Status", "Action"].map((header, index) => (
+                                    <TableCell
+                                        key={index}
+                                        sx={{
+                                            fontWeight: "500",
+                                            padding: "10px 24px",
+                                            fontSize: "14px",
+                                        }}
+                                        className="text-black border-bottom"
+                                    >
+                                        {header}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+
+                        <TableBody>
+                            {filteredBanners.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((banner, index) => (
+                                <TableRow key={banner._id}>
+                                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                                    <TableCell>{banner.title}</TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            label={banner.type}
+                                            color={banner.type === 'image' ? 'primary' : 'secondary'}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Switch
+                                            checked={banner.status === "active"}
+                                            onChange={(e) => handleToggleActive(banner._id, e.target.checked)}
+                                            inputProps={{ "aria-label": "controlled" }}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/banners/${banner._id}`)}>
+                                            <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
+                                        </IconButton>
+                                        <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-banner/${banner._id}`)}>
+                                            <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
+                                        </IconButton>
+                                        <IconButton aria-label="delete" color="error" onClick={() => handleDelete(banner._id)}>
+                                            <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>delete</i>
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                            {emptyRows > 0 && (
+                                <TableRow style={{ height: 53 * emptyRows }}>
+                                    <TableCell colSpan={6} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    rowsPerPageOptions={[10, 25, 50]}
+                                    colSpan={6}
+                                    count={banners.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    SelectProps={{
+                                        inputProps: {
+                                            "aria-label": "rows per page",
+                                        },
+                                        native: true,
+                                    }}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                    ActionsComponent={TablePaginationActions}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    </Table>
+                </TableContainer>
+
             </Card>
             <Snackbar
                 open={snackbarOpen}

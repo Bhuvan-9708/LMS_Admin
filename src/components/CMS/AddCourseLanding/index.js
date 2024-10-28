@@ -43,13 +43,13 @@ function CourseLandingPageForm() {
         faq: '',
         is_active: true
     });
-    router - useRouter();
     const [heroSections, setHeroSections] = useState([]);
     const [courses, setCourses] = useState([]);
     const [syllabuses, setSyllabuses] = useState([]);
     const [certificates, setCertificates] = useState([]);
     const [faqs, setFaqs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -238,7 +238,7 @@ function CourseLandingPageForm() {
 
             const result = await response.json();
             console.log('Course landing page created:', result);
-            router.push('/cms/course-landing');
+            router.push('/cms/course-landing')
         } catch (error) {
             console.error('Error creating course landing page:', error);
         }
