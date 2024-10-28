@@ -15,6 +15,7 @@ import {
     FormControlLabel,
     CircularProgress
 } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 function CourseLandingPageForm() {
     const [formData, setFormData] = useState({
@@ -26,6 +27,7 @@ function CourseLandingPageForm() {
             description: '',
             points: []
         },
+        course_benefits_title: '',
         course_benefits: [],
         syllabus: '',
         for_whom: {
@@ -41,7 +43,7 @@ function CourseLandingPageForm() {
         faq: '',
         is_active: true
     });
-
+    router - useRouter();
     const [heroSections, setHeroSections] = useState([]);
     const [courses, setCourses] = useState([]);
     const [syllabuses, setSyllabuses] = useState([]);
@@ -84,21 +86,44 @@ function CourseLandingPageForm() {
         });
     };
 
-    const handleNestedChange = (e, field, index) => {
+    const handleNestedChange = (e, field, index, subfield) => {
         const { name, value } = e.target;
-        const updatedField = [...formData[field]];
 
-        if (index !== undefined) {
-            updatedField[index][name] = value;
+        if (subfield && Array.isArray(formData[field][subfield])) {
+            const updatedContent = [...formData[field][subfield]];
+            updatedContent[index] = {
+                ...updatedContent[index],
+                [name]: value
+            };
+            setFormData({
+                ...formData,
+                [field]: {
+                    ...formData[field],
+                    [subfield]: updatedContent
+                }
+            });
+        } else if (Array.isArray(formData[field])) {
+            const updatedArray = [...formData[field]];
+            updatedArray[index] = {
+                ...updatedArray[index],
+                [name]: value
+            };
+            setFormData({
+                ...formData,
+                [field]: updatedArray
+            });
         } else {
-            updatedField[name] = value;
+            // Handle direct nested object
+            setFormData({
+                ...formData,
+                [field]: {
+                    ...formData[field],
+                    [name]: value
+                }
+            });
         }
-
-        setFormData({
-            ...formData,
-            [field]: updatedField,
-        });
     };
+
 
     const handleUserLearningPointsChange = (e, index) => {
         const { name, value } = e.target;
@@ -113,7 +138,28 @@ function CourseLandingPageForm() {
             },
         });
     };
-
+    const handleToolsChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevData => ({
+            ...prevData,
+            tools: {
+                ...prevData.tools,
+                [name]: value
+            }
+        }));
+    };
+    const handleToolImageChange = (e, index) => {
+        const file = e.target.files[0];
+        const newImages = [...formData.tools.image];
+        newImages[index] = { image_icon: file };
+        setFormData(prevData => ({
+            ...prevData,
+            tools: {
+                ...prevData.tools,
+                image: newImages
+            }
+        }));
+    };
     const handleAddPoint = () => {
         setFormData({
             ...formData,
@@ -125,10 +171,13 @@ function CourseLandingPageForm() {
     };
 
     const handleAddBenefit = () => {
-        setFormData({
-            ...formData,
-            course_benefits: [...formData.course_benefits, { title: '', description: '' }],
-        });
+        setFormData((prevData) => ({
+            ...prevData,
+            course_benefits: [
+                ...prevData.course_benefits,
+                { title: '', description: '' }
+            ]
+        }));
     };
 
     const handleAddForWhomContent = () => {
@@ -141,14 +190,14 @@ function CourseLandingPageForm() {
         });
     };
 
-    const handleAddToolImage = () => {
-        setFormData({
-            ...formData,
+    const addToolImage = () => {
+        setFormData(prevData => ({
+            ...prevData,
             tools: {
-                ...formData.tools,
-                image: [...formData.tools.image, { image_icon: '' }],
-            },
-        });
+                ...prevData.tools,
+                image: [...prevData.tools.image, { image_icon: null }]
+            }
+        }));
     };
 
     const handleSubmit = async (e) => {
@@ -156,21 +205,26 @@ function CourseLandingPageForm() {
         const formDataToSend = new FormData();
 
         Object.entries(formData).forEach(([key, value]) => {
-            if (typeof value !== 'object') {
+            if (typeof value !== 'object' || key === 'course_id') {
                 formDataToSend.append(key, value);
             }
         });
 
         formDataToSend.append('user_learning', JSON.stringify(formData.user_learning));
-        formDataToSend.append('course_benefits', JSON.stringify(formData.course_benefits));
+        formDataToSend.append('course_benefits', JSON.stringify([
+            ...formData.course_benefits
+        ]));
         formDataToSend.append('for_whom', JSON.stringify(formData.for_whom));
         formDataToSend.append('tools[title]', formData.tools.title);
 
-        formData.tools.image.forEach((img, index) => {
-            if (img.image_icon) {
-                formDataToSend.append(`tools[image][${index}]`, img.image_icon);
-            }
-        });
+        if (formData.tools.image) {
+            formData.tools.image.forEach((img, index) => {
+                if (img.image_icon) {
+                    formDataToSend.append(`tools[image][${index}]`, img.image_icon);
+                }
+            });
+        }
+        formDataToSend.append('is_active', formData.is_active === 'true');
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course/v1/create`, {
@@ -184,10 +238,9 @@ function CourseLandingPageForm() {
 
             const result = await response.json();
             console.log('Course landing page created:', result);
-            // Handle success (e.g., show a success message, redirect, etc.)
+            router.push('/cms/course-landing');
         } catch (error) {
             console.error('Error creating course landing page:', error);
-            // Handle error (e.g., show an error message)
         }
     };
 
@@ -299,13 +352,23 @@ function CourseLandingPageForm() {
                         </Grid>
                     </Grid>
                 </Grid>
-
+                <Grid item xs={12}>
+                    <TextField
+                        label="Course Benefits Title"
+                        name="course_benefits_title"
+                        value={formData.course_benefits_title}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+                </Grid>
                 <Grid item xs={12}>
                     <Typography variant="h6">Course Benefits</Typography>
                     {formData.course_benefits.map((benefit, index) => (
                         <Grid key={index} container spacing={2}>
                             <Grid item xs={6}>
                                 <TextField
+                                    sx={{ m: 1 }}
                                     label="Benefit Title"
                                     name="title"
                                     value={benefit.title}
@@ -316,6 +379,7 @@ function CourseLandingPageForm() {
 
                             <Grid item xs={6}>
                                 <TextField
+                                    sx={{ m: 1 }}
                                     label="Benefit Description"
                                     name="description"
                                     value={benefit.description}
@@ -325,7 +389,7 @@ function CourseLandingPageForm() {
                             </Grid>
                         </Grid>
                     ))}
-
+                    <br />
                     <Grid item xs={12}>
                         <Button variant="contained" color="primary" onClick={handleAddBenefit}>
                             Add Benefit
@@ -377,6 +441,7 @@ function CourseLandingPageForm() {
                             <Grid key={index} container spacing={2}>
                                 <Grid item xs={6}>
                                     <TextField
+                                        sx={{ m: 2 }}
                                         label="Content Title"
                                         name="title"
                                         value={content.title}
@@ -387,6 +452,7 @@ function CourseLandingPageForm() {
 
                                 <Grid item xs={6}>
                                     <TextField
+                                        sx={{ m: 2 }}
                                         label="Content Description"
                                         name="description"
                                         value={content.description}
@@ -405,40 +471,40 @@ function CourseLandingPageForm() {
                     </Grid>
                 </Grid>
 
-                <Grid item xs={12}>
-                    <Typography variant="h6">Tools</Typography>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <TextField
-                                label="Title"
-                                name="title"
-                                value={formData.tools.title}
-                                onChange={(e) => handleNestedChange(e, 'tools')}
-                                fullWidth
-                            />
-                        </Grid>
+                <Typography variant="h6" gutterBottom>Tools</Typography>
+                <TextField
+                    fullWidth
+                    label="Tools Title"
+                    name="title"
+                    value={formData.tools.title}
+                    onChange={handleToolsChange}
+                    margin="normal"
+                />
 
-                        {formData.tools.image.map((image, index) => (
-                            <Grid key={index} container spacing={2}>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        sx={{ m: 2 }}
-                                        type="file"
-                                        name="image_icon"
-                                        onChange={(e) => handleNestedChange(e, 'tools', index, 'image')} // Use the updated function
-                                        fullWidth
-                                    />
-                                </Grid>
-                            </Grid>
-                        ))}
-
-                        <Grid item xs={12}>
-                            <Button variant="contained" color="primary" onClick={handleAddToolImage}>
-                                Add Image
+                {formData.tools.image.map((img, index) => (
+                    <Box key={index} mb={2}>
+                        <input
+                            sx={{ m: 1 }}
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            id={`tool-image-upload-${index}`}
+                            type="file"
+                            onChange={(e) => handleToolImageChange(e, index)}
+                        />
+                        <label htmlFor={`tool-image-upload-${index}`}>
+                            <Button sx={{ m: 1 }} variant="contained" component="span">
+                                Upload Tool Image {index + 1}
                             </Button>
-                        </Grid>
-                    </Grid>
-                </Grid>
+                        </label>
+                        {img.image_icon && (
+                            <Typography variant="body2">{img.image_icon.name}</Typography>
+                        )}
+                    </Box>
+                ))}
+
+                <Button sx={{ m: 1 }} type="button" onClick={addToolImage} variant="outlined" color="primary">
+                    Add Tool Image
+                </Button>
 
                 <Grid item xs={12}>
                     <FormControl fullWidth>

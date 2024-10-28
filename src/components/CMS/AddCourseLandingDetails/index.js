@@ -10,6 +10,7 @@ import {
   Typography,
   Box
 } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 function CourseLandingPageDetailsForm() {
   const [formData, setFormData] = useState({
@@ -27,7 +28,7 @@ function CourseLandingPageDetailsForm() {
     meta_keywords: [],
     seo_url: ''
   });
-
+  const router = useRouter();
   const [courseLandingPages, setCourseLandingPages] = useState([]);
   const [sectionWorkings, setSectionWorkings] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
@@ -37,7 +38,8 @@ function CourseLandingPageDetailsForm() {
       try {
         const courseLandingPagesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course`);
         const courseLandingPagesData = await courseLandingPagesResponse.json();
-        setCourseLandingPages(courseLandingPagesData.data);
+        setCourseLandingPages(courseLandingPagesData.data.data.data);
+
 
         const sectionWorkingsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section-working/`);
         const sectionWorkingsData = await sectionWorkingsResponse.json();
@@ -72,21 +74,18 @@ function CourseLandingPageDetailsForm() {
     }));
   };
 
-  const handleArrayInputChange = (section, index, field, value) => {
-    setFormData(prevData => {
-      const newArray = [...prevData[section]];
-      newArray[index] = { ...newArray[index], [field]: value };
-      return {
-        ...prevData,
-        [section]: newArray
-      };
+  const handleArrayInputChange = (field, index, key, value) => {
+    setFormData((prevData) => {
+      const updatedArray = [...prevData[field]];
+      updatedArray[index] = value;
+      return { ...prevData, [field]: updatedArray };
     });
   };
 
-  const addArrayItem = (section, newItem) => {
-    setFormData(prevData => ({
+  const addArrayItem = (field, initialValue) => {
+    setFormData((prevData) => ({
       ...prevData,
-      [section]: [...prevData[section], newItem]
+      [field]: [...prevData[field], initialValue || '']
     }));
   };
 
@@ -105,20 +104,23 @@ function CourseLandingPageDetailsForm() {
     e.preventDefault();
     const formDataToSend = new FormData();
 
-    // Append all text fields
     Object.keys(formData).forEach(key => {
       if (key !== 'course_highlights' && key !== 'meta_keywords') {
         formDataToSend.append(key, formData[key]);
       }
     });
 
-    // Append nested objects and arrays
     formDataToSend.append('course_highlights[title]', formData.course_highlights.title);
     formDataToSend.append('course_highlights[description]', formData.course_highlights.description);
+
     if (formData.course_highlights.image) {
       formDataToSend.append('course_highlights[image]', formData.course_highlights.image);
     }
-    formDataToSend.append('course_highlights[points]', JSON.stringify(formData.course_highlights.points));
+
+    formData.course_highlights.points.forEach((point, index) => {
+      formDataToSend.append(`course_highlights[points][${index}][title]`, point.title);
+      formDataToSend.append(`course_highlights[points][${index}][description]`, point.description);
+    });  
 
     formData.meta_keywords.forEach((keyword, index) => {
       formDataToSend.append(`meta_keywords[${index}]`, keyword);
@@ -136,10 +138,9 @@ function CourseLandingPageDetailsForm() {
 
       const result = await response.json();
       console.log('Course landing page details created:', result);
-      // Handle success (e.g., show a success message, redirect, etc.)
+      router.push('/cms/course-landing');
     } catch (error) {
       console.error('Error creating course landing page details:', error);
-      // Handle error (e.g., show an error message)
     }
   };
 
@@ -154,7 +155,7 @@ function CourseLandingPageDetailsForm() {
           value={formData.course_landing_page_id}
           onChange={handleInputChange}
         >
-          {courseLandingPages.map(page => (
+          {courseLandingPages?.map(page => (
             <MenuItem key={page._id} value={page._id}>{page.title}</MenuItem>
           ))}
         </Select>

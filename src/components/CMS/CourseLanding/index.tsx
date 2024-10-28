@@ -102,7 +102,8 @@ const CourseLandingPageList: React.FC = () => {
                     throw new Error('Failed to fetch Course Landing Pages');
                 }
                 const data = await response.json();
-                setLandingPages(data.data);
+                setLandingPages(data.data.data.data);
+                console.log(data.data.data.data);
             } catch (err: any) {
                 setError(err.message);
             } finally {
