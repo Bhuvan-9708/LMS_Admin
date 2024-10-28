@@ -13,7 +13,7 @@ const AddFaqForm = () => {
         ],
         is_deleted: false
     });
-    router = useRouter();
+    const router = useRouter();
     const handleChange = (field, value) => {
         setFaq(prev => ({ ...prev, [field]: value }));
     };

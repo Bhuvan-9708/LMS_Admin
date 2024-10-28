@@ -61,7 +61,7 @@ const CreateCourse = () => {
       points: [''],
     },
     certification_text: '',
-    certification_points: [],
+    certification_points: [''],
     certificate_image: null,
   });
 
@@ -208,15 +208,27 @@ const CreateCourse = () => {
     event.preventDefault();
     const formDataToSend = new FormData();
 
-    // Append files correctly
+    // Append file inputs correctly
     if (formData.image) formDataToSend.append('image', formData.image);
     if (formData.certificate_image) formDataToSend.append('certificate_image', formData.certificate_image);
     if (formData.syllabus) formDataToSend.append('syllabus', formData.syllabus);
-
-    // Append other non-file fields
+    formDataToSend.append('your_learning', JSON.stringify(formData.your_learning));
+    formDataToSend.append('for_whom', JSON.stringify(formData.for_whom));
+    formDataToSend.append('certification_points', JSON.stringify(formData.certification_points));
+    // Append other fields
     Object.entries(formData).forEach(([key, value]) => {
       if (!['image', 'certificate_image', 'syllabus'].includes(key)) {
-        formDataToSend.append(key, value);
+        if (typeof value === 'object' && value !== null) {
+          if (key === 'your_learning' || key === 'for_whom' || key === 'certification_points') {
+            formDataToSend.append(key, JSON.stringify(value));
+          } else {
+            Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+              formDataToSend.append(`${key}[${nestedKey}]`, nestedValue);
+            });
+          }
+        } else {
+          formDataToSend.append(key, value);
+        }
       }
     });
 
