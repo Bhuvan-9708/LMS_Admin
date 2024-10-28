@@ -10,6 +10,7 @@ import {
     MenuItem,
     Typography,
     Box,
+    Grid,
     Checkbox,
     FormControlLabel,
     CircularProgress
@@ -34,7 +35,7 @@ function CourseLandingPageForm() {
         },
         tools: {
             title: '',
-            image: []
+            image: [{ image_icon: null }],
         },
         certificate: '',
         faq: '',
@@ -43,7 +44,7 @@ function CourseLandingPageForm() {
 
     const [heroSections, setHeroSections] = useState([]);
     const [courses, setCourses] = useState([]);
-    const [syllabi, setSyllabi] = useState([]);
+    const [syllabuses, setSyllabuses] = useState([]);
     const [certificates, setCertificates] = useState([]);
     const [faqs, setFaqs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +53,7 @@ function CourseLandingPageForm() {
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                const [heroSectionsData, coursesData, syllabiData, certificatesData, faqsData] = await Promise.all([
+                const [heroSectionsData, coursesData, syllabusData, certificatesData, faqsData] = await Promise.all([
                     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page-hero-section/?type=course`).then(res => res.json()),
                     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/`).then(res => res.json()),
                     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/syllabus/`).then(res => res.json()),
@@ -62,7 +63,7 @@ function CourseLandingPageForm() {
 
                 setHeroSections(heroSectionsData.data || []);
                 setCourses(coursesData.data || []);
-                setSyllabi(syllabiData.data || []);
+                setSyllabuses(syllabusData.data || []);
                 setCertificates(certificatesData.data || []);
                 setFaqs(faqsData.data || []);
             } catch (error) {
@@ -75,83 +76,79 @@ function CourseLandingPageForm() {
         fetchData();
     }, []);
 
-    const handleInputChange = (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: value
-        }));
-    };
-
-    const handleArrayInputChange = (section, index, field, value) => {
-        setFormData(prevData => {
-            // Ensure section corresponds to an array
-            const newArray = Array.isArray(prevData[section]) ? [...prevData[section]] : [];
-
-            // Check if index is valid
-            if (newArray[index]) {
-                newArray[index] = { ...newArray[index], [field]: value };
-            }
-
-            return {
-                ...prevData,
-                [section]: newArray
-            };
+        setFormData({
+            ...formData,
+            [name]: value,
         });
     };
 
+    const handleNestedChange = (e, field, index) => {
+        const { name, value } = e.target;
+        const updatedField = [...formData[field]];
 
-    const addArrayItem = (section, newItem) => {
-        setFormData(prevData => {
-            const pathParts = section.split('.');
-            let current = prevData;
+        if (index !== undefined) {
+            updatedField[index][name] = value;
+        } else {
+            updatedField[name] = value;
+        }
 
-            for (const part of pathParts) {
-                if (current[part] === undefined) {
-                    console.error(`Path ${part} does not exist in the formData.`);
-                    return prevData;
-                }
-                current = current[part];
-            }
-
-            if (Array.isArray(current)) {
-                return {
-                    ...prevData,
-                    [pathParts[0]]: {
-                        ...prevData[pathParts[0]],
-                        [pathParts[1]]: [...current, newItem]
-                    }
-                };
-            } else {
-                console.error(`Expected array at ${section}, but found:`, current);
-                return prevData;
-            }
+        setFormData({
+            ...formData,
+            [field]: updatedField,
         });
     };
 
-    const handleToolImageChange = (e, index) => {
-        const file = e.target.files[0];
-        setFormData(prevData => {
-            const newImages = [...prevData.tools.image];
-            newImages[index] = { image_icon: file };
-            return {
-                ...prevData,
-                tools: {
-                    ...prevData.tools,
-                    image: newImages
-                }
-            };
+    const handleUserLearningPointsChange = (e, index) => {
+        const { name, value } = e.target;
+        const updatedPoints = [...formData.user_learning.points];
+        updatedPoints[index][name] = value;
+
+        setFormData({
+            ...formData,
+            user_learning: {
+                ...formData.user_learning,
+                points: updatedPoints,
+            },
         });
     };
 
-    const addToolImage = () => {
-        setFormData(prevData => ({
-            ...prevData,
+    const handleAddPoint = () => {
+        setFormData({
+            ...formData,
+            user_learning: {
+                ...formData.user_learning,
+                points: [...formData.user_learning.points, { title: '', description: '' }],
+            },
+        });
+    };
+
+    const handleAddBenefit = () => {
+        setFormData({
+            ...formData,
+            course_benefits: [...formData.course_benefits, { title: '', description: '' }],
+        });
+    };
+
+    const handleAddForWhomContent = () => {
+        setFormData({
+            ...formData,
+            for_whom: {
+                ...formData.for_whom,
+                content: [...formData.for_whom.content, { title: '', description: '' }],
+            },
+        });
+    };
+
+    const handleAddToolImage = () => {
+        setFormData({
+            ...formData,
             tools: {
-                ...prevData.tools,
-                image: [...prevData.tools.image, { image_icon: null }]
-            }
-        }));
+                ...formData.tools,
+                image: [...formData.tools.image, { image_icon: '' }],
+            },
+        });
     };
 
     const handleSubmit = async (e) => {
@@ -200,254 +197,304 @@ function CourseLandingPageForm() {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Typography variant="h4" gutterBottom>Add Course Landing Page</Typography>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <TextField
+                        label="Title"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleChange}
+                        fullWidth
+                        required
+                    />
+                </Grid>
 
-            <TextField
-                fullWidth
-                label="Title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                margin="normal"
-                required
-            />
+                <Grid item xs={12}>
+                    <FormControl fullWidth required>
+                        <InputLabel>Hero Section</InputLabel>
+                        <Select
+                            name="hero_section"
+                            value={formData.hero_section}
+                            onChange={handleChange}
+                        >
+                            {heroSections.map((section) => (
+                                <MenuItem key={section._id} value={section._id}>
+                                    {section.title}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
 
-            <FormControl fullWidth margin="normal" required>
-                <InputLabel>Hero Section</InputLabel>
-                <Select
-                    name="hero_section"
-                    value={formData.hero_section || ''}
-                    onChange={handleInputChange}
-                >
-                    {heroSections.map(section => (
-                        <MenuItem key={section._id} value={section._id}>{section.title}</MenuItem>
+                <Grid item xs={12}>
+                    <FormControl fullWidth required>
+                        <InputLabel>Course</InputLabel>
+                        <Select
+                            name="course_id"
+                            value={formData.course_id}
+                            onChange={handleChange}
+                        >
+                            {courses.map((course) => (
+                                <MenuItem key={course._id} value={course._id}>
+                                    {course.title}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Typography variant="h6">User Learning</Typography>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <TextField
+                                label="Title"
+                                name="title"
+                                value={formData.user_learning.title}
+                                onChange={(e) => handleNestedChange(e, 'user_learning')}
+                                fullWidth
+                            />
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <TextField
+                                label="Description"
+                                name="description"
+                                value={formData.user_learning.description}
+                                onChange={(e) => handleNestedChange(e, 'user_learning')}
+                                fullWidth
+                            />
+                        </Grid>
+
+                        {formData.user_learning.points.map((point, index) => (
+                            <Grid key={index} container spacing={2}>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        sx={{ m: 2 }}
+                                        label="Point Title"
+                                        name="title"
+                                        value={point.title}
+                                        onChange={(e) => handleUserLearningPointsChange(e, index)}
+                                        fullWidth
+                                    />
+                                </Grid>
+
+                                <Grid item xs={6}>
+                                    <TextField
+                                        sx={{ m: 2 }}
+                                        label="Point Description"
+                                        name="description"
+                                        value={point.description}
+                                        onChange={(e) => handleUserLearningPointsChange(e, index)}
+                                        fullWidth
+                                    />
+                                </Grid>
+                            </Grid>
+                        ))}
+
+                        <Grid item xs={12}>
+                            <Button variant="contained" color="primary" onClick={handleAddPoint}>
+                                Add Point
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Typography variant="h6">Course Benefits</Typography>
+                    {formData.course_benefits.map((benefit, index) => (
+                        <Grid key={index} container spacing={2}>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="Benefit Title"
+                                    name="title"
+                                    value={benefit.title}
+                                    onChange={(e) => handleNestedChange(e, 'course_benefits', index)}
+                                    fullWidth
+                                />
+                            </Grid>
+
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="Benefit Description"
+                                    name="description"
+                                    value={benefit.description}
+                                    onChange={(e) => handleNestedChange(e, 'course_benefits', index)}
+                                    fullWidth
+                                />
+                            </Grid>
+                        </Grid>
                     ))}
-                </Select>
-            </FormControl>
 
-            <FormControl fullWidth margin="normal" required>
-                <InputLabel>Course</InputLabel>
-                <Select
-                    name="course_id"
-                    value={formData.course_id}
-                    onChange={handleInputChange}
-                >
-                    {courses.map(course => (
-                        <MenuItem key={course._id} value={course._id}>{course.title}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-
-            <Typography variant="h6" gutterBottom>User Learning</Typography>
-            <TextField
-                fullWidth
-                label="Title"
-                name="title"
-                value={formData.user_learning.title}
-                onChange={(e) => handleInputChange(e, 'user_learning')}
-                margin="normal"
-            />
-            <TextField
-                fullWidth
-                label="Description"
-                name="description"
-                value={formData.user_learning.description}
-                onChange={(e) => handleInputChange(e, 'user_learning')}
-                margin="normal"
-                multiline
-                rows={4}
-            />
-            {formData.user_learning.points.map((point, index) => (
-                <Box key={index} mb={2}>
-                    <TextField
-                        fullWidth
-                        label={`Point ${index + 1} Title`}
-                        value={point.title}
-                        onChange={(e) => handleArrayInputChange('user_learning.points', index, 'title', e.target.value)}
-                        margin="normal"
-                    />
-                    <TextField
-                        fullWidth
-                        label={`Point ${index + 1} Description`}
-                        value={point.description}
-                        onChange={(e) => handleArrayInputChange('user_learning.points', index, 'description', e.target.value)}
-                        margin="normal"
-                    />
-                </Box>
-            ))}
-            <Button
-                type="button"
-                onClick={() => addArrayItem('user_learning.points', { title: '', description: '' })}
-                variant="outlined"
-                color="primary"
-            >
-                Add Learning Point
-            </Button>
-
-            <Typography variant="h6" gutterBottom>Course Benefits</Typography>
-            {formData.course_benefits?.map((benefit, index) => (
-                <Box key={index} mb={2}>
-                    <TextField
-                        fullWidth
-                        label={`Benefit ${index + 1} Title`}
-                        value={benefit.title}
-                        onChange={(e) => handleArrayInputChange('course_benefits', index, 'title', e.target.value)}
-                        margin="normal"
-                    />
-                    <TextField
-                        fullWidth
-                        label={`Benefit ${index + 1} Description`}
-                        value={benefit.description}
-                        onChange={(e) => handleArrayInputChange('course_benefits', index, 'description', e.target.value)}
-                        margin="normal"
-                    />
-                </Box>
-            ))}
-            <Button
-                type="button"
-                onClick={() => addArrayItem('course_benefits', { title: '', description: '' })}
-                variant="outlined"
-                color="primary"
-            >
-                Add Course Benefit
-            </Button>
-
-            <FormControl fullWidth margin="normal">
-                <InputLabel>Syllabus</InputLabel>
-                <Select
-                    name="syllabus"
-                    value={formData.syllabus}
-                    onChange={handleInputChange}
-                >
-                    {syllabi.map(syllabus => (
-                        <MenuItem key={syllabus._id} value={syllabus._id}>{syllabus.title}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-
-            <Typography variant="h6" gutterBottom>For Whom</Typography>
-            <TextField
-                fullWidth
-                label="Title"
-                name="title"
-                value={formData.for_whom.title}
-                onChange={(e) => handleInputChange(e, 'for_whom')}
-                margin="normal"
-            />
-            <TextField
-                fullWidth
-                label="Description"
-                name="description"
-                value={formData.for_whom.description}
-                onChange={(e) => handleInputChange(e, 'for_whom')}
-                margin="normal"
-                multiline
-                rows={4}
-            />
-            {formData.for_whom.content.map((item, index) => (
-                <Box key={index} mb={2}>
-                    <TextField
-                        fullWidth
-                        label={`Content ${index + 1} Title`}
-                        value={item.title}
-                        onChange={(e) => handleArrayInputChange('for_whom.content', index, 'title', e.target.value)}
-                        margin="normal"
-                    />
-                    <TextField
-                        fullWidth
-                        label={`Content ${index + 1} Description`}
-                        value={item.description}
-                        onChange={(e) => handleArrayInputChange('for_whom.content', index, 'description', e.target.value)}
-                        margin="normal"
-                    />
-                </Box>
-            ))}
-            <Button
-                type="button"
-                onClick={() => addArrayItem('for_whom.content', { title: '', description: '' })}
-                variant="outlined"
-                color="primary"
-            >
-                Add For Whom Content
-            </Button>
-
-            <Typography variant="h6" gutterBottom>Tools</Typography>
-            <TextField
-                fullWidth
-                label="Tools Title"
-                name="title"
-                value={formData.tools.title}
-                onChange={(e) => handleInputChange(e, 'tools')}
-                margin="normal"
-            />
-            {formData.tools.image.map((img, index) => (
-                <Box key={index} mb={2}>
-                    <input
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        id={`tool-image-upload-${index}`}
-                        type="file"
-                        onChange={(e) => handleToolImageChange(e, index)}
-                    />
-                    <label htmlFor={`tool-image-upload-${index}`}>
-                        <Button variant="contained" component="span">
-                            Upload Tool Image {index + 1}
+                    <Grid item xs={12}>
+                        <Button variant="contained" color="primary" onClick={handleAddBenefit}>
+                            Add Benefit
                         </Button>
-                    </label>
-                    {img.image_icon && (
-                        <Typography variant="body2">{img.image_icon.name}</Typography>
-                    )}
-                </Box>
-            ))}
-            <Button type="button" onClick={addToolImage} variant="outlined" color="primary">
-                Add Tool Image
-            </Button>
+                    </Grid>
+                </Grid>
 
-            <FormControl fullWidth margin="normal">
-                <InputLabel>Certificate</InputLabel>
-                <Select
-                    name="certificate"
-                    value={formData.certificate}
-                    onChange={handleInputChange}
-                >
-                    {certificates.map(certificate => (
-                        <MenuItem key={certificate._id} value={certificate._id}>{certificate.certification_title || certificate.title}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <Grid item xs={12}>
+                    <FormControl fullWidth>
+                        <InputLabel>Syllabus</InputLabel>
+                        <Select
+                            name="syllabus"
+                            value={formData.syllabus}
+                            onChange={handleChange}
+                        >
+                            {syllabuses.map((syllabus) => (
+                                <MenuItem key={syllabus._id} value={syllabus._id}>
+                                    {syllabus.title}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
 
-            <FormControl fullWidth margin="normal">
-                <InputLabel>FAQ</InputLabel>
-                <Select
-                    name="faq"
-                    value={formData.faq}
-                    onChange={handleInputChange}
-                >
-                    {faqs.map(faq => (
-                        <MenuItem key={faq._id} value={faq._id}>{faq.title}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <Grid item xs={12}>
+                    <Typography variant="h6">For Whom</Typography>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <TextField
+                                label="Title"
+                                name="title"
+                                value={formData.for_whom.title}
+                                onChange={(e) => handleNestedChange(e, 'for_whom')}
+                                fullWidth
+                            />
+                        </Grid>
 
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={formData.is_active}
-                        onChange={(e) => setFormData(prevData => ({ ...prevData, is_active: e.target.checked }))}
-                        name="is_active"
-                        color="primary"
+                        <Grid item xs={6}>
+                            <TextField
+                                label=" Description"
+                                name="description"
+                                value={formData.for_whom.description}
+                                onChange={(e) => handleNestedChange(e, 'for_whom')}
+                                fullWidth
+                            />
+                        </Grid>
+
+                        {formData.for_whom.content.map((content, index) => (
+                            <Grid key={index} container spacing={2}>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        label="Content Title"
+                                        name="title"
+                                        value={content.title}
+                                        onChange={(e) => handleNestedChange(e, 'for_whom', index, 'content')}
+                                        fullWidth
+                                    />
+                                </Grid>
+
+                                <Grid item xs={6}>
+                                    <TextField
+                                        label="Content Description"
+                                        name="description"
+                                        value={content.description}
+                                        onChange={(e) => handleNestedChange(e, 'for_whom', index, 'content')}
+                                        fullWidth
+                                    />
+                                </Grid>
+                            </Grid>
+                        ))}
+
+                        <Grid item xs={12}>
+                            <Button variant="contained" color="primary" onClick={handleAddForWhomContent}>
+                                Add Content
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Typography variant="h6">Tools</Typography>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <TextField
+                                label="Title"
+                                name="title"
+                                value={formData.tools.title}
+                                onChange={(e) => handleNestedChange(e, 'tools')}
+                                fullWidth
+                            />
+                        </Grid>
+
+                        {formData.tools.image.map((image, index) => (
+                            <Grid key={index} container spacing={2}>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        sx={{ m: 2 }}
+                                        type="file"
+                                        name="image_icon"
+                                        onChange={(e) => handleNestedChange(e, 'tools', index, 'image')} // Use the updated function
+                                        fullWidth
+                                    />
+                                </Grid>
+                            </Grid>
+                        ))}
+
+                        <Grid item xs={12}>
+                            <Button variant="contained" color="primary" onClick={handleAddToolImage}>
+                                Add Image
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <FormControl fullWidth>
+                        <InputLabel>Certificate</InputLabel>
+                        <Select
+                            name="certificate"
+                            value={formData.certificate}
+                            onChange={handleChange}
+                        >
+                            {certificates.map((certificate) => (
+                                <MenuItem key={certificate._id} value={certificate._id}>
+                                    {certificate.certification_title}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <FormControl fullWidth>
+                        <InputLabel>FAQ</InputLabel>
+                        <Select
+                            name="faq"
+                            value={formData.faq}
+                            onChange={handleChange}
+                        >
+                            {faqs.map((faq) => (
+                                <MenuItem key={faq._id} value={faq._id}>
+                                    {faq.title}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={formData.is_active}
+                                onChange={handleChange}
+                                name="is_active"
+                            />
+                        }
+                        label="Is Active"
                     />
-                }
-                label="Is Active"
-            />
+                </Grid>
 
-            <Box mt={2}>
-                <Button type="submit" variant="contained" color="primary">
-                    Create Course Landing Page
-                </Button>
-            </Box>
+                <Grid item xs={12}>
+                    <Button type="submit" variant="contained" color="primary">
+                        Create Course Landing Page
+                    </Button>
+                </Grid>
+            </Grid>
         </form>
     );
-}
+};
 
 export default CourseLandingPageForm;

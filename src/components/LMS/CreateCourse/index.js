@@ -43,8 +43,6 @@ const CreateCourse = () => {
     start_time: '',
     start_date: null,
     languages: [],
-    tools_and_technology: [],
-    tags: [],
     meta_title: '',
     meta_description: '',
     meta_keywords: '',
@@ -470,34 +468,6 @@ const CreateCourse = () => {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
-            {formData.tools_and_technology.map((tool, index) => (
-              <Grid item xs={12} key={index}>
-                <TextField
-                  fullWidth
-                  label={`Tool/Technology ${index + 1}`}
-                  value={tool}
-                  onChange={(e) => handleArrayChange(index, e.target.value, 'tools_and_technology')}
-                />
-                <Button onClick={() => handleRemoveArrayItem(index, 'tools_and_technology')}>Remove</Button>
-              </Grid>
-            ))}
-            <Grid item xs={12}>
-              <Button onClick={() => handleAddArrayItem('tools_and_technology')}>Add Tool/Technology</Button>
-            </Grid>
-            {formData.tags.map((tag, index) => (
-              <Grid item xs={12} key={index}>
-                <TextField
-                  fullWidth
-                  label={`Tag ${index + 1}`}
-                  value={tag}
-                  onChange={(e) => handleArrayChange(index, e.target.value, 'tags')}
-                />
-                <Button onClick={() => handleRemoveArrayItem(index, 'tags')}>Remove</Button>
-              </Grid>
-            ))}
-            <Grid item xs={12}>
-              <Button onClick={() => handleAddArrayItem('tags')}>Add Tag</Button>
             </Grid>
             <Grid item xs={12}>
               <TextField

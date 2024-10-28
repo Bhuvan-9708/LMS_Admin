@@ -124,7 +124,9 @@ const CourseLandingPageList: React.FC = () => {
     };
 
     const filteredLandingPages = Array.isArray(landingPages)
-        ? landingPages.filter(page => page.title.toLowerCase().includes(searchTerm.toLowerCase()))
+        ? landingPages.filter(page =>
+            page.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
         : [];
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
@@ -189,7 +191,6 @@ const CourseLandingPageList: React.FC = () => {
     if (error) {
         return <Typography>Error: {error}</Typography>;
     }
-
     return (
         <>
             <Card sx={{ boxShadow: 'none', borderRadius: '7px', mb: '25px', padding: { xs: '18px', sm: '20px', lg: '25px' } }}>
@@ -225,45 +226,53 @@ const CourseLandingPageList: React.FC = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {filteredLandingPages
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((landingPage, index) => (
-                                    <TableRow key={landingPage._id}>
-                                        <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                                        <TableCell>{landingPage.title}</TableCell>
-                                        <TableCell>{new Date(landingPage.createdAt).toLocaleDateString()}</TableCell>
-                                        <TableCell>
-                                            <Switch
-                                                checked={landingPage.is_active}
-                                                onChange={(e) => handleToggleActive(landingPage._id, e.target.checked)}
-                                                inputProps={{ 'aria-label': 'controlled' }}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <IconButton
-                                                aria-label="view"
-                                                color="primary"
-                                                onClick={() => router.push(`/cms/course-landing-pages/${landingPage._id}`)}
-                                            >
-                                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>visibility</span>
-                                            </IconButton>
-                                            <IconButton
-                                                aria-label="edit"
-                                                color="secondary"
-                                                onClick={() => router.push(`/cms/edit-course-landing-page/${landingPage._id}`)}
-                                            >
-                                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>edit</span>
-                                            </IconButton>
-                                            <IconButton
-                                                aria-label="delete"
-                                                color="error"
-                                                onClick={() => handleDelete(landingPage._id)}
-                                            >
-                                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                            {filteredLandingPages.length > 0 ? (
+                                filteredLandingPages
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((landingPage, index) => (
+                                        <TableRow key={landingPage._id}>
+                                            <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                                            <TableCell>{landingPage.title}</TableCell>
+                                            <TableCell>{new Date(landingPage.createdAt).toLocaleDateString()}</TableCell>
+                                            <TableCell>
+                                                <Switch
+                                                    checked={landingPage.is_active}
+                                                    onChange={(e) => handleToggleActive(landingPage._id, e.target.checked)}
+                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <IconButton
+                                                    aria-label="view"
+                                                    color="primary"
+                                                    onClick={() => router.push(`/cms/course-landing-pages/${landingPage._id}`)}
+                                                >
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>visibility</span>
+                                                </IconButton>
+                                                <IconButton
+                                                    aria-label="edit"
+                                                    color="secondary"
+                                                    onClick={() => router.push(`/cms/edit-course-landing-page/${landingPage._id}`)}
+                                                >
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>edit</span>
+                                                </IconButton>
+                                                <IconButton
+                                                    aria-label="delete"
+                                                    color="error"
+                                                    onClick={() => handleDelete(landingPage._id)}
+                                                >
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={5} align="center">
+                                        No course landing pages available.
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                         <TableFooter>
                             <TableRow>
