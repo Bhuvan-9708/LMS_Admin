@@ -54,6 +54,8 @@ interface AboutUs {
     meta_description: string;
     meta_keywords: string[];
     seo_url: string;
+    hero_section_title: string;
+    hero_section_description: string;
 }
 
 interface Banner {
@@ -98,6 +100,8 @@ export default function CreateAboutUs() {
         meta_description: '',
         meta_keywords: [] as string[],
         seo_url: '',
+        hero_section_title: '',
+        hero_section_description: '',
     });
 
     const router = useRouter();
@@ -183,11 +187,11 @@ export default function CreateAboutUs() {
 
         Object.entries(aboutUs).forEach(([key, value]) => {
             if (typeof value === 'string' || value instanceof File) {
-                formData.append(key, value); 
+                formData.append(key, value);
             } else if (Array.isArray(value)) {
                 if (key === 'meta_keywords') {
                     value.forEach((keyword, index) => {
-                        formData.append(`meta_keywords[${index}]`, keyword); 
+                        formData.append(`meta_keywords[${index}]`, keyword);
                     });
                 } else {
                     value.forEach((item, index) => {
@@ -212,10 +216,11 @@ export default function CreateAboutUs() {
                 });
             }
         });
-
+        if (aboutUs.coummnity_banner_image) {
+            console.log("Appending community banner image to FormData");
+            formData.append('coummnity_banner_image', aboutUs.coummnity_banner_image);
+        }
         if (aboutUs.image) formData.append('image', aboutUs.image);
-        if (aboutUs.coummnity_banner_image) formData.append('coummnity_banner_image', aboutUs.coummnity_banner_image);
-
         aboutUs.points_description.forEach((point, index) => {
             if (point.image) formData.append(`points_description[${index}].image`, point.image);
         });
@@ -283,6 +288,25 @@ export default function CreateAboutUs() {
                         value={aboutUs.about_us_text}
                         onChange={(value) => handleRichTextChange('about_us_text', value)}
                     />
+                    <br />
+                    <Typography variant="h6" gutterBottom>Hero Section Heading & Description</Typography>
+                    <TextField
+                        fullWidth
+                        label="Hero Section Title"
+                        name="hero_section_title"
+                        value={aboutUs.hero_section_title}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Hero Section Description"
+                        name="hero_section_description"
+                        value={aboutUs.hero_section_description}
+                        onChange={handleInputChange}
+                        margin="normal"
+                    />
+                    <br />
                     <Typography variant="h6" gutterBottom>About Us Descriptions</Typography>
                     {aboutUs.about_us_description.map((desc, index) => (
                         <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>

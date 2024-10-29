@@ -148,13 +148,13 @@ const Courses: React.FC = () => {
     setPage(0);
   };
   const handleUpdateCourseStatus = async (
-    id: string,
+    courseId: string,
     updateData: { status?: string; isActive?: boolean }
   ) => {
-    console.log("Course ID:", id);
+    console.log("Course ID:", courseId);
     console.log("Update Data:", updateData);
 
-    const courseResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/status/${id}`);
+    const courseResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/status/${courseId}`);
     const course = await courseResponse.json();
 
     const dataToUpdate = {
@@ -163,7 +163,7 @@ const Courses: React.FC = () => {
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/status/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/status/${courseId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToUpdate),  
