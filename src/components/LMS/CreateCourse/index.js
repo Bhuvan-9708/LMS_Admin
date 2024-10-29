@@ -61,7 +61,7 @@ const CreateCourse = () => {
       points: [''],
     },
     certification_text: '',
-    certification_points: [''],
+    certification_points: [],
     certificate_image: null,
   });
 
@@ -70,6 +70,7 @@ const CreateCourse = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const status = ['pending', 'approved', 'rejected'];
 
   useEffect(() => {
     fetchData();
@@ -180,16 +181,11 @@ const CreateCourse = () => {
     });
   };
 
-  const handleAddArrayItem = (field, nestedField) => {
-    setFormData(prevData => {
-      const newData = { ...prevData };
-      if (nestedField) {
-        newData[field][nestedField].push('');
-      } else {
-        newData[field].push('');
-      }
-      return newData;
-    });
+  const handleAddArrayItem = (field) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: [...prevData[field], '']
+    }));
   };
 
   const handleRemoveArrayItem = (index, field, nestedField) => {
@@ -208,24 +204,24 @@ const CreateCourse = () => {
     event.preventDefault();
     const formDataToSend = new FormData();
 
-    // Append file inputs correctly
     if (formData.image) formDataToSend.append('image', formData.image);
     if (formData.certificate_image) formDataToSend.append('certificate_image', formData.certificate_image);
     if (formData.syllabus) formDataToSend.append('syllabus', formData.syllabus);
+
     formDataToSend.append('your_learning', JSON.stringify(formData.your_learning));
     formDataToSend.append('for_whom', JSON.stringify(formData.for_whom));
+
     formDataToSend.append('certification_points', JSON.stringify(formData.certification_points));
-    // Append other fields
+    formDataToSend.append('special_price_from', formData.special_price_from);
+    formDataToSend.append('special_price_to', formData.special_price_to);
+    formDataToSend.append('start_date', formData.start_date);
+
     Object.entries(formData).forEach(([key, value]) => {
-      if (!['image', 'certificate_image', 'syllabus'].includes(key)) {
+      if (!['image', 'certificate_image', 'syllabus', 'your_learning', 'for_whom', 'certification_points'].includes(key)) {
         if (typeof value === 'object' && value !== null) {
-          if (key === 'your_learning' || key === 'for_whom' || key === 'certification_points') {
-            formDataToSend.append(key, JSON.stringify(value));
-          } else {
-            Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-              formDataToSend.append(`${key}[${nestedKey}]`, nestedValue);
-            });
-          }
+          Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+            formDataToSend.append(`${key}[${nestedKey}]`, nestedValue);
+          });
         } else {
           formDataToSend.append(key, value);
         }
@@ -249,6 +245,19 @@ const CreateCourse = () => {
     } catch (error) {
       console.error('Error creating course:', error);
     }
+  };
+
+  const labelStyle = {
+    fontWeight: "500",
+    fontSize: "14px",
+    mb: "10px",
+    display: "block",
+  };
+  const selectStyle = {
+    "& fieldset": {
+      border: "1px solid #D5D9E2",
+      borderRadius: "7px",
+    },
   };
 
   if (loading) {
@@ -381,6 +390,54 @@ const CreateCourse = () => {
                   />
                 }
                 label="Is Active"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.is_featured}
+                    onChange={handleCheckboxChange}
+                    name="is_featured"
+                  />
+                }
+                label="Is Featured"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.is_popular}
+                    onChange={handleCheckboxChange}
+                    name="is_popular"
+                  />
+                }
+                label="Is Popular"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.is_new}
+                    onChange={handleCheckboxChange}
+                    name="is_new"
+                  />
+                }
+                label="Is New"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.is_upcoming}
+                    onChange={handleCheckboxChange}
+                    name="is_upcoming"
+                  />
+                }
+                label="Is Upcoming"
               />
             </Grid>
             <Grid item xs={12}>
@@ -536,6 +593,7 @@ const CreateCourse = () => {
             <Grid item xs={12}>
               <Typography variant="h6">Your Learning</Typography>
               <TextField
+                sx={{ m: 1 }}
                 fullWidth
                 label="Title"
                 name="your_learning.title"
@@ -543,6 +601,7 @@ const CreateCourse = () => {
                 onChange={handleInputChange}
               />
               <TextField
+                sx={{ m: 1 }}
                 fullWidth
                 label="Text"
                 name="your_learning.text"
@@ -555,6 +614,7 @@ const CreateCourse = () => {
               {formData.your_learning.tags.map((tag, index) => (
                 <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
                   <TextField
+                    sx={{ m: 1 }}
                     fullWidth
                     label={`Tag ${index + 1}`}
                     value={tag}
@@ -570,6 +630,7 @@ const CreateCourse = () => {
               {formData.your_learning.points.map((point, index) => (
                 <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
                   <TextField
+                    sx={{ m: 1 }}
                     fullWidth
                     label={`Point ${index + 1}`}
                     value={point}
@@ -586,6 +647,7 @@ const CreateCourse = () => {
             <Grid item xs={12}>
               <Typography variant="h6">For Whom</Typography>
               <TextField
+                sx={{ m: 1 }}
                 fullWidth
                 label="Title"
                 name="for_whom.title"
@@ -593,6 +655,7 @@ const CreateCourse = () => {
                 onChange={handleInputChange}
               />
               <TextField
+                sx={{ m: 1 }}
                 fullWidth
                 label="Text"
                 name="for_whom.text"
@@ -605,6 +668,7 @@ const CreateCourse = () => {
               {formData.for_whom.tags.map((tag, index) => (
                 <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
                   <TextField
+                    sx={{ m: 1 }}
                     fullWidth
                     label={`Tag ${index + 1}`}
                     value={tag}
@@ -620,6 +684,7 @@ const CreateCourse = () => {
               {formData.for_whom.points.map((point, index) => (
                 <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
                   <TextField
+                    sx={{ m: 1 }}
                     fullWidth
                     label={`Point ${index + 1}`}
                     value={point}
@@ -636,6 +701,7 @@ const CreateCourse = () => {
             <Grid item xs={12}>
               <Typography variant="h6">Certification</Typography>
               <TextField
+                sx={{ m: 1 }}
                 fullWidth
                 label="Certification Text"
                 name="certification_text"
@@ -648,6 +714,7 @@ const CreateCourse = () => {
               {formData.certification_points.map((point, index) => (
                 <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
                   <TextField
+                    sx={{ m: 1 }}
                     fullWidth
                     label={`Certification Point ${index + 1}`}
                     value={point}
@@ -659,8 +726,9 @@ const CreateCourse = () => {
                 </div>
               ))}
               <Button onClick={() => handleAddArrayItem('certification_points')}>Add Certification Point</Button>
-
+              <br />
               <input
+                sx={{ m: 1 }}
                 accept="image/*"
                 style={{ display: 'none' }}
                 id="certificate-image-upload"
@@ -675,14 +743,35 @@ const CreateCourse = () => {
               </label>
               {formData.certificate_image && <Typography>{formData.certificate_image.name}</Typography>}
             </Grid>
-
+            <Grid item xs={12} sm={12} lg={12}>
+              <Box>
+                <Typography component="label" sx={labelStyle} className="text-black">
+                  Status
+                </Typography>
+                <FormControl fullWidth >
+                  <Select
+                    id="status"
+                    name="status"
+                    value={formData.status}
+                    onChange={handleSelectChange}
+                    sx={selectStyle}
+                  >
+                    {status.map((level) => (
+                      <MenuItem key={level} value={level}>
+                        {level.charAt(0).toUpperCase() + level.slice(1)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Grid>
           </Grid>
         </Card>
         <Button type="submit" variant="contained" color="primary" size="large" fullWidth>
           Create Course
         </Button>
       </Box>
-    </LocalizationProvider>
+    </LocalizationProvider >
   );
 };
 
