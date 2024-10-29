@@ -44,6 +44,7 @@ const CategoryManagement = () => {
     image_icon: null,
   });
   const [searchTerm, setSearchTerm] = useState('');
+
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -61,6 +62,7 @@ const CategoryManagement = () => {
       console.error('Error fetching categories:', error);
     }
   };
+
   const filteredCategories = categories.filter(category =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -90,6 +92,8 @@ const CategoryManagement = () => {
         if (formData[key]) {
           formDataToSend.append(key === 'image' ? 'category-image' : 'category-image-icon', formData[key]);
         }
+      } else if (key === 'parent_category' && formData[key] === '') {
+        formDataToSend.append(key, 'null');
       } else {
         formDataToSend.append(key, formData[key]);
       }
@@ -137,6 +141,7 @@ const CategoryManagement = () => {
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
+
   const handleDelete = async (categoryId) => {
     if (window.confirm('Are you sure you want to delete this category?')) {
       try {
@@ -164,6 +169,14 @@ const CategoryManagement = () => {
       image: null,
       image_icon: null,
     });
+  };
+
+  const renderCategoryOptions = (categories, level = 0) => {
+    return categories.map(category => (
+      <MenuItem key={category._id} value={category._id} style={{ paddingLeft: `${level * 20}px` }}>
+        {category.name}
+      </MenuItem>
+    ));
   };
 
   return (
@@ -198,7 +211,7 @@ const CategoryManagement = () => {
             <input
               type="text"
               className={styles.inputSearch}
-              placeholder="Search Banner here..."
+              placeholder="Search Category here..."
               onChange={handleSearchChange}
             />
           </Box>
@@ -217,20 +230,14 @@ const CategoryManagement = () => {
             </Button>
           </Box>
         </Box>
-        <Box
-          sx={{
-            marginLeft: "-25px",
-            marginRight: "-25px",
-          }}
-        >
-        </Box>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="banners table">
+          <Table sx={{ minWidth: 650 }} aria-label="categories table">
             <TableHead className="bg-primary-50">
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>Active</TableCell>
+                <TableCell>Parent Category</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -240,6 +247,7 @@ const CategoryManagement = () => {
                   <TableCell>{category.name}</TableCell>
                   <TableCell>{category.description}</TableCell>
                   <TableCell>{category.is_active ? 'Yes' : 'No'}</TableCell>
+                  <TableCell>{category.parent_category ? categories.find(c => c._id === category.parent_category)?.name : 'None'}</TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleEdit(category)}>
                       <EditIcon />
@@ -311,14 +319,20 @@ const CategoryManagement = () => {
                   </FormControl>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    id="parent_category"
-                    label="Parent Category ID"
-                    name="parent_category"
-                    value={formData.parent_category}
-                    onChange={handleInputChange}
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel id="parent-category-label">Parent Category</InputLabel>
+                    <Select
+                      sx={{ m: 1 }}
+                      labelId="parent-category-label"
+                      id="parent_category"
+                      name="parent_category"
+                      value={formData.parent_category}
+                      onChange={handleInputChange}
+                    >
+                      <MenuItem sx={{ m: 1 }} value="">None</MenuItem>
+                      {renderCategoryOptions(categories)}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12}>
                   <input
@@ -362,9 +376,9 @@ const CategoryManagement = () => {
             </Button>
           </DialogActions>
         </Dialog>
-      </Card >
+      </Card>
     </>
   );
 };
 
-export default CategoryManagement;
+export default CategoryManagement; 

@@ -302,7 +302,7 @@ const Contacts: React.FC = () => {
                     }}
                     className="text-black border-bottom"
                   >
-                    Phone
+                    Subject
                   </TableCell>
                   <TableCell
                     sx={{
@@ -355,7 +355,7 @@ const Contacts: React.FC = () => {
                       sx={{ padding: "15px 20px", fontSize: "14px" }}
                       className="border-bottom"
                     >
-                      {contact.phone}
+                      {contact.subject}
                     </TableCell>
                     <TableCell
                       sx={{ padding: "15px 20px", fontSize: "14px" }}
