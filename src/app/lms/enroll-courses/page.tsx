@@ -1,6 +1,6 @@
 import * as React from "react";
 import NextLink from 'next/link';
-import EnrollCourses from "@/components/LMS/EnrollCourses";
+import EnrollCourses from "@/components/LMS/EnrollCoursesForm";
 
 export default function Page() {
     return (

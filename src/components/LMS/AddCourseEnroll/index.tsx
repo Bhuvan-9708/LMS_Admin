@@ -124,7 +124,7 @@ export default function AddCourseEnrollmentForm() {
                 throw new Error('Failed to create course enrollment form');
             }
 
-            router.push('/course-enrollment-forms');
+            router.push('/lms/enroll-courses/');
         } catch (error) {
             console.error('Error creating course enrollment form:', error);
         }
