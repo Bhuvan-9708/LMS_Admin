@@ -103,7 +103,6 @@ const CourseLandingPageList: React.FC = () => {
                 }
                 const data = await response.json();
                 setLandingPages(data.data.data.data);
-                console.log(data.data.data.data);
             } catch (err: any) {
                 setError(err.message);
             } finally {
