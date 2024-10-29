@@ -5,7 +5,6 @@ import {
     Box,
     Button,
     Card,
-    Chip,
     IconButton,
     Paper,
     Snackbar,
@@ -20,28 +19,21 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
-import MuiAlert, { AlertProps, AlertColor } from '@mui/material/Alert';
+import MuiAlert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import { useRouter } from 'next/navigation';
 
-interface TablePaginationActionsProps {
-    count: number;
-    page: number;
-    rowsPerPage: number;
-    onPageChange: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void;
-}
-
-function TablePaginationActions(props: TablePaginationActionsProps) {
+function TablePaginationActions(props) {
     const theme = useTheme();
     const { count, page, rowsPerPage, onPageChange } = props;
 
-    const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleBackButtonClick = (event) => {
         onPageChange(event, page - 1);
     };
 
-    const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleNextButtonClick = (event) => {
         onPageChange(event, page + 1);
     };
 
@@ -67,31 +59,20 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
     );
 }
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-interface CourseLandingPage {
-    _id: string;
-    course_id: {
-        _id: string;
-        title: string;
-    };
-    title: string;
-    is_active: boolean;
-    createdAt: string;
-}
-
-const CourseLandingPageList: React.FC = () => {
-    const [landingPages, setLandingPages] = useState<CourseLandingPage[]>([]);
+const CourseLandingPageList = () => {
+    const [landingPages, setLandingPages] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
-    const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const router = useRouter();
 
     useEffect(() => {
@@ -101,9 +82,16 @@ const CourseLandingPageList: React.FC = () => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch Course Landing Pages');
                 }
-                const data = await response.json();
-                setLandingPages(data.data.data.data);
-            } catch (err: any) {
+                const result = await response.json();
+
+                console.log("API response:", result);
+
+                if (result.success && result.data && result.data.dataWithEffectivePrice) {
+                    setLandingPages(result.data.dataWithEffectivePrice);
+                } else {
+                    throw new Error('Invalid data structure in API response');
+                }
+            } catch (err) {
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -112,32 +100,33 @@ const CourseLandingPageList: React.FC = () => {
 
         fetchLandingPages();
     }, []);
+
     const handleAddLandingPage = () => {
         router.push('/cms/add-course-landing');
     };
+
     const handleAddLandingPageDetails = () => {
         router.push('/cms/add-course-landing-details');
     };
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };
 
-    const filteredLandingPages = Array.isArray(landingPages)
-        ? landingPages.filter(page =>
-            page.title.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        : [];
+    const filteredLandingPages = landingPages.filter(page =>
+        page.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-    const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+    const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
 
-    const handleToggleActive = async (id: string, isChecked: boolean) => {
+    const handleToggleActive = async (id, isChecked) => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course/status/${id}`, {
                 method: 'PATCH',
@@ -163,7 +152,7 @@ const CourseLandingPageList: React.FC = () => {
         }
     };
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (id) => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course/delete/${id}`, {
                 method: 'DELETE',
@@ -190,6 +179,7 @@ const CourseLandingPageList: React.FC = () => {
     if (error) {
         return <Typography>Error: {error}</Typography>;
     }
+
     return (
         <>
             <Card sx={{ boxShadow: 'none', borderRadius: '7px', mb: '25px', padding: { xs: '18px', sm: '20px', lg: '25px' } }}>
