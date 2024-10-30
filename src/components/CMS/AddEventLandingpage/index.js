@@ -184,7 +184,7 @@ function EventLandingPageForm() {
 
             const result = await response.json();
             console.log('Event landing page created:', result);
-            results.push('/cms/event-landing');
+            router.push('/cms/event-landing');
         } catch (error) {
             console.error('Error creating event landing page:', error);
         }

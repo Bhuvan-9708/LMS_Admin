@@ -6,8 +6,6 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Checkbox,
-    FormControlLabel,
     Button,
     Typography,
     Box
@@ -36,7 +34,7 @@ function EventLandingPageDetailsForm() {
         meta_keywords: [],
         seo_url: ''
     });
-
+    const router = useRouter();
     const [landingPages, setLandingPages] = useState([]);
     const [faqs, setFaqs] = useState([]);
     const [certificate, setCertificate] = useState([]);
@@ -227,7 +225,9 @@ function EventLandingPageDetailsForm() {
                 formDataToSend.append(`tools[image][${index}]`, img.image_icon);
             }
         });
-
+        formDataToSend.append('seo_url', formData.seo_url);
+        formDataToSend.append('meta_title', formData.meta_title);
+        formDataToSend.append('meta_description', formData.meta_description);
         formDataToSend.append('pro[title]', formData.pro.title);
         formDataToSend.append('pro[description]', formData.pro.description);
         formData.pro.points.forEach((point, index) => {
@@ -264,6 +264,7 @@ function EventLandingPageDetailsForm() {
 
             const result = await response.json();
             console.log('Event landing page details created:', result);
+            router.push('/cms/event-landing');
         } catch (error) {
             console.error('Error creating event landing page details:', error);
         }
