@@ -79,16 +79,87 @@ function CourseLandingPageDetailsForm() {
 
   const handleArrayInputChange = (field, index, key, value) => {
     setFormData((prevData) => {
-      const updatedArray = [...prevData[field]];
-      updatedArray[index] = value;
-      return { ...prevData, [field]: updatedArray };
+      if (field === 'course_highlights.points') {
+        const updatedPoints = prevData.course_highlights.points.map((point, idx) => {
+          if (idx === index) {
+            return {
+              ...point,
+              [key]: value
+            };
+          }
+          return point;
+        });
+        return {
+          ...prevData,
+          course_highlights: {
+            ...prevData.course_highlights,
+            points: updatedPoints
+          }
+        };
+      }
+      console.error(`Field ${field} is not recognized.`);
+      return prevData; // Return previous state if field is not recognized
     });
   };
 
   const addArrayItem = (field, initialValue) => {
-    setFormData((prevData) => ({
+    setFormData((prevData) => {
+      if (field === 'course_highlights.points') {
+        return {
+          ...prevData,
+          course_highlights: {
+            ...prevData.course_highlights,
+            points: [...prevData.course_highlights.points, initialValue]
+          }
+        };
+      }
+      return prevData;
+    });
+  };
+
+  const removeArrayItem = (field, index) => {
+    setFormData((prevData) => {
+      if (field === 'course_highlights.points') {
+        const updatedPoints = prevData.course_highlights.points.filter((_, i) => i !== index);
+        return {
+          ...prevData,
+          course_highlights: {
+            ...prevData.course_highlights,
+            points: updatedPoints
+          }
+        };
+      }
+      console.error(`Field ${field} is not recognized.`);
+      return prevData;
+    });
+  };
+
+  const handleKeywordChange = (index, value) => {
+    setFormData(prevData => {
+      const updatedKeywords = prevData.meta_keywords.map((keyword, idx) => {
+        if (idx === index) {
+          return value;
+        }
+        return keyword;
+      });
+      return {
+        ...prevData,
+        meta_keywords: updatedKeywords
+      };
+    });
+  };
+
+  const addKeyword = () => {
+    setFormData(prevData => ({
       ...prevData,
-      [field]: [...prevData[field], initialValue || '']
+      meta_keywords: [...prevData.meta_keywords, '']
+    }));
+  };
+
+  const removeKeyword = (index) => {
+    setFormData(prevData => ({
+      ...prevData,
+      meta_keywords: prevData.meta_keywords.filter((_, idx) => idx !== index)
     }));
   };
 
@@ -212,6 +283,14 @@ function CourseLandingPageDetailsForm() {
             onChange={(e) => handleArrayInputChange('course_highlights.points', index, 'description', e.target.value)}
             margin="normal"
           />
+          <Button
+            type="button"
+            onClick={() => removeArrayItem('course_highlights.points', index)}
+            variant="outlined"
+            color="secondary"
+          >
+            Remove Highlight Point
+          </Button>
         </Box>
       ))}
       <Button
@@ -270,18 +349,28 @@ function CourseLandingPageDetailsForm() {
       />
 
       {formData.meta_keywords.map((keyword, index) => (
-        <TextField
-          key={index}
-          fullWidth
-          label={`Meta Keyword ${index + 1}`}
-          value={keyword}
-          onChange={(e) => handleArrayInputChange('meta_keywords', index, '', e.target.value)}
-          margin="normal"
-        />
+        <Box key={index} mb={2}>
+          <TextField
+            key={index}
+            fullWidth
+            label={`Meta Keyword ${index + 1}`}
+            value={keyword}
+            onChange={(e) => handleKeywordChange(index, e.target.value)}
+            margin="normal"
+          />
+          <Button
+            type="button"
+            onClick={() => removeKeyword(index)}
+            variant="outlined"
+            color="secondary"
+          >
+            Remove Meta Keyword
+          </Button>
+        </Box>
       ))}
       <Button
         type="button"
-        onClick={() => addArrayItem('meta_keywords', '')}
+        onClick={addKeyword}
         variant="outlined"
         color="primary"
       >
