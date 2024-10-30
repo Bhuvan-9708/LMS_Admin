@@ -38,8 +38,11 @@ function CourseLandingPageDetailsForm() {
       try {
         const courseLandingPagesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course`);
         const courseLandingPagesData = await courseLandingPagesResponse.json();
-        setCourseLandingPages(courseLandingPagesData.data.data.data);
-
+        const coursesWithIdAndTitle = courseLandingPagesData.data.dataWithEffectivePrice.map(course => ({
+          _id: course._id,
+          title: course.title,
+        }));
+        setCourseLandingPages(coursesWithIdAndTitle);
 
         const sectionWorkingsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section-working/`);
         const sectionWorkingsData = await sectionWorkingsResponse.json();
@@ -120,7 +123,7 @@ function CourseLandingPageDetailsForm() {
     formData.course_highlights.points.forEach((point, index) => {
       formDataToSend.append(`course_highlights[points][${index}][title]`, point.title);
       formDataToSend.append(`course_highlights[points][${index}][description]`, point.description);
-    });  
+    });
 
     formData.meta_keywords.forEach((keyword, index) => {
       formDataToSend.append(`meta_keywords[${index}]`, keyword);

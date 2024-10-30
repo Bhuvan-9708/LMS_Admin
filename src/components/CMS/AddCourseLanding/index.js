@@ -13,8 +13,11 @@ import {
     Grid,
     Checkbox,
     FormControlLabel,
-    CircularProgress
+    CircularProgress,
+    IconButton
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { useRouter } from 'next/navigation';
 
 function CourseLandingPageForm() {
@@ -27,7 +30,7 @@ function CourseLandingPageForm() {
             description: '',
             points: []
         },
-        course_benefits_title: '',
+        course_benefits_title: [{ title: "" }],
         course_benefits: [],
         syllabus: '',
         for_whom: {
@@ -40,6 +43,10 @@ function CourseLandingPageForm() {
             image: [{ image_icon: null }],
         },
         certificate: '',
+        skills_learning: {
+            title: '',
+            tags: ['']
+        },
         faq: '',
         is_active: true
     });
@@ -80,64 +87,64 @@ function CourseLandingPageForm() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setFormData(prevData => ({
+            ...prevData,
             [name]: value,
-        });
+        }));
     };
 
     const handleNestedChange = (e, field, index, subfield) => {
         const { name, value } = e.target;
 
-        if (subfield && Array.isArray(formData[field][subfield])) {
-            const updatedContent = [...formData[field][subfield]];
-            updatedContent[index] = {
-                ...updatedContent[index],
-                [name]: value
-            };
-            setFormData({
-                ...formData,
-                [field]: {
-                    ...formData[field],
-                    [subfield]: updatedContent
-                }
-            });
-        } else if (Array.isArray(formData[field])) {
-            const updatedArray = [...formData[field]];
-            updatedArray[index] = {
-                ...updatedArray[index],
-                [name]: value
-            };
-            setFormData({
-                ...formData,
-                [field]: updatedArray
-            });
-        } else {
-            // Handle direct nested object
-            setFormData({
-                ...formData,
-                [field]: {
-                    ...formData[field],
+        setFormData(prevData => {
+            if (subfield && Array.isArray(prevData[field][subfield])) {
+                const updatedContent = [...prevData[field][subfield]];
+                updatedContent[index] = {
+                    ...updatedContent[index],
                     [name]: value
-                }
-            });
-        }
+                };
+                return {
+                    ...prevData,
+                    [field]: {
+                        ...prevData[field],
+                        [subfield]: updatedContent
+                    }
+                };
+            } else if (Array.isArray(prevData[field])) {
+                const updatedArray = [...prevData[field]];
+                updatedArray[index] = {
+                    ...updatedArray[index],
+                    [name]: value
+                };
+                return {
+                    ...prevData,
+                    [field]: updatedArray
+                };
+            } else {
+                return {
+                    ...prevData,
+                    [field]: {
+                        ...prevData[field],
+                        [name]: value
+                    }
+                };
+            }
+        });
     };
-
 
     const handleUserLearningPointsChange = (e, index) => {
         const { name, value } = e.target;
-        const updatedPoints = [...formData.user_learning.points];
-        updatedPoints[index][name] = value;
-
-        setFormData({
-            ...formData,
+        setFormData(prevData => ({
+            ...prevData,
             user_learning: {
-                ...formData.user_learning,
-                points: updatedPoints,
+                ...prevData.user_learning,
+                points: prevData.user_learning.points.map((point, i) =>
+                    i === index ? { ...point, [name]: value } : point
+                ),
             },
-        });
+        }));
     };
+
     const handleToolsChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevData => ({
@@ -148,30 +155,32 @@ function CourseLandingPageForm() {
             }
         }));
     };
+
     const handleToolImageChange = (e, index) => {
         const file = e.target.files[0];
-        const newImages = [...formData.tools.image];
-        newImages[index] = { image_icon: file };
         setFormData(prevData => ({
             ...prevData,
             tools: {
                 ...prevData.tools,
-                image: newImages
+                image: prevData.tools.image.map((img, i) =>
+                    i === index ? { image_icon: file } : img
+                )
             }
         }));
     };
+
     const handleAddPoint = () => {
-        setFormData({
-            ...formData,
+        setFormData(prevData => ({
+            ...prevData,
             user_learning: {
-                ...formData.user_learning,
-                points: [...formData.user_learning.points, { title: '', description: '' }],
+                ...prevData.user_learning,
+                points: [...prevData.user_learning.points, { title: '', description: '' }],
             },
-        });
+        }));
     };
 
     const handleAddBenefit = () => {
-        setFormData((prevData) => ({
+        setFormData(prevData => ({
             ...prevData,
             course_benefits: [
                 ...prevData.course_benefits,
@@ -181,13 +190,13 @@ function CourseLandingPageForm() {
     };
 
     const handleAddForWhomContent = () => {
-        setFormData({
-            ...formData,
+        setFormData(prevData => ({
+            ...prevData,
             for_whom: {
-                ...formData.for_whom,
-                content: [...formData.for_whom.content, { title: '', description: '' }],
+                ...prevData.for_whom,
+                content: [...prevData.for_whom.content, { title: '', description: '' }],
             },
-        });
+        }));
     };
 
     const addToolImage = () => {
@@ -198,6 +207,66 @@ function CourseLandingPageForm() {
                 image: [...prevData.tools.image, { image_icon: null }]
             }
         }));
+    };
+
+    const handleSkillsLearningChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevData => ({
+            ...prevData,
+            skills_learning: {
+                ...prevData.skills_learning,
+                [name]: value,
+            },
+        }));
+    };
+
+    const handleTagChange = (index, value) => {
+        setFormData(prevData => ({
+            ...prevData,
+            skills_learning: {
+                ...prevData.skills_learning,
+                tags: prevData.skills_learning.tags.map((tag, i) =>
+                    i === index ? value : tag
+                ),
+            },
+        }));
+    };
+
+    const addTagField = () => {
+        setFormData(prevData => ({
+            ...prevData,
+            skills_learning: {
+                ...prevData.skills_learning,
+                tags: [...prevData.skills_learning.tags, ''],
+            },
+        }));
+    };
+
+    const removeTagField = (index) => {
+        setFormData(prevData => ({
+            ...prevData,
+            skills_learning: {
+                ...prevData.skills_learning,
+                tags: prevData.skills_learning.tags.filter((_, i) => i !== index),
+            },
+        }));
+    };
+    const handleCourseBenefitTitleChange = (index, event) => {
+        const updatedTitles = [...formData.course_benefits_title];
+        updatedTitles[index].title = event.target.value;
+        setFormData({ ...formData, course_benefits_title: updatedTitles });
+    };
+
+    const addCourseBenefitTitle = () => {
+        setFormData({
+            ...formData,
+            course_benefits_title: [...formData.course_benefits_title, { title: "" }],
+        });
+    };
+
+    const removeCourseBenefitTitle = (index) => {
+        const updatedTitles = formData.course_benefits_title.filter((_, i) => i !== index);
+        setFormData({ ...formData, course_benefits_title: updatedTitles });
     };
 
     const handleSubmit = async (e) => {
@@ -211,34 +280,36 @@ function CourseLandingPageForm() {
         });
 
         formDataToSend.append('user_learning', JSON.stringify(formData.user_learning));
-        formDataToSend.append('course_benefits', JSON.stringify([
-            ...formData.course_benefits
-        ]));
+        formDataToSend.append('course_benefits', JSON.stringify(formData.course_benefits));
         formDataToSend.append('for_whom', JSON.stringify(formData.for_whom));
-        formDataToSend.append('tools[title]', formData.tools.title);
+        formDataToSend.append("tools.title", formData.tools.title);
+        formDataToSend.append('skills_learning', JSON.stringify(formData.skills_learning));
+        formData.course_benefits_title.forEach((benefit, index) => {
+            formDataToSend.append(`course_benefits_title[${index}][title]`, benefit.title);
+        });
 
-        if (formData.tools.image) {
-            formData.tools.image.forEach((img, index) => {
-                if (img.image_icon) {
-                    formDataToSend.append(`tools[image][${index}]`, img.image_icon);
-                }
-            });
-        }
-        formDataToSend.append('is_active', formData.is_active === 'true');
+        formData.tools.image.forEach((img, index) => {
+            if (img.image_icon) {
+                formDataToSend.append(`tools.image[${index}].image_icon`, img.image_icon);
+            }
+        });
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course/v1/create`, {
                 method: 'POST',
                 body: formDataToSend,
             });
-
+            if (response.status === 409) {
+                alert('A landing page already exists for this course.');
+                return;
+            }
             if (!response.ok) {
                 throw new Error('Failed to create course landing page');
             }
 
             const result = await response.json();
             console.log('Course landing page created:', result);
-            router.push('/cms/course-landing')
+            router.push('/cms/course-landing');
         } catch (error) {
             console.error('Error creating course landing page:', error);
         }
@@ -352,17 +423,29 @@ function CourseLandingPageForm() {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        label="Course Benefits Title"
-                        name="course_benefits_title"
-                        value={formData.course_benefits_title}
-                        onChange={handleChange}
-                        fullWidth
-                        required
-                    />
+                <br />
+                <Grid container spacing={1} sx={{ m: 1 }}>
+                    {formData.course_benefits_title.map((benefit, index) => (
+                        <Grid item xs={12} key={index}>
+                            <TextField
+                                label={`Course Benefits Title ${index + 1}`}
+                                value={benefit.title}
+                                onChange={(e) => handleCourseBenefitTitleChange(index, e)}
+                                fullWidth
+                                required
+                            />
+                            <Button onClick={() => removeCourseBenefitTitle(index)} color="secondary">
+                                Remove
+                            </Button>
+                        </Grid>
+                    ))}
+                    <Grid item xs={6} spacing={2}>
+                        <Button onClick={addCourseBenefitTitle} variant="outlined" color="primary">
+                            Add Another Benefit Title
+                        </Button>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} >
                     <Typography variant="h6">Course Benefits</Typography>
                     {formData.course_benefits.map((benefit, index) => (
                         <Grid key={index} container spacing={2}>
@@ -470,42 +553,88 @@ function CourseLandingPageForm() {
                         </Grid>
                     </Grid>
                 </Grid>
+                <Grid container spacing={2} sx={{ m: 1 }}>
+                    <Typography variant="h6" gutterBottom>Tools</Typography>
+                    <TextField
+                        sx={{ m: 1 }}
+                        fullWidth
+                        label="Tools Title"
+                        name="title"
+                        value={formData.tools.title}
+                        onChange={handleToolsChange}
+                        margin="normal"
+                    />
 
-                <Typography variant="h6" gutterBottom>Tools</Typography>
-                <TextField
-                    fullWidth
-                    label="Tools Title"
-                    name="title"
-                    value={formData.tools.title}
-                    onChange={handleToolsChange}
-                    margin="normal"
-                />
+                    {formData.tools.image.map((img, index) => (
+                        <Box key={index} mb={2}>
+                            <input
+                                sx={{ m: 1 }}
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                id={`tool-image-upload-${index}`}
+                                type="file"
+                                onChange={(e) => handleToolImageChange(e, index)}
+                            />
+                            <label htmlFor={`tool-image-upload-${index}`}>
+                                <Button sx={{ m: 1 }} variant="contained" component="span">
+                                    Upload Tool Image {index + 1}
+                                </Button>
+                            </label>
+                            {img.image_icon && (
+                                <Typography variant="body2">{img.image_icon.name}</Typography>
+                            )}
+                        </Box>
+                    ))}
 
-                {formData.tools.image.map((img, index) => (
-                    <Box key={index} mb={2}>
-                        <input
-                            sx={{ m: 1 }}
-                            accept="image/*"
-                            style={{ display: 'none' }}
-                            id={`tool-image-upload-${index}`}
-                            type="file"
-                            onChange={(e) => handleToolImageChange(e, index)}
+                    <Button sx={{ m: 1 }} type="button" onClick={addToolImage} variant="outlined" color="primary">
+                        Add Tool Image
+                    </Button>
+                </Grid>
+                <Grid item xs={12}>
+                    <Box>
+                        <Typography variant="h6">Skills Learning</Typography>
+                        <TextField
+                            label="Title"
+                            name="title"
+                            variant="outlined"
+                            fullWidth
+                            value={formData.skills_learning.title}
+                            onChange={handleSkillsLearningChange}
+                            margin="normal"
                         />
-                        <label htmlFor={`tool-image-upload-${index}`}>
-                            <Button sx={{ m: 1 }} variant="contained" component="span">
-                                Upload Tool Image {index + 1}
-                            </Button>
-                        </label>
-                        {img.image_icon && (
-                            <Typography variant="body2">{img.image_icon.name}</Typography>
-                        )}
+
+                        <Typography variant="subtitle1" gutterBottom>
+                            Tags
+                        </Typography>
+                        {formData.skills_learning.tags.map((tag, index) => (
+                            <Box key={index} display="flex" alignItems="center" mb={1}>
+                                <TextField
+                                    label={`Tag ${index + 1}`}
+                                    variant="outlined"
+                                    value={tag}
+                                    onChange={(e) => handleTagChange(index, e.target.value)}
+                                    fullWidth
+                                />
+                                <IconButton
+                                    color="primary"
+                                    onClick={addTagField}
+                                    size="large"
+                                >
+                                    <AddIcon />
+                                </IconButton>
+                                {formData.skills_learning.tags.length > 1 && (
+                                    <IconButton
+                                        color="secondary"
+                                        onClick={() => removeTagField(index)}
+                                        size="large"
+                                    >
+                                        <RemoveIcon />
+                                    </IconButton>
+                                )}
+                            </Box>
+                        ))}
                     </Box>
-                ))}
-
-                <Button sx={{ m: 1 }} type="button" onClick={addToolImage} variant="outlined" color="primary">
-                    Add Tool Image
-                </Button>
-
+                </Grid>
                 <Grid item xs={12}>
                     <FormControl fullWidth>
                         <InputLabel>Certificate</InputLabel>
