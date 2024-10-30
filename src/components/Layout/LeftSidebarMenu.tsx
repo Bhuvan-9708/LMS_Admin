@@ -238,7 +238,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                 </AccordionDetails>
               </Accordion>
 
-              <Typography
+              {/* <Typography
                 className="sub-title"
                 sx={{
                   display: "block",
@@ -247,9 +247,9 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                 }}
               >
                 APPS
-              </Typography>
+              </Typography> */}
 
-              <Link
+              {/* <Link
                 href="/apps/to-do-list/"
                 className={`sidebar-menu-link ${pathname === "/apps/to-do-list/" ? "active" : ""
                   }`}
@@ -457,7 +457,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                 }}
               >
                 PAGES
-              </Typography>
+              </Typography> */}
 
               <Accordion
                 expanded={expanded === "panel5"}
@@ -720,7 +720,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                         className={`sidemenu-link ${pathname === "/crm/customers/" ? "active" : ""
                           }`}
                       >
-                        Customers
+                        Landing Page Queries
                       </Link>
                     </li>
 

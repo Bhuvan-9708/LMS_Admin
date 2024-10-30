@@ -1,13 +1,13 @@
 import * as React from "react";
-import NextLink from 'next/link';     
-import CustomersTable from "@/components/CRM/CustomersTable";
+import NextLink from 'next/link';
+import CustomersTable from "@/components/CRM/LandingPageQueries";
 
 export default function Page() {
   return (
     <>
       {/* Breadcrumb */}
       <div className="breadcrumb-card">
-        <h5>Customers</h5>
+        <h5>Landing Page Queries</h5>
 
         <ul className="breadcrumb">
           <li>
@@ -17,7 +17,7 @@ export default function Page() {
             </NextLink>
           </li>
           <li>CRM</li>
-          <li>Customers</li>
+          <li>Queries</li>
         </ul>
       </div>
 

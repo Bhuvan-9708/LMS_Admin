@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Card,
+  CardContent,
+  Typography,
   Table,
   TableBody,
   TableCell,
@@ -10,52 +12,55 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Switch,
   Button,
   IconButton,
   Box,
   TablePagination,
   Alert,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import styles from "@/components/LMS/Search.module.css";
 import { useRouter } from "next/navigation";
 
-interface Contact {
+interface Query {
   _id: string;
-  first_name: string;
-  last_name: string;
+  name: string;
   email: string;
   phone: string;
-  message: string;
-  subject: string;
+  course_id?: string;
+  event_id?: string;
+  query: string;
 }
 
-export default function ContactList() {
-  const [contacts, setContacts] = useState<Contact[]>([]);
+export default function QueryList() {
+  const [queries, setQueries] = useState<Query[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [totalItems, setTotalItems] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
-    fetchContacts();
+    fetchQueries();
   }, []);
 
-  const fetchContacts = async () => {
+  const fetchQueries = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact`);
-      if (!response.ok) throw new Error("Failed to fetch contact details");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/connect-with-us/`);
+      if (!response.ok) throw new Error("Failed to fetch query details");
 
       const data = await response.json();
       if (data && Array.isArray(data.data)) {
-        setContacts(data.data);
-        console.log(">>>", data.data);
+        setQueries(data.data);
+        setTotalItems(data.pagination.totalItems);
       } else {
-        setContacts([]);
+        setQueries([]);
       }
     } catch (error: any) {
       setError(error.message);
@@ -66,14 +71,14 @@ export default function ContactList() {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/queries/${id}`, {
         method: "DELETE",
       });
-      if (!response.ok) throw new Error("Failed to delete contact");
+      if (!response.ok) throw new Error("Failed to delete query");
 
-      setContacts((prevContacts) => prevContacts.filter((contact) => contact._id !== id));
+      setQueries((prevQueries) => prevQueries.filter((query) => query._id !== id));
     } catch (error) {
-      console.error("Error deleting contact:", error);
+      console.error("Error deleting query:", error);
     }
   };
 
@@ -90,8 +95,8 @@ export default function ContactList() {
     setPage(0);
   };
 
-  const filteredContacts = contacts.filter((contact) =>
-    Object.values(contact)
+  const filteredQueries = queries.filter((query) =>
+    Object.values(query)
       .join(" ")
       .toLowerCase()
       .includes(searchTerm)
@@ -116,22 +121,22 @@ export default function ContactList() {
             <input
               type="text"
               className={styles.inputSearch}
-              placeholder="Search contacts..."
+              placeholder="Search queries..."
               onChange={handleSearchChange}
             />
           </Box>
-          <Button variant="contained" color="primary" onClick={() => router.push("/cms/create-contact")}>
-            Add Contact
+          <Button variant="contained" color="primary" onClick={() => router.push("/cms/create-query")}>
+            Add Query
           </Button>
         </Box>
 
         {error && <Alert severity="error">{error}</Alert>}
 
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 800 }} aria-label="contact list table">
+          <Table sx={{ minWidth: 800 }} aria-label="query list table">
             <TableHead className="bg-primary-50">
               <TableRow>
-                {["First Name", "Last Name", "Email", "Subject", "Message", "Actions"].map(
+                {["Name", "Email", "Phone", "Course ID", "Event ID", "Query", "Actions"].map(
                   (header, index) => (
                     <TableCell key={index} sx={{ fontWeight: "500", fontSize: "14px" }}>
                       {header}
@@ -148,17 +153,25 @@ export default function ContactList() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredContacts
+                filteredQueries
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((contact) => (
-                    <TableRow key={contact._id}>
-                      <TableCell>{contact.first_name}</TableCell>
-                      <TableCell>{contact.last_name}</TableCell>
-                      <TableCell>{contact.email}</TableCell>
-                      <TableCell>{contact.subject}</TableCell>
-                      <TableCell>{contact.message}</TableCell>
+                  .map((query) => (
+                    <TableRow key={query._id}>
+                      <TableCell>{query.name}</TableCell>
+                      <TableCell>{query.email}</TableCell>
+                      <TableCell>{query.phone}</TableCell>
+                      <TableCell>{query.course_id || "-"}</TableCell>
+                      <TableCell>{query.event_id || "-"}</TableCell>
+                      <TableCell>{query.query}</TableCell>
                       <TableCell>
-                        <IconButton aria-label="delete" color="error" onClick={() => handleDelete(contact._id)}>
+                        <IconButton
+                          aria-label="edit"
+                          color="secondary"
+                          onClick={() => router.push(`/cms/edit-query/${query._id}`)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton aria-label="delete" color="error" onClick={() => handleDelete(query._id)}>
                           <DeleteIcon />
                         </IconButton>
                       </TableCell>
@@ -171,7 +184,7 @@ export default function ContactList() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={filteredContacts.length}
+            count={totalItems}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
