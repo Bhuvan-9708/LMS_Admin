@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import {
     Button,
     Card,
@@ -16,77 +16,64 @@ import {
     IconButton,
     FormControlLabel,
     Switch,
-} from '@mui/material';
-import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
+    CircularProgress,
+} from '@mui/material'
+import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material'
 import { SelectChangeEvent } from '@mui/material';
-
-import dynamic from "next/dynamic";
-const RichTextEditor = dynamic(() => import("@mantine/rte"), {
-    ssr: false,
-});
-
-interface NavigationBar {
-    name: string;
-    link: string;
-}
-
-interface PopularCategory {
-    category: string;
-    background_color: string;
-}
-
-interface FAQ {
-    question: string;
-    answer: string;
-}
+import { useRouter } from 'next/navigation';
 
 interface Homepage {
-    header_logo: File | null;
-    header_text: string;
-    title: string;
-    sub_title: string;
-    navigation_bars: NavigationBar[];
-    image: File | null;
-    section_working: string;
-    popular_category_heading: string;
-    popular_category_text: string;
-    popular_categories: PopularCategory[];
-    popular_course_title: string;
-    popular_course_heading: string;
-    popular_course_text: string;
-    popular_courses: string[];
-    upcoming_course_title: string;
-    upcoming_course_heading: string;
-    upcoming_course_text: string;
-    upcoming_courses: string[];
-    upcoming_webinar_title: string;
-    upcoming_webinar_heading: string;
-    upcoming_webinar_text: string;
-    upcoming_webinar: string[];
-    banner: string[];
-    about: string;
-    article_main: string;
-    article_title: string;
-    article_heading: string;
-    article_description: string;
-    articles: string[];
-    testimonials_title: string;
-    testimonials_heading: string;
-    testimonials_sub_title: string;
-    testimonials: string[];
-    faq_title: string;
-    faq_heading: string;
-    faqs: FAQ[];
-    is_active: boolean;
-    meta_title: string;
-    meta_description: string;
-    meta_keywords: string[];
-    seo_url: string;
+    id: string
+    header_logo: File | null
+    header_text: string
+    title: string
+    sub_title: string
+    navigation_bars: { name: string; link: string }[]
+    image: File | null
+    section_working: string
+    popular_category_heading: string
+    popular_category_text: string
+    popular_categories: { category: string; background_color: string }[]
+    popular_course_title: string
+    popular_course_heading: string
+    popular_course_text: string
+    popular_courses: string[]
+    upcoming_course_title: string
+    upcoming_course_heading: string
+    upcoming_course_text: string
+    upcoming_courses: string[]
+    upcoming_webinar_title: string
+    upcoming_webinar_heading: string
+    upcoming_webinar_text: string
+    upcoming_webinar: string[]
+    banner: string[]
+    about: string
+    article_main: string
+    article_title: string
+    article_heading: string
+    article_description: string
+    articles: string[]
+    testimonials_title: string
+    testimonials_heading: string
+    testimonials_sub_title: string
+    testimonials: string[]
+    faq_title: string
+    faq_heading: string
+    faqs: { question: string; answer: string }[]
+    is_active: boolean
+    meta_title: string
+    meta_description: string
+    meta_keywords: string[]
+    seo_url: string
 }
 
-export default function AddHomepageForm() {
+interface EditHomepageProps {
+    homepageId: string
+}
+
+export default function EditHomepage({ homepageId }: EditHomepageProps) {
     const [homepage, setHomepage] = useState<Homepage>({
+        id: '',
         header_logo: null,
         header_text: '',
         title: '',
@@ -128,226 +115,255 @@ export default function AddHomepageForm() {
         meta_description: '',
         meta_keywords: [],
         seo_url: '',
-    });
-
-    const [categories, setCategories] = useState<any[]>([]);
-    const [courses, setCourses] = useState<any[]>([]);
-    const [events, setEvents] = useState<any[]>([]);
-    const [banners, setBanners] = useState<any[]>([]);
-    const [blogs, setBlogs] = useState<any[]>([]);
-    const [courseReviews, setCourseReviews] = useState<any[]>([]);
-    const [sectionWorkings, setSectionWorkings] = useState<any[]>([]);
-    const [aboutUs, setAboutUs] = useState<any[]>([]);
-
+    })
+    const [categories, setCategories] = useState<any[]>([])
+    const [courses, setCourses] = useState<any[]>([])
+    const [events, setEvents] = useState<any[]>([])
+    const [banners, setBanners] = useState<any[]>([])
+    const [blogs, setBlogs] = useState<any[]>([])
+    const [courseReviews, setCourseReviews] = useState<any[]>([])
+    const [sectionWorkings, setSectionWorkings] = useState<any[]>([])
+    const [aboutUs, setAboutUs] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
     const router = useRouter();
 
     useEffect(() => {
-        fetchCategories();
-        fetchCourses();
-        fetchEvents();
-        fetchBanners();
-        fetchBlogs();
-        fetchCourseReviews();
-        fetchSectionWorkings();
-        fetchAboutUs();
-    }, []);
+        const fetchHomepage = async () => {
+            if (!homepageId) return;
+
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/home/${homepageId}`);
+                if (!response.ok) throw new Error('Failed to fetch homepage');
+                const data = await response.json();
+                setHomepage(data.data);
+            } catch (error) {
+                console.error('Error fetching homepage:', error);
+                setError('Failed to load homepage');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchHomepage();
+    }, [homepageId]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true)
+            try {
+                await Promise.all([
+                    fetchCategories(),
+                    fetchCourses(),
+                    fetchEvents(),
+                    fetchBanners(),
+                    fetchBlogs(),
+                    fetchCourseReviews(),
+                    fetchSectionWorkings(),
+                    fetchAboutUs(),
+                ])
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                setError('Failed to load homepage data')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchData()
+    }, [])
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`);
-            const data = await response.json();
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`)
+            const data = await response.json()
             if (data.success) {
-                setCategories(data.data.categories);
+                setCategories(data.data.categories)
             }
         } catch (error) {
-            console.error('Error fetching categories:', error);
+            console.error('Error fetching categories:', error)
         }
-    };
+    }
 
     const fetchCourses = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course`);
-            const data = await response.json();
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course`)
+            const data = await response.json()
             if (data.success) {
-                setCourses(data.data);
+                setCourses(data.data)
             }
         } catch (error) {
-            console.error('Error fetching courses:', error);
+            console.error('Error fetching courses:', error)
         }
-    };
+    }
 
     const fetchEvents = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/event/get-all-events`);
-            const data = await response.json();
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/event/get-all-events`)
+            const data = await response.json()
             if (data.success) {
-                setEvents(data.data);
+                setEvents(data.data)
             }
         } catch (error) {
-            console.error('Error fetching events:', error);
+            console.error('Error fetching events:', error)
         }
-    };
+    }
 
     const fetchBanners = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner`)
             if (!response.ok) {
-                throw new Error("Failed to fetch banners");
+                throw new Error("Failed to fetch banners")
             }
-            const data = await response.json();
-            setBanners(data.data);
+            const data = await response.json()
+            setBanners(data.data)
         } catch (error) {
-            console.error('Error fetching banners:', error);
+            console.error('Error fetching banners:', error)
         }
-    };
+    }
 
     const fetchBlogs = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/`);
-            const data = await response.json();
-            setBlogs(data.data.blogs);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/`)
+            const data = await response.json()
+            setBlogs(data.data.blogs)
         } catch (error) {
-            console.error('Error fetching blogs:', error);
+            console.error('Error fetching blogs:', error)
         }
-    };
+    }
 
     const fetchCourseReviews = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/`);
-            const data = await response.json();
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/`)
+            const data = await response.json()
             if (data.success && data.data) {
-                setCourseReviews(data.data);
+                setCourseReviews(data.data)
             } else {
-                console.error('Unexpected API response:', data);
+                console.error('Unexpected API response:', data)
             }
         } catch (error) {
-            console.error('Error fetching course reviews:', error);
+            console.error('Error fetching course reviews:', error)
         }
-    };
+    }
 
     const fetchSectionWorkings = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section-working/`);
-            const data = await response.json();
-            setSectionWorkings(data.data);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section-working/`)
+            const data = await response.json()
+            setSectionWorkings(data.data)
         } catch (error) {
-            console.error('Error fetching section workings:', error);
+            console.error('Error fetching section workings:', error)
         }
-    };
+    }
 
     const fetchAboutUs = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/about-us/`);
-            const data = await response.json();
-            setAboutUs(data.data);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/about-us/`)
+            const data = await response.json()
+            setAboutUs(data.data)
         } catch (error) {
-            console.error('Error fetching about us:', error);
+            console.error('Error fetching about us:', error)
         }
-    };
+    }
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setHomepage(prev => ({ ...prev, [name]: value }));
-    };
+        const { name, value } = event.target
+        setHomepage(prev => ({ ...prev, [name]: value }))
+    }
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, field: keyof Homepage) => {
-        const file = event.target.files?.[0] || null;
-        setHomepage(prev => ({ ...prev, [field]: file }));
-    };
+        const file = event.target.files?.[0] || null
+        setHomepage(prev => ({ ...prev, [field]: file }))
+    }
 
     const handleArrayInputChange = (index: number, field: keyof Homepage, subField: string, value: string) => {
         setHomepage(prev => {
-            const newArray = [...(prev[field] as any[])];
-            newArray[index] = { ...newArray[index], [subField]: value };
-            return { ...prev, [field]: newArray };
-        });
-    };
+            const newArray = [...(prev[field] as any[])]
+            newArray[index] = { ...newArray[index], [subField]: value }
+            return { ...prev, [field]: newArray }
+        })
+    }
 
     const handleAddArrayItem = (field: keyof Homepage, newItem: any = {}) => {
         setHomepage(prev => ({
             ...prev,
             [field]: [...(prev[field] as any[]), newItem]
-        }));
-    };
+        }))
+    }
 
     const handleRemoveArrayItem = (field: keyof Homepage, index: number) => {
         setHomepage(prev => ({
             ...prev,
             [field]: (prev[field] as any[]).filter((_, i) => i !== index)
-        }));
-    };
-    const handleRichTextChange = (field: keyof Homepage, value: string) => {
-        setHomepage((prev) => ({ ...prev, [field]: value }));
-    };
+        }))
+    }
+
     const handleMultiSelectChange = (event: SelectChangeEvent<string[]>, field: keyof Homepage) => {
-        const {
-            target: { value }
-        } = event;
+        const { value } = event.target
         setHomepage(prev => ({
             ...prev,
             [field]: typeof value === 'string' ? value.split(',') : value
-        }));
-    };
+        }))
+    }
 
     const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault();
-        const formData = new FormData();
+        event.preventDefault()
+        if (!homepage) return;
+        const formData = new FormData()
 
         Object.entries(homepage).forEach(([key, value]) => {
             if (value instanceof File) {
-                // If the value is a File, append it directly
-                formData.append(key, value);
+                formData.append(key, value)
             } else if (Array.isArray(value)) {
-                // For arrays of objects, append each object property individually
                 value.forEach((item, index) => {
                     if (typeof item === 'object' && item !== null) {
-                        // Append each key-value pair within the object
                         Object.entries(item).forEach(([subKey, subValue]) => {
-                            if (typeof subValue === 'string' || subValue instanceof Blob) {
-                                formData.append(`${key}[${index}][${subKey}]`, subValue);
-                            } else if (subValue !== null && subValue !== undefined) {
-                                formData.append(`${key}[${index}][${subKey}]`, String(subValue));
-                            }
-                        });
+                            formData.append(`${key}[${index}][${subKey}]`, subValue as string)
+                        })
                     } else {
-                        // If not an object, append as a simple array element
-                        formData.append(`${key}[]`, String(item));
+                        formData.append(`${key}[]`, item as string)
                     }
-                });
+                })
             } else if (typeof value === 'boolean') {
-                // Convert boolean to string
-                formData.append(key, value.toString());
+                formData.append(key, value.toString())
             } else if (value !== null && value !== undefined) {
-                // Append other non-null values directly
-                formData.append(key, value);
+                formData.append(key, value as string)
             }
-        });
+        })
 
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/home/create`,
-                {
-                    method: 'POST',
-                    body: formData,
-                }
-            );
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/home/${homepage.id}`, {
+                method: 'PUT',
+                body: formData,
+            })
 
             if (!response.ok) {
-                throw new Error('Failed to create homepage');
+                throw new Error('Failed to update homepage')
             }
 
-            const result = await response.json();
-            console.log('Homepage created successfully:', result);
-            router.push('/cms/homepage');
+            const result = await response.json()
+            console.log('Homepage updated successfully:', result)
+            router.push('/cms/homepage')
         } catch (error) {
-            console.error('Error creating homepage:', error);
+            console.error('Error updating homepage:', error)
+            setError('Failed to update homepage')
         }
-    };
+    }
+
+    if (loading) {
+        return <CircularProgress />
+    }
+
+    if (error) {
+        return <Typography color="error">{error}</Typography>
+    }
 
     return (
         <Card>
             <CardContent>
-                <Typography variant="h5" gutterBottom>Add New Homepage</Typography>
+                <Typography variant="h5" gutterBottom>
+                    Edit Homepage
+                </Typography>
                 <form onSubmit={handleSubmit}>
                     <Box sx={{ mb: 2 }}>
                         <input
@@ -362,22 +378,20 @@ export default function AddHomepageForm() {
                                 Upload Header Logo
                             </Button>
                         </label>
-                        {homepage.header_logo && <Typography variant="body2">{homepage.header_logo.name}</Typography>}
+                        {homepage.header_logo && (
+                            <Typography variant="body2">
+                                {homepage.header_logo instanceof File ? homepage.header_logo.name : 'Current logo'}
+                            </Typography>
+                        )}
                     </Box>
 
-                    <Typography variant="subtitle1">Header Text</Typography>
-                    <RichTextEditor
-                        controls={[
-                            ["bold", "italic", "underline", "link", "image"],
-                            ["unorderedList", "h1", "h2", "h3"],
-                            ["sup", "sub"],
-                            ["alignLeft", "alignCenter", "alignRight"],
-                        ]}
-                        style={{
-                            minHeight: "270px",
-                        }}
+                    <TextField
+                        fullWidth
+                        label="Header Text"
+                        name="header_text"
                         value={homepage.header_text}
-                        onChange={(value) => handleRichTextChange('header_text', value)}
+                        onChange={handleInputChange}
+                        margin="normal"
                     />
                     <TextField
                         fullWidth
@@ -431,7 +445,11 @@ export default function AddHomepageForm() {
                                 Upload Main Image
                             </Button>
                         </label>
-                        {homepage.image && <Typography variant="body2">{homepage.image.name}</Typography>}
+                        {homepage.image && (
+                            <Typography variant="body2">
+                                {homepage.image instanceof File ? homepage.image.name : 'Current image'}
+                            </Typography>
+                        )}
                     </Box>
 
                     <FormControl fullWidth margin="normal">
@@ -466,7 +484,6 @@ export default function AddHomepageForm() {
                     <Typography variant="h6" gutterBottom>Popular Categories</Typography>
                     {homepage.popular_categories.map((cat, index) => (
                         <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
-
                             <FormControl fullWidth>
                                 <InputLabel>Category</InputLabel>
                                 <Select
@@ -845,13 +862,13 @@ export default function AddHomepageForm() {
                         label="Add Meta Keyword"
                         onKeyPress={(e) => {
                             if (e.key === 'Enter') {
-                                e.preventDefault();
-                                const target = e.target as HTMLInputElement;
+                                e.preventDefault()
+                                const target = e.target as HTMLInputElement
                                 setHomepage(prev => ({
                                     ...prev,
                                     meta_keywords: [...prev.meta_keywords, target.value]
-                                }));
-                                target.value = '';
+                                }))
+                                target.value = ''
                             }
                         }}
                         margin="normal"
@@ -867,10 +884,10 @@ export default function AddHomepageForm() {
                     />
 
                     <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-                        Create Homepage
+                        Update Homepage
                     </Button>
                 </form>
             </CardContent>
         </Card>
-    );
+    )
 }

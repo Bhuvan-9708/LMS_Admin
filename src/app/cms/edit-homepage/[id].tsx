@@ -1,8 +1,16 @@
 import * as React from "react";
 import NextLink from 'next/link';
-import AddHomepage from "@/components/CMS/AddHomepage";
+import EditHomepage from "@/components/CMS/EditHomepage";
+import { useRouter } from 'next/router';
 
 export default function Page() {
+    const router = useRouter();
+    const { id } = router.query;
+
+    if (!id) {
+        return <div>Loading...</div>;
+    }
+    
     return (
         <>
             <div className="breadcrumb-card">
@@ -16,10 +24,10 @@ export default function Page() {
                         </NextLink>
                     </li>
                     <li>CMS</li>
-                    <li>Add Homepage</li>
+                    <li>Edit Homepage</li>
                 </ul>
             </div>
-            <AddHomepage />
+            <EditHomepage homepageId={id as string} />
         </>
     );
 }

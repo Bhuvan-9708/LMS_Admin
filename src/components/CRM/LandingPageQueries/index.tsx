@@ -24,12 +24,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import styles from "@/components/LMS/Search.module.css";
 import { useRouter } from "next/navigation";
 
+
+interface CourseID {
+  _id: string;
+  title: string;
+}
+
 interface Query {
   _id: string;
   name: string;
   email: string;
   phone: string;
-  course_id?: string;
+  course_id?: string | CourseID;
   event_id?: string;
   query: string;
 }
@@ -58,6 +64,7 @@ export default function QueryList() {
       const data = await response.json();
       if (data && Array.isArray(data.data)) {
         setQueries(data.data);
+        console.log("Fetched Queries:", data.data);
         setTotalItems(data.pagination.totalItems);
       } else {
         setQueries([]);
@@ -160,8 +167,11 @@ export default function QueryList() {
                       <TableCell>{query.name}</TableCell>
                       <TableCell>{query.email}</TableCell>
                       <TableCell>{query.phone}</TableCell>
-                      <TableCell>{query.course_id || "-"}</TableCell>
-                      <TableCell>{query.event_id || "-"}</TableCell>
+                      <TableCell>
+                        {typeof query.course_id === "object" && query.course_id !== null
+                          ? query.course_id.title
+                          : query.course_id || "-"}
+                      </TableCell>                      <TableCell>{query.event_id || "-"}</TableCell>
                       <TableCell>{query.query}</TableCell>
                       <TableCell>
                         <IconButton
