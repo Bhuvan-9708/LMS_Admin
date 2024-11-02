@@ -726,6 +726,24 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 
                     <li className="sidemenu-item">
                       <Link
+                        href="/crm/application-form/"
+                        className={`sidemenu-link ${pathname === "/crm/application-form/" ? "active" : ""
+                          }`}
+                      >
+                        Application Form
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
+                        href="/crm/hire-from-us/"
+                        className={`sidemenu-link ${pathname === "/crm/hire-from-us/" ? "active" : ""
+                          }`}
+                      >
+                        Hire from us
+                      </Link>
+                    </li>
+                    <li className="sidemenu-item">
+                      <Link
                         href="/crm/leads/"
                         className={`sidemenu-link ${pathname === "/crm/leads/" ? "active" : ""
                           }`}
