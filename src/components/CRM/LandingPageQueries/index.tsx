@@ -132,9 +132,6 @@ export default function QueryList() {
               onChange={handleSearchChange}
             />
           </Box>
-          <Button variant="contained" color="primary" onClick={() => router.push("/cms/create-query")}>
-            Add Query
-          </Button>
         </Box>
 
         {error && <Alert severity="error">{error}</Alert>}

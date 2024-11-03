@@ -120,9 +120,6 @@ export default function ContactList() {
               onChange={handleSearchChange}
             />
           </Box>
-          <Button variant="contained" color="primary" onClick={() => router.push("/cms/create-contact")}>
-            Add Contact
-          </Button>
         </Box>
 
         {error && <Alert severity="error">{error}</Alert>}
