@@ -12,25 +12,28 @@ import {
     Grid,
     InputLabel,
     MenuItem,
+    Radio,
+    RadioGroup,
     Select,
     TextField,
     Typography,
     IconButton,
-    SelectChangeEvent
+    SelectChangeEvent,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 
-interface Question {
+interface QnA {
     question: string;
     possible_answers: string[];
     is_required: boolean;
-    question_type: 'text' | 'multiple-choice' | 'checkbox';
+    question_type: 'text' | 'multiple-choice';
 }
 
-interface CourseEnrollmentForm {
-    course_id: string;
-    questions: Question[];
+interface ApplicationForm {
+    course_id?: string;
+    event_id?: string;
+    qna: QnA[];
     is_active: boolean;
 }
 
@@ -39,22 +42,25 @@ interface Course {
     title: string;
 }
 
+interface Event {
+    _id: string;
+    title: string;
+}
+
 export default function AddCourseEnrollmentForm() {
-    const [enrollmentForm, setEnrollmentForm] = useState<CourseEnrollmentForm>({
-        course_id: '',
-        questions: [],
+    const [form, setForm] = useState<ApplicationForm>({
+        qna: [],
         is_active: true,
     });
     const router = useRouter();
-    const [courseId, setCourseId] = useState<String>("")
-    console.log("courseID", courseId);
+    const [selectionType, setSelectionType] = useState<'course' | 'event'>('course');
     const [courses, setCourses] = useState<Course[]>([]);
+    const [events, setEvents] = useState<Event[]>([]);
 
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/course`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course`);
                 const data = await response.json();
                 setCourses(data.data);
             } catch (error) {
@@ -62,71 +68,111 @@ export default function AddCourseEnrollmentForm() {
             }
         };
 
+        const fetchEvents = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/event/get-all-events`)
+                const data = await response.json()
+                if (data.success) {
+                    setEvents(data.data)
+                }
+            } catch (error) {
+                console.error('Error fetching events:', error)
+            }
+        }
+
         fetchCourses();
+        fetchEvents();
     }, []);
 
-    const handleCourseChange = (event: SelectChangeEvent<string>) => {
-        setEnrollmentForm({ ...enrollmentForm, course_id: event.target.value });
-        setCourseId(event.target.value);
+    const handleSelectionTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedType = event.target.value as 'course' | 'event';
+        setSelectionType(selectedType);
+
+        setForm((prevForm) => ({
+            ...prevForm,
+            course_id: selectedType === 'course' ? '' : undefined,
+            event_id: selectedType === 'event' ? '' : undefined,
+        }));
+    };
+
+    const handleFieldChange = (event: SelectChangeEvent<string>, field: 'course_id' | 'event_id') => {
+        setForm({ ...form, [field]: event.target.value });
     };
 
     const handleAddQuestion = () => {
-        setEnrollmentForm({
-            ...enrollmentForm,
-            questions: [
-                ...enrollmentForm.questions,
+        setForm({
+            ...form,
+            qna: [
+                ...form.qna,
                 { question: '', possible_answers: [], is_required: true, question_type: 'text' },
             ],
         });
     };
 
-    const handleQuestionChange = (index: number, field: keyof Question, value: any) => {
-        const updatedQuestions = [...enrollmentForm.questions];
-        updatedQuestions[index] = { ...updatedQuestions[index], [field]: value };
-        setEnrollmentForm({ ...enrollmentForm, questions: updatedQuestions });
+    const handleQuestionChange = (index: number, field: keyof QnA, value: any) => {
+        const updatedQnA = [...form.qna];
+        updatedQnA[index] = { ...updatedQnA[index], [field]: value };
+        setForm({ ...form, qna: updatedQnA });
     };
 
     const handleAddAnswer = (questionIndex: number) => {
-        const updatedQuestions = [...enrollmentForm.questions];
-        updatedQuestions[questionIndex].possible_answers.push('');
-        setEnrollmentForm({ ...enrollmentForm, questions: updatedQuestions });
+        const updatedQnA = [...form.qna];
+        updatedQnA[questionIndex].possible_answers.push('');
+        setForm({ ...form, qna: updatedQnA });
     };
 
     const handleAnswerChange = (questionIndex: number, answerIndex: number, value: string) => {
-        const updatedQuestions = [...enrollmentForm.questions];
-        updatedQuestions[questionIndex].possible_answers[answerIndex] = value;
-        setEnrollmentForm({ ...enrollmentForm, questions: updatedQuestions });
+        const updatedQnA = [...form.qna];
+        updatedQnA[questionIndex].possible_answers[answerIndex] = value;
+        setForm({ ...form, qna: updatedQnA });
     };
 
     const handleRemoveQuestion = (index: number) => {
-        const updatedQuestions = enrollmentForm.questions.filter((_, i) => i !== index);
-        setEnrollmentForm({ ...enrollmentForm, questions: updatedQuestions });
+        const updatedQnA = form.qna.filter((_, i) => i !== index);
+        setForm({ ...form, qna: updatedQnA });
     };
 
     const handleRemoveAnswer = (questionIndex: number, answerIndex: number) => {
-        const updatedQuestions = [...enrollmentForm.questions];
-        updatedQuestions[questionIndex].possible_answers = updatedQuestions[questionIndex].possible_answers.filter((_, i) => i !== answerIndex);
-        setEnrollmentForm({ ...enrollmentForm, questions: updatedQuestions });
+        const updatedQnA = [...form.qna];
+        updatedQnA[questionIndex].possible_answers = updatedQnA[questionIndex].possible_answers.filter((_, i) => i !== answerIndex);
+        setForm({ ...form, qna: updatedQnA });
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        const submissionData = { ...form };
+        if (selectionType === 'course') {
+            delete submissionData.event_id;
+        } else {
+            delete submissionData.course_id;
+        }
+
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enrollmentform/create/${courseId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/application-form/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(enrollmentForm),
+                body: JSON.stringify(submissionData),
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to create course enrollment form');
-            }
+            const responseData = await response.json();
 
-            router.push('/lms/enroll-courses/');
+            if (!response.ok) {
+                if (responseData.error === "Course not found or marked as inactive !") {
+                    alert("The selected course could not be found or is inactive. Please choose a different course.");
+                } else if (responseData.error === "Event not found or marked as inactive !") {
+                    alert("The selected event could not be found or is inactive. Please choose a different event.");
+                } else {
+                    throw new Error(responseData.error || 'Failed to create enrollment form');
+                }
+            } else {
+                router.push('/lms/enroll-courses/');
+            }
         } catch (error) {
-            console.error('Error creating course enrollment form:', error);
+            console.error('Error creating enrollment form:', error);
+            alert("An unexpected error occurred. Please try again.");
         }
     };
 
@@ -137,22 +183,49 @@ export default function AddCourseEnrollmentForm() {
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel id="course-select-label">Course</InputLabel>
-                                <Select
-                                    labelId="course-select-label"
-                                    value={enrollmentForm.course_id}
-                                    onChange={handleCourseChange}
-                                    required
-                                >
-                                    {courses.map((course) => (
-                                        <MenuItem key={course._id} value={course._id}>{course.title}</MenuItem>
-                                    ))}
-                                </Select>
+                            <FormControl component="fieldset">
+                                <RadioGroup row value={selectionType} onChange={handleSelectionTypeChange}>
+                                    <FormControlLabel value="course" control={<Radio />} label="Course" />
+                                    <FormControlLabel value="event" control={<Radio />} label="Event" />
+                                </RadioGroup>
                             </FormControl>
                         </Grid>
-                        {enrollmentForm.questions.map((question, questionIndex) => (
-                            <Grid item xs={12} key={questionIndex}>
+                        {selectionType === 'course' && (
+                            <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="course-select-label">Course</InputLabel>
+                                    <Select
+                                        labelId="course-select-label"
+                                        value={form.course_id || ''}
+                                        onChange={(e) => handleFieldChange(e, 'course_id')}
+                                        required
+                                    >
+                                        {courses.map((course) => (
+                                            <MenuItem key={course._id} value={course._id}>{course.title}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        )}
+                        {selectionType === 'event' && (
+                            <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="event-select-label">Event</InputLabel>
+                                    <Select
+                                        labelId="event-select-label"
+                                        value={form.event_id || ''}
+                                        onChange={(e) => handleFieldChange(e, 'event_id')}
+                                        required
+                                    >
+                                        {events.map((event) => (
+                                            <MenuItem key={event._id} value={event._id}>{event.title}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        )}
+                        {form.qna.map((qna, qnaIndex) => (
+                            <Grid item xs={12} key={qnaIndex}>
                                 <Card variant="outlined">
                                     <CardContent>
                                         <Grid container spacing={2}>
@@ -160,42 +233,41 @@ export default function AddCourseEnrollmentForm() {
                                                 <TextField
                                                     fullWidth
                                                     label="Question"
-                                                    value={question.question}
-                                                    onChange={(e) => handleQuestionChange(questionIndex, 'question', e.target.value)}
+                                                    value={qna.question}
+                                                    onChange={(e) => handleQuestionChange(qnaIndex, 'question', e.target.value)}
                                                     required
                                                 />
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <FormControl fullWidth>
-                                                    <InputLabel id={`question-type-label-${questionIndex}`}>Question Type</InputLabel>
+                                                    <InputLabel id={`question-type-label-${qnaIndex}`}>Question Type</InputLabel>
                                                     <Select
-                                                        labelId={`question-type-label-${questionIndex}`}
-                                                        value={question.question_type}
-                                                        onChange={(e) => handleQuestionChange(questionIndex, 'question_type', e.target.value)}
+                                                        labelId={`question-type-label-${qnaIndex}`}
+                                                        value={qna.question_type}
+                                                        onChange={(e) => handleQuestionChange(qnaIndex, 'question_type', e.target.value)}
                                                     >
                                                         <MenuItem value="text">Text</MenuItem>
                                                         <MenuItem value="multiple-choice">Multiple Choice</MenuItem>
-                                                        <MenuItem value="checkbox">Checkbox</MenuItem>
                                                     </Select>
                                                 </FormControl>
                                             </Grid>
-                                            {(question.question_type === 'multiple-choice' || question.question_type === 'checkbox') && (
+                                            {qna.question_type === 'multiple-choice' && (
                                                 <Grid item xs={12}>
-                                                    {question.possible_answers.map((answer, answerIndex) => (
+                                                    {qna.possible_answers.map((answer, answerIndex) => (
                                                         <Box key={answerIndex} display="flex" alignItems="center" mb={1}>
                                                             <TextField
                                                                 fullWidth
                                                                 label={`Answer ${answerIndex + 1}`}
                                                                 value={answer}
-                                                                onChange={(e) => handleAnswerChange(questionIndex, answerIndex, e.target.value)}
+                                                                onChange={(e) => handleAnswerChange(qnaIndex, answerIndex, e.target.value)}
                                                                 required
                                                             />
-                                                            <IconButton onClick={() => handleRemoveAnswer(questionIndex, answerIndex)}>
+                                                            <IconButton onClick={() => handleRemoveAnswer(qnaIndex, answerIndex)}>
                                                                 <DeleteIcon />
                                                             </IconButton>
                                                         </Box>
                                                     ))}
-                                                    <Button startIcon={<AddIcon />} onClick={() => handleAddAnswer(questionIndex)}>
+                                                    <Button startIcon={<AddIcon />} onClick={() => handleAddAnswer(qnaIndex)}>
                                                         Add Answer
                                                     </Button>
                                                 </Grid>
@@ -204,8 +276,8 @@ export default function AddCourseEnrollmentForm() {
                                                 <FormControlLabel
                                                     control={
                                                         <Checkbox
-                                                            checked={question.is_required}
-                                                            onChange={(e) => handleQuestionChange(questionIndex, 'is_required', e.target.checked)}
+                                                            checked={qna.is_required}
+                                                            onChange={(e) => handleQuestionChange(qnaIndex, 'is_required', e.target.checked)}
                                                         />
                                                     }
                                                     label="Required"
@@ -213,7 +285,7 @@ export default function AddCourseEnrollmentForm() {
                                             </Grid>
                                         </Grid>
                                         <Box mt={2}>
-                                            <Button variant="outlined" color="secondary" onClick={() => handleRemoveQuestion(questionIndex)}>
+                                            <Button variant="outlined" color="secondary" onClick={() => handleRemoveQuestion(qnaIndex)}>
                                                 Remove Question
                                             </Button>
                                         </Box>
@@ -230,8 +302,8 @@ export default function AddCourseEnrollmentForm() {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={enrollmentForm.is_active}
-                                        onChange={(e) => setEnrollmentForm({ ...enrollmentForm, is_active: e.target.checked })}
+                                        checked={form.is_active}
+                                        onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
                                     />
                                 }
                                 label="Active"
@@ -239,7 +311,7 @@ export default function AddCourseEnrollmentForm() {
                         </Grid>
                         <Grid item xs={12}>
                             <Button type="submit" variant="contained" color="primary">
-                                Create Enrollment Form
+                                Submit
                             </Button>
                         </Grid>
                     </Grid>

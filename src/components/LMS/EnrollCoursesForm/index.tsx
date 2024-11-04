@@ -27,8 +27,9 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 interface Course {
     _id: string;
-    course_id: String;
-    questions: Array<{
+    course_id?: { _id: string; title: string };
+    event_id?: { _id: string; title: string } | null;
+    qna: Array<{
         question: string;
         possible_answers: string[];
         is_required: boolean;
@@ -54,14 +55,14 @@ const CourseEnrollmentList: React.FC = () => {
         setSearchTerm(event.target.value);
     };
 
-    const filteredCourses = enrollmentForms.filter((enrollmentForm) =>
-        enrollmentForm.course_id
+    // Filter entries based on search term
+    const filteredCourses = enrollmentForms.filter((entry) =>
+        (entry.course_id?.title || entry.event_id?.title || "")
             .toLowerCase()
             .includes(searchTerm.toLowerCase())
     );
 
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredCourses.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredCourses.length) : 0;
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -74,17 +75,16 @@ const CourseEnrollmentList: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner/delete/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/application-form/delete/${id}`, {
                 method: "DELETE",
             });
             if (!response.ok) {
                 throw new Error("Failed to delete Banner");
             }
-            setEnrollmentForms(prevCourses => prevCourses.filter(course => course._id !== id));
+            setEnrollmentForms(prevEntries => prevEntries.filter(entry => entry._id !== id));
 
         } catch (error) {
             console.error("Failed to delete Banner", error);
-
         }
     };
 
@@ -92,7 +92,7 @@ const CourseEnrollmentList: React.FC = () => {
         const fetchEnrollmentForms = async () => {
             try {
                 const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/enrollmentform/`
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/admin/application-form/`
                 );
                 const data = await response.json();
                 setEnrollmentForms(data.data);
@@ -135,22 +135,22 @@ const CourseEnrollmentList: React.FC = () => {
                     <input
                         type="text"
                         className={styles.inputSearch}
-                        placeholder="Search course here..."
+                        placeholder="Search course/event here..."
                         onChange={handleSearchChange}
                     />
                 </Box>
 
                 <Box sx={{ padding: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Button variant="contained" color="primary" onClick={handleAddCourses}>
-                        Add Course
+                        Add Appilcation Form
                     </Button>
                 </Box>
             </Box>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="courses table">
+                <Table sx={{ minWidth: 650 }} aria-label="entries table">
                     <TableHead className="bg-primary-50">
                         <TableRow>
-                            {["ID", "Course", "Questions", "Status", "Created At", "Action"].map((header, index) => (
+                            {["ID", "Name", "Questions", "Status", "Created At", "Action"].map((header, index) => (
                                 <TableCell
                                     key={index}
                                     sx={{
@@ -166,26 +166,28 @@ const CourseEnrollmentList: React.FC = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {filteredCourses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((course) => (
-                            <TableRow key={course._id}>
-                                <TableCell>{course._id}</TableCell>
-                                <TableCell>{course.course_id}</TableCell>
-                                <TableCell>{course.questions.length}</TableCell>
+                        {filteredCourses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((enrollment, index) => (
+                            <TableRow key={enrollment._id}>
+                                <TableCell>{index + 1}</TableCell>
+                                <TableCell>
+                                    {enrollment.course_id?.title || enrollment.event_id?.title || "N/A"}
+                                </TableCell>
+                                <TableCell>{enrollment.qna.length}</TableCell>
                                 <TableCell>
                                     <Chip
-                                        label={course.is_active ? 'Active' : 'Inactive'}
-                                        color={course.is_active ? 'success' : 'default'}
+                                        label={enrollment.is_active ? 'Active' : 'Inactive'}
+                                        color={enrollment.is_active ? 'success' : 'default'}
                                     />
                                 </TableCell>
-                                <TableCell>{new Date(course.createdAt).toLocaleDateString()}</TableCell>
+                                <TableCell>{new Date(enrollment.createdAt).toLocaleDateString()}</TableCell>
                                 <TableCell>
-                                    <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/view-enroll-course/${course._id}`)}>
+                                    <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/view-enroll/${enrollment._id}`)}>
                                         <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
                                     </IconButton>
-                                    <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-enroll-course/${course._id}`)}>
+                                    <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-enroll/${enrollment._id}`)}>
                                         <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
                                     </IconButton>
-                                    <IconButton aria-label="delete" color="error" onClick={() => handleDelete(course._id)}>
+                                    <IconButton aria-label="delete" color="error" onClick={() => handleDelete(enrollment._id)}>
                                         <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>delete</i>
                                     </IconButton>
                                 </TableCell>
@@ -201,6 +203,6 @@ const CourseEnrollmentList: React.FC = () => {
             </TableContainer>
         </Card>
     );
-}
+};
 
 export default CourseEnrollmentList;

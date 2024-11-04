@@ -730,7 +730,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                         className={`sidemenu-link ${pathname === "/crm/application-form/" ? "active" : ""
                           }`}
                       >
-                        Application Form
+                        Application Form Queries
                       </Link>
                     </li>
                     <li className="sidemenu-item">
@@ -952,7 +952,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
                         className={`sidemenu-link ${pathname === "/lms/enroll-courses/" ? "active" : ""
                           }`}
                       >
-                        Enrolled Courses
+                        Enrolled Form
                       </Link>
                     </li>
                     <li className="sidemenu-item">

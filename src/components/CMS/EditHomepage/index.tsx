@@ -1,5 +1,4 @@
-'use client'
-
+"use client"
 import React, { useState, useEffect } from 'react'
 import {
     Button,
@@ -129,24 +128,24 @@ export default function EditHomepage({ homepageId }: EditHomepageProps) {
     const router = useRouter();
 
     useEffect(() => {
-        const fetchHomepage = async () => {
-            if (!homepageId) return;
-
+        const fetchHomepageData = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/home/${homepageId}`);
-                if (!response.ok) throw new Error('Failed to fetch homepage');
-                const data = await response.json();
-                setHomepage(data.data);
-            } catch (error) {
-                console.error('Error fetching homepage:', error);
-                setError('Failed to load homepage');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/home/${homepageId}`)
+                if (!response.ok) {
+                    throw new Error('Failed to fetch homepage data')
+                }
+                const data = await response.json()
+                setHomepage(data.data.data.data)
+                console.log(data.data.data.data)
+            } catch (err) {
+                setError('An error occurred while fetching homepage data')
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
-        };
+        }
 
-        fetchHomepage();
-    }, [homepageId]);
+        fetchHomepageData()
+    }, [homepageId])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -350,12 +349,20 @@ export default function EditHomepage({ homepageId }: EditHomepageProps) {
         }
     }
 
+    if (!homepageId) {
+        return <Typography>No homepage ID provided</Typography>
+    }
+
     if (loading) {
         return <CircularProgress />
     }
 
     if (error) {
         return <Typography color="error">{error}</Typography>
+    }
+
+    if (!homepage) {
+        return <Typography>Homepage not found</Typography>
     }
 
     return (
@@ -411,7 +418,7 @@ export default function EditHomepage({ homepageId }: EditHomepageProps) {
                     />
 
                     <Typography variant="h6" gutterBottom>Navigation Bars</Typography>
-                    {homepage.navigation_bars.map((nav, index) => (
+                    {homepage.navigation_bars?.map((nav, index) => (
                         <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                             <TextField
                                 label="Name"
@@ -482,7 +489,7 @@ export default function EditHomepage({ homepageId }: EditHomepageProps) {
                     />
 
                     <Typography variant="h6" gutterBottom>Popular Categories</Typography>
-                    {homepage.popular_categories.map((cat, index) => (
+                    {homepage.popular_categories?.map((cat, index) => (
                         <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                             <FormControl fullWidth>
                                 <InputLabel>Category</InputLabel>
@@ -796,7 +803,7 @@ export default function EditHomepage({ homepageId }: EditHomepageProps) {
                     />
 
                     <Typography variant="h6" gutterBottom>FAQs</Typography>
-                    {homepage.faqs.map((faq, index) => (
+                    {homepage.faqs?.map((faq, index) => (
                         <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                             <TextField
                                 label="Question"
@@ -849,7 +856,7 @@ export default function EditHomepage({ homepageId }: EditHomepageProps) {
 
                     <Typography variant="h6" gutterBottom>Meta Keywords</Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        {homepage.meta_keywords.map((keyword, index) => (
+                        {homepage.meta_keywords?.map((keyword, index) => (
                             <Chip
                                 key={index}
                                 label={keyword}
