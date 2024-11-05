@@ -1,58 +1,52 @@
 import * as React from "react";
-import NextLink from 'next/link';
+import { Metadata, ResolvingMetadata } from 'next';
+import { notFound } from 'next/navigation';
 import EditHomepage from "@/components/CMS/EditHomepage";
 
 interface Homepage {
     _id: string;
+    title: string;
 }
 
-export async function generateStaticParams() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/home`);
-    const homepages = await response.json();
+async function getHomepage(id: string): Promise<Homepage | null> {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/home/${id}`, { next: { revalidate: 60 } });
+        if (!res.ok) throw new Error('Failed to fetch homepage');
+        return res.json();
+    } catch (error) {
+        console.error('Error fetching homepage:', error);
+        return null;
+    }
+}
 
-    console.log("API response for homepages:", homepages); 
+export async function generateMetadata(
+    { params }: { params: { id: string } },
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    const homepage = await getHomepage(params.id);
 
-    const data = Array.isArray(homepages)
-        ? homepages
-        : Array.isArray(homepages.data)
-            ? homepages.data
-            : null;
-
-    if (!data) {
-        throw new Error("Expected an array but got something else");
+    if (!homepage) {
+        return {
+            title: 'Homepage Not Found',
+        };
     }
 
-    return data.map((homepage: Homepage) => ({
-        id: homepage._id,
-    }));
-}
-
-
-interface PageProps {
-    params: {
-        id: string;
+    return {
+        title: `Edit Homepage - ${homepage.title}`,
     };
 }
 
-export default async function Page({ params }: PageProps) {
-    const { id } = params;
+export default async function EditHomepagePage({ params }: { params: { id: string } }) {
+    const homepage = await getHomepage(params.id);
+
+    if (!homepage) {
+        notFound();
+    }
 
     return (
-        <>
-            <div className="breadcrumb-card">
-                <h5>CMS</h5>
-                <ul className="breadcrumb">
-                    <li>
-                        <NextLink href="/dashboard/ecommerce/">
-                            <i className="material-symbols-outlined">home</i>
-                            Dashboard
-                        </NextLink>
-                    </li>
-                    <li>CMS</li>
-                    <li>Edit Homepage</li>
-                </ul>
-            </div>
-            <EditHomepage homepageId={id} />
-        </>
+        <div className="container mx-auto px-4 py-8">
+            <h1 className="text-3xl font-bold mb-6">Edit Homepage</h1>
+            <EditHomepage homepageId={params.id} />
+        </div>
     );
 }

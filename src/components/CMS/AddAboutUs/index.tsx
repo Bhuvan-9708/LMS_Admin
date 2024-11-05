@@ -15,6 +15,8 @@ import {
     MenuItem,
     FormControl,
     InputLabel,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -107,6 +109,11 @@ export default function CreateAboutUs() {
     const router = useRouter();
     const [banners, setBanners] = useState<Banner[]>([]);
     const [sections, setSections] = useState<SectionWorking[]>([]);
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+        open: false,
+        message: "",
+        severity: "success",
+    });
 
     useEffect(() => {
         fetchBanners();
@@ -243,6 +250,10 @@ export default function CreateAboutUs() {
         } catch (error) {
             console.error('Error creating About Us entry:', error);
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     return (
@@ -601,6 +612,17 @@ export default function CreateAboutUs() {
                     </Button>
                 </form>
             </CardContent>
+            < Snackbar
+                open={snackbar.open}
+                autoHideDuration={2000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Card>
+
     );
 }

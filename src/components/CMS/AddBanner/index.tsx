@@ -34,10 +34,7 @@ interface Banner {
     additional_images: File[];
 }
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-    props,
-    ref,
-) {
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
@@ -281,7 +278,7 @@ export default function AddBannerForm() {
                                     key={index}
                                     src={src}
                                     alt={`Additional Preview ${index + 1}`}
-                                    style={{ width: '100px', height: '100px', objectFit: 'contain' }}
+                                    style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                                 />
                             ))}
                         </Box>
@@ -290,25 +287,23 @@ export default function AddBannerForm() {
                         variant="contained"
                         color="secondary"
                         onClick={() => additionalImagesInputRef.current?.click()}
-                        sx={{ mb: 2 }}
                     >
                         Choose Additional Images
                     </Button>
-                    <br />
                     <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-                        Create Banner
+                        Submit Banner
                     </Button>
                 </form>
+                <Snackbar
+                    open={snackbar.open}
+                    autoHideDuration={2000}
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                >
+                    <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
             </CardContent>
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={6000}
-                onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
-            >
-                <Alert onClose={() => setSnackbar(prev => ({ ...prev, open: false }))} severity={snackbar.severity} sx={{ width: '100%' }}>
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
         </Card>
     );
 }

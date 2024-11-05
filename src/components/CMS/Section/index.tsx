@@ -159,7 +159,7 @@ const SectionTable: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/section/delete/${id}`, {
                 method: "DELETE",
             });
             if (!response.ok) {

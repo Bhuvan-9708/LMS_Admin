@@ -7,6 +7,10 @@ const nextConfig = {
     unoptimized: true,
   },
   optimizeFonts: false,
+  reactStrictMode: true,
+  experimental: {
+    appDir: true,
+  },
 };
 
 export default nextConfig;

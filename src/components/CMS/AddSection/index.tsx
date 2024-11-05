@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import {
     Button,
@@ -70,7 +70,8 @@ export default function AddSectionForm() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(section),
-            });
+            }
+            );
 
             if (!response.ok) {
                 throw new Error('Failed to create section');
@@ -98,11 +99,13 @@ export default function AddSectionForm() {
                         margin="normal"
                         required
                     />
+
                     <Typography variant="h6" gutterBottom>Content</Typography>
                     <RichTextEditor
                         value={section.content}
                         onChange={(value) => setSection(prev => ({ ...prev, content: value }))}
                     />
+
                     <TextField
                         fullWidth
                         label="Meta URL"
@@ -111,6 +114,7 @@ export default function AddSectionForm() {
                         onChange={handleInputChange}
                         margin="normal"
                     />
+
                     <Typography variant="h6" gutterBottom>Meta Tags</Typography>
                     {section.meta_tags.map((tag, index) => (
                         <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -125,6 +129,7 @@ export default function AddSectionForm() {
                         </Box>
                     ))}
                     <Button onClick={handleAddMetaTag}>Add Meta Tag</Button>
+
                     <TextField
                         fullWidth
                         label="Meta Description"
@@ -135,6 +140,7 @@ export default function AddSectionForm() {
                         multiline
                         rows={3}
                     />
+
                     <FormControlLabel
                         control={
                             <Checkbox
@@ -145,6 +151,7 @@ export default function AddSectionForm() {
                         }
                         label="Is Active"
                     />
+
                     <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
                         Create Section
                     </Button>

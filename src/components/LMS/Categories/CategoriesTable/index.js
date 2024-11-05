@@ -18,6 +18,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Switch,
   Dialog,
   Card,
   DialogTitle,
@@ -74,7 +75,12 @@ const CategoryManagement = () => {
       [name]: value
     }));
   };
-
+  const handleSwitchChange = (e) => {
+    setFormData(prevData => ({
+      ...prevData,
+      is_active: e.target.checked
+    }));
+  };
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     setFormData(prevData => ({
@@ -268,11 +274,7 @@ const CategoryManagement = () => {
             <IconButton
               aria-label="close"
               onClick={() => setOpenDialog(false)}
-              sx={{
-                position: 'absolute',
-                right: 8,
-                top: 8,
-              }}
+              sx={{ position: 'absolute', right: 8, top: 8 }}
             >
               <CloseIcon />
             </IconButton>
@@ -305,66 +307,18 @@ const CategoryManagement = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <FormControl fullWidth>
-                    <InputLabel id="is-active-label">Is Active</InputLabel>
-                    <Select
-                      labelId="is-active-label"
-                      id="is_active"
-                      name="is_active"
-                      value={formData.is_active}
-                      onChange={handleInputChange}
-                    >
-                      <MenuItem value={true}>Yes</MenuItem>
-                      <MenuItem value={false}>No</MenuItem>
-                    </Select>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Switch
+                        checked={formData.is_active}
+                        onChange={handleSwitchChange}
+                        name="is_active"
+                        color="primary"
+                      />
+                      <Typography variant="body1">
+                        {formData.is_active ? 'Active' : 'Inactive'}
+                      </Typography>
+                    </Box>
                   </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl fullWidth>
-                    <InputLabel id="parent-category-label">Parent Category</InputLabel>
-                    <Select
-                      sx={{ m: 1 }}
-                      labelId="parent-category-label"
-                      id="parent_category"
-                      name="parent_category"
-                      value={formData.parent_category}
-                      onChange={handleInputChange}
-                    >
-                      <MenuItem sx={{ m: 1 }} value="">None</MenuItem>
-                      {renderCategoryOptions(categories)}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <input
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    id="category-image"
-                    type="file"
-                    name="image"
-                    onChange={handleFileChange}
-                  />
-                  <label htmlFor="category-image">
-                    <Button variant="contained" component="span">
-                      Upload Category Image
-                    </Button>
-                  </label>
-                  {formData.image && <Typography>{formData.image.name}</Typography>}
-                </Grid>
-                <Grid item xs={12}>
-                  <input
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    id="category-image-icon"
-                    type="file"
-                    name="image_icon"
-                    onChange={handleFileChange}
-                  />
-                  <label htmlFor="category-image-icon">
-                    <Button variant="contained" component="span">
-                      Upload Category Icon
-                    </Button>
-                  </label>
-                  {formData.image_icon && <Typography>{formData.image_icon.name}</Typography>}
                 </Grid>
               </Grid>
             </Box>

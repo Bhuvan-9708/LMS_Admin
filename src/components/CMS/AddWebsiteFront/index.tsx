@@ -38,13 +38,13 @@ const AddWebsiteFront: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const heroRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hero-section`);
+                const heroRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hero-section/`);
                 const heroData = await heroRes.json();
-                setHeroSections(heroData);
+                setHeroSections(heroData.data);
 
-                const bannerRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banners`);
+                const bannerRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner/`);
                 const bannerData = await bannerRes.json();
-                setBanners(bannerData);
+                setBanners(bannerData.data);
             } catch (err) {
                 console.error("Error fetching data:", err);
             }

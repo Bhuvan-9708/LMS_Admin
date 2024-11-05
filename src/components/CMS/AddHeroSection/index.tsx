@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { TextField, Button, Checkbox, FormControlLabel, Box, Typography } from "@mui/material";
+import { TextField, Button, Checkbox, FormControlLabel, Box, Typography, Snackbar, Alert } from "@mui/material";
 import { SelectChangeEvent } from '@mui/material/Select';
 
 interface HeroSectionFormData {
@@ -27,8 +27,8 @@ const AddHeroSection: React.FC = () => {
         buttonUrl: "",
         is_active: true,
     });
-
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
     const router = useRouter();
 
@@ -93,15 +93,19 @@ const AddHeroSection: React.FC = () => {
                 }
             });
             if (response.data.success) {
-                alert("Hero Section added successfully!");
+                setSnackbar({ open: true, message: "Hero Section added successfully!", severity: 'success' });
                 router.push("/cms/hero-section");
             } else {
-                alert("Failed to add hero section.");
+                setSnackbar({ open: true, message: "Failed to add hero section.", severity: 'error' });
             }
         } catch (error) {
             console.error("Error adding hero section:", error);
-            alert("Error adding hero section.");
+            setSnackbar({ open: true, message: "Error adding hero section.", severity: 'error' });
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
     };
 
     return (
@@ -204,6 +208,16 @@ const AddHeroSection: React.FC = () => {
             >
                 Add Hero Section
             </Button>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={2000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

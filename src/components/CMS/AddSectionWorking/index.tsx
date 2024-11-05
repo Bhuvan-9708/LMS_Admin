@@ -12,6 +12,8 @@ import {
     FormControlLabel,
     Switch,
     Chip,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -45,7 +47,14 @@ export default function AddSectionWorking() {
         meta_description: '',
         meta_keywords: [],
     });
+
     const router = useRouter();
+
+    // Snackbar state
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         setSectionWorking((prev) => ({ ...prev, [name]: value }));
@@ -123,11 +132,23 @@ export default function AddSectionWorking() {
 
             const result = await response.json();
             console.log('Section working created:', result);
+            // Show success snackbar
+            setSnackbarMessage('Section working created successfully!');
+            setSnackbarSeverity('success');
+            setSnackbarOpen(true);
             router.push('/cms/section-working');
         } catch (error) {
             console.error('Error creating section working:', error);
-            // Handle error (e.g., show an error message)
+            // Show error snackbar
+            setSnackbarMessage('Error creating section working.');
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
         }
+    };
+
+    // Close Snackbar
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
     };
 
     return (
@@ -257,24 +278,25 @@ export default function AddSectionWorking() {
                             />
                         ))}
                     </Box>
-                    <TextField
-                        fullWidth
-                        label="Add Meta Keyword"
-                        onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                const target = e.target as HTMLInputElement;
-                                handleAddKeyword(target.value);
-                                target.value = '';
-                            }
-                        }}
-                        margin="normal"
-                    />
-                    <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-                        Create Section Working
+                    <Button onClick={() => handleAddKeyword(prompt('Enter a keyword') || '')}>
+                        Add Keyword
+                    </Button>
+
+                    <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+                        Submit
                     </Button>
                 </form>
+
+                <Snackbar
+                    open={snackbarOpen}
+                    autoHideDuration={6000}
+                    onClose={handleCloseSnackbar}
+                >
+                    <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
             </CardContent>
-        </Card >
+        </Card>
     );
 }

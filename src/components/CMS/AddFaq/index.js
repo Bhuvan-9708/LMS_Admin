@@ -1,6 +1,19 @@
 "use client";
 import React, { useState } from 'react';
-import { TextField, Card, CardContent, Box, Button, FormControlLabel, Checkbox, Typography, Grid } from '@mui/material';
+import {
+    TextField,
+    Card,
+    CardContent,
+    Box,
+    Button,
+    FormControlLabel,
+    Checkbox,
+    Typography,
+    Grid,
+    CircularProgress,
+    Snackbar,
+    Alert,
+} from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -8,53 +21,76 @@ const AddFaqForm = () => {
     const [faq, setFaq] = useState({
         title: '',
         description: '',
-        content: [
-            { question: '', answers: '' }
-        ],
-        is_deleted: false
+        content: [{ question: '', answers: '' }],
+        is_deleted: false,
     });
+    const [loading, setLoading] = useState(false);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
+
     const router = useRouter();
+
     const handleChange = (field, value) => {
-        setFaq(prev => ({ ...prev, [field]: value }));
+        setFaq((prev) => ({ ...prev, [field]: value }));
     };
 
     const handleContentChange = (index, field, value) => {
         const updatedContent = [...faq.content];
         updatedContent[index][field] = value;
-        setFaq(prev => ({
+        setFaq((prev) => ({
             ...prev,
-            content: updatedContent
+            content: updatedContent,
         }));
     };
 
     const addContent = () => {
-        setFaq(prev => ({
+        setFaq((prev) => ({
             ...prev,
-            content: [...prev.content, { question: '', answers: '' }]
+            content: [...prev.content, { question: '', answers: '' }],
         }));
     };
 
     const removeContent = (index) => {
-        setFaq(prev => ({
+        setFaq((prev) => ({
             ...prev,
-            content: prev.content.filter((_, i) => i !== index)
+            content: prev.content.filter((_, i) => i !== index),
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/faq/create`, faq);
             console.log('FAQ submitted successfully:', response.data);
-            router.push('/cms/faq')
+
+            // Show success snackbar and reset form
+            setSnackbar({
+                open: true,
+                message: 'FAQ submitted successfully!',
+                severity: 'success',
+            });
             setFaq({
                 title: '',
                 description: '',
                 content: [{ question: '', answers: '' }],
-                is_deleted: false
+                is_deleted: false,
             });
+            router.push('/cms/faq');
         } catch (error) {
             console.error('Error submitting FAQ:', error);
+
+            // Show error snackbar
+            setSnackbar({
+                open: true,
+                message: 'Error submitting FAQ. Please try again.',
+                severity: 'error',
+            });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -93,7 +129,9 @@ const AddFaqForm = () => {
                                                     variant="outlined"
                                                     fullWidth
                                                     value={item.question}
-                                                    onChange={(e) => handleContentChange(index, 'question', e.target.value)}
+                                                    onChange={(e) =>
+                                                        handleContentChange(index, 'question', e.target.value)
+                                                    }
                                                 />
                                             </Box>
                                             <Box mb={2}>
@@ -102,7 +140,9 @@ const AddFaqForm = () => {
                                                     variant="outlined"
                                                     fullWidth
                                                     value={item.answers}
-                                                    onChange={(e) => handleContentChange(index, 'answers', e.target.value)}
+                                                    onChange={(e) =>
+                                                        handleContentChange(index, 'answers', e.target.value)
+                                                    }
                                                 />
                                             </Box>
                                             <Button
@@ -118,7 +158,6 @@ const AddFaqForm = () => {
                                 </Grid>
                             </Grid>
                         ))}
-
                         <Grid item xs={12}>
                             <Button sx={{ m: 2 }} variant="contained" onClick={addContent}>
                                 Add Content
@@ -138,11 +177,30 @@ const AddFaqForm = () => {
                             />
                         </Grid>
                     </Grid>
-                    <Button sx={{ m: 2, width: 200 }} type="submit" variant="contained" color="primary">
-                        Submit
-                    </Button>
+                    <Box display="flex" alignItems="center" mt={2}>
+                        <Button
+                            sx={{ m: 2, width: 200 }}
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            disabled={loading}
+                        >
+                            {loading ? <CircularProgress size={24} /> : 'Submit'}
+                        </Button>
+                    </Box>
                 </CardContent>
             </Card>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={2000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </form>
     );
 };

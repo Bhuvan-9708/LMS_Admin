@@ -8,21 +8,22 @@ import {
     CardContent,
     Checkbox,
     Box,
-    Chip,
     FormControl,
     InputLabel,
     MenuItem,
     Select,
     TextField,
     Typography,
+    Snackbar,
+    Alert
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { SelectChangeEvent } from "@mui/material/Select";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 const RichTextEditor = dynamic(() => import("@mantine/rte"), {
     ssr: false,
@@ -76,6 +77,11 @@ export default function CreateBlog() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+        open: false,
+        message: "",
+        severity: "success",
+    });
 
     useEffect(() => {
         const fetchInstructors = async () => {
@@ -130,34 +136,6 @@ export default function CreateBlog() {
         setBlogPost((prev) => ({ ...prev, [name]: checked }));
     };
 
-    const handleArrayInputChange = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-        index: number,
-        field: keyof BlogPost
-    ) => {
-        const { value } = event.target;
-        setBlogPost((prev) => {
-            const updatedField = [...(prev[field] as string[])];
-            updatedField[index] = value;
-            return { ...prev, [field]: updatedField };
-        });
-    };
-
-    const handleAddArrayItem = (field: keyof BlogPost) => {
-        setBlogPost((prev) => ({
-            ...prev,
-            [field]: [...(prev[field] as string[]), ""],
-        }));
-    };
-
-    const handleRemoveArrayItem = (index: number, field: keyof BlogPost) => {
-        setBlogPost((prev) => {
-            const updatedField = [...(prev[field] as string[])];
-            updatedField.splice(index, 1);
-            return { ...prev, [field]: updatedField };
-        });
-    };
-
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
@@ -173,9 +151,6 @@ export default function CreateBlog() {
             const formData = new FormData();
             if (selectedImage) {
                 formData.append("blog-image", selectedImage);
-                console.log(selectedImage);
-            } else {
-                console.error("No image selected");
             }
             Object.entries(blogPost).forEach(([key, value]) => {
                 if (Array.isArray(value)) {
@@ -189,7 +164,7 @@ export default function CreateBlog() {
                 }
             });
 
-            const response = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/blog/create`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/create`, {
                 method: "POST",
                 body: formData,
             });
@@ -199,10 +174,11 @@ export default function CreateBlog() {
             }
 
             const result = await response.json();
-            console.log("Blog post created successfully:", result);
+            setSnackbar({ open: true, message: "Blog post created successfully!", severity: "success" });
             router.push('/cms/blog');
             resetForm();
         } catch (error) {
+            setSnackbar({ open: true, message: "Error creating blog post", severity: "error" });
             console.error("Error creating blog post:", error);
         }
     };
@@ -226,13 +202,16 @@ export default function CreateBlog() {
         setImagePreview(null);
     };
 
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <LocalizationProvider dateAdapter={AdapterDateFns} >
             <Card>
                 <CardContent>
-                    <Typography variant="h5" gutterBottom>Create New Blog Post</Typography>
-                    <form onSubmit={handleSubmit}>
+                    <Typography variant="h5" gutterBottom > Create New Blog Post </Typography>
+                    < form onSubmit={handleSubmit} >
                         <TextField
                             fullWidth
                             label="Title"
@@ -244,11 +223,12 @@ export default function CreateBlog() {
                         />
                         <RichTextEditor
                             value={blogPost.content}
-                            onChange={(value) => setBlogPost(prev => ({ ...prev, content: value }))}
+                            onChange={(value) => setBlogPost(prev => ({ ...prev, content: value }))
+                            }
                         />
-                        <FormControl fullWidth margin="normal">
-                            <InputLabel id="author-label">Author</InputLabel>
-                            <Select
+                        < FormControl fullWidth margin="normal" >
+                            <InputLabel id="author-label" > Author </InputLabel>
+                            < Select
                                 labelId="author-label"
                                 id="author"
                                 name="author"
@@ -256,19 +236,20 @@ export default function CreateBlog() {
                                 onChange={handleSelectChange}
                                 required
                             >
-                                {instructors.map((instructor) => (
-                                    <MenuItem key={instructor._id} value={instructor._id}>
-                                        {`${instructor.first_name} ${instructor.last_name}`}
-                                    </MenuItem>
-                                ))}
+                                {
+                                    instructors.map((instructor) => (
+                                        <MenuItem key={instructor._id} value={instructor._id} >
+                                            {`${instructor.first_name} ${instructor.last_name}`}
+                                        </MenuItem>
+                                    ))}
                             </Select>
                         </FormControl>
-                        <DatePicker
+                        < DatePicker
                             label="Published Date"
                             value={blogPost.published_date}
                             onChange={(date) => setBlogPost(prev => ({ ...prev, published_date: date }))}
                         />
-                        <Box sx={{ mt: 2, mb: 2 }}>
+                        < Box sx={{ mt: 2, mb: 2 }}>
                             <input
                                 accept="image/*"
                                 style={{ display: 'none' }}
@@ -276,97 +257,22 @@ export default function CreateBlog() {
                                 type="file"
                                 onChange={handleImageChange}
                             />
-                            <label htmlFor="raised-button-file">
-                                <Button variant="contained" component="span">
+                            <label htmlFor="raised-button-file" >
+                                <Button variant="contained" component="span" >
                                     Upload Image
                                 </Button>
                             </label>
-                            {imagePreview && (
-                                <Box sx={{ mt: 2 }}>
-                                    <Image src={imagePreview} alt="Blog post image preview" width={200} height={200} objectFit="cover" />
-                                </Box>
-                            )}
+                            {
+                                imagePreview && (
+                                    <Box sx={{ mt: 2 }}>
+                                        <Image src={imagePreview} alt="Blog post image preview" width={200} height={200} objectFit="cover" />
+                                    </Box>
+                                )
+                            }
                         </Box>
-                        {blogPost.tags.map((tag, index) => (
-                            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
-                                <TextField
-                                    fullWidth
-                                    label={`Tag ${index + 1}`}
-                                    value={tag}
-                                    onChange={(e) => handleArrayInputChange(e, index, 'tags')}
-                                    margin="normal"
-                                />
-                                <Button
-                                    onClick={() => handleRemoveArrayItem(index, 'tags')}
-                                    color="secondary"
-                                    variant="contained"
-                                    style={{ marginLeft: '10px' }}
-                                >
-                                    Remove
-                                </Button>
-                            </div>
-                        ))}
-                        <Button onClick={() => handleAddArrayItem('tags')}>Add Tag</Button>
-                        {blogPost.meta_url.map((url, index) => (
-                            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
-                                <TextField
-                                    fullWidth
-                                    label={`Meta URL ${index + 1}`}
-                                    value={url}
-                                    onChange={(e) => handleArrayInputChange(e, index, 'meta_url')}
-                                    margin="normal"
-                                />
-                                <Button
-                                    onClick={() => handleRemoveArrayItem(index, 'meta_url')}
-                                    color="secondary"
-                                    variant="contained"
-                                    style={{ marginLeft: '10px' }}
-                                >
-                                    Remove
-                                </Button>
-                            </div>
-                        ))}
-                        <Button onClick={() => handleAddArrayItem('meta_url')}>Add Meta URL</Button>
-                        <TextField
-                            fullWidth
-                            label="Meta Description"
-                            name="meta_description"
-                            value={blogPost.meta_description}
-                            onChange={handleInputChange}
-                            margin="normal"
-                        />
-                        <TextField
-                            fullWidth
-                            label="Meta Title"
-                            name="meta_title"
-                            value={blogPost.meta_title}
-                            onChange={handleInputChange}
-                            margin="normal"
-                        />
-                        {blogPost.meta_keywords.map((keyword, index) => (
-                            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
-                                <TextField
-                                    fullWidth
-                                    label={`Meta Keyword ${index + 1}`}
-                                    value={keyword}
-                                    onChange={(e) => handleArrayInputChange(e, index, 'meta_keywords')}
-                                    margin="normal"
-                                />
-                                <Button
-                                    onClick={() => handleRemoveArrayItem(index, 'meta_keywords')}
-                                    color="secondary"
-                                    variant="contained"
-                                    style={{ marginLeft: '10px' }}
-                                >
-                                    Remove
-                                </Button>
-                            </div>
-                        ))}
-                        <Button onClick={() => handleAddArrayItem('meta_keywords')}>Add Meta Keyword</Button>
-                        <br />
-                        <FormControlLabel
+                        < FormControlLabel
                             control={
-                                <Checkbox
+                                < Checkbox
                                     checked={blogPost.is_active}
                                     onChange={handleCheckboxChange}
                                     name="is_active"
@@ -374,43 +280,36 @@ export default function CreateBlog() {
                             }
                             label="Is Active"
                         />
-                        <FormControl fullWidth margin="normal">
-                            <InputLabel id="status-label">Status</InputLabel>
-                            <Select
+                        <FormControl fullWidth margin="normal" >
+                            <InputLabel id="status-label" > Status </InputLabel>
+                            < Select
                                 labelId="status-label"
                                 name="status"
                                 value={blogPost.status}
                                 onChange={(e) => setBlogPost((prev) => ({ ...prev, status: e.target.value as BlogPost["status"] }))}
                                 required
                             >
-                                <MenuItem value="draft">Draft</MenuItem>
-                                <MenuItem value="published">Published</MenuItem>
-                                <MenuItem value="archived">Archived</MenuItem>
+                                <MenuItem value="draft" > Draft </MenuItem>
+                                < MenuItem value="published" > Published </MenuItem>
+                                < MenuItem value="archived" > Archived </MenuItem>
                             </Select>
                         </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <InputLabel id="category-label">Categories</InputLabel>
-                            <Select
-                                labelId="category-label"
-                                name="category"
-                                multiple
-                                value={blogPost.category}
-                                onChange={handleSelectChange}
-                                required
-                            >
-                                {categories.map((category) => (
-                                    <MenuItem key={category._id} value={category._id}>
-                                        {category.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-                            Create Blog Post
+                        < Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+                            Create Blog
                         </Button>
                     </form>
                 </CardContent>
             </Card>
+            < Snackbar
+                open={snackbar.open}
+                autoHideDuration={2000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </LocalizationProvider>
     );
 }

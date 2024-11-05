@@ -9,7 +9,9 @@ import {
     FormControlLabel,
     Checkbox,
     Typography,
-    Grid
+    Grid,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -18,7 +20,7 @@ const CertificateForm = () => {
     const [certificateData, setCertificateData] = useState({
         certification_title: '',
         certification_heading: '',
-        certificate_image: null, // Change to null for file input
+        certificate_image: null,
         text_displayed_on_frontend: '',
         certification_details: [
             {
@@ -27,6 +29,11 @@ const CertificateForm = () => {
             }
         ],
         is_deleted: false
+    });
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
     });
     const router = useRouter();
 
@@ -53,13 +60,12 @@ const CertificateForm = () => {
     };
 
     const handleImageChange = (e) => {
-        const file = e.target.files[0]; // Get the first selected file
+        const file = e.target.files[0];
         setCertificateData(prev => ({ ...prev, certificate_image: file }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const formData = new FormData();
 
         formData.append('certification_title', certificateData.certification_title);
@@ -79,8 +85,11 @@ const CertificateForm = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            console.log('Certificate submitted successfully:', response.data);
-            router.push('/cms/certificate')
+            setSnackbar({
+                open: true,
+                message: 'Certificate submitted successfully!',
+                severity: 'success'
+            });
             setCertificateData({
                 certification_title: '',
                 certification_heading: '',
@@ -89,9 +98,19 @@ const CertificateForm = () => {
                 certification_details: [{ title: '', description: '' }],
                 is_deleted: false
             });
+            router.push('/cms/certificate');
         } catch (error) {
+            setSnackbar({
+                open: true,
+                message: 'Error submitting certificate. Please try again.',
+                severity: 'error'
+            });
             console.error('Error submitting certificate:', error);
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
     };
 
     return (
@@ -200,6 +219,16 @@ const CertificateForm = () => {
                     </Grid>
                 </CardContent>
             </Card>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={2000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </form>
     );
 };

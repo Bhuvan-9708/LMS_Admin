@@ -1,63 +1,67 @@
 "use client";
 import React, { useState } from 'react';
-import { TextField, Card, CardContent, Button, FormControlLabel, Checkbox, Typography, Grid } from '@mui/material';
+import { TextField, Card, CardContent, Button, FormControlLabel, Checkbox, Typography, Grid, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
-const FeedbackForm = () => {
-    const [feedbackData, setFeedbackData] = useState({
+const DynamicForm = () => {
+    const [formData, setFormData] = useState({
         title: '',
         description: '',
         join_now_text: '',
         join_now_url: '',
-        feedbacks: [
+        entries: [
             {
                 name: '',
-                feedback: '',
+                comment: '',
                 date: ''
             }
         ],
         is_deleted: false
     });
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
     const router = useRouter();
+
     const handleChange = (field, value) => {
-        setFeedbackData(prev => ({ ...prev, [field]: value }));
+        setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleFeedbackChange = (index, field, value) => {
-        const updatedFeedbacks = [...feedbackData.feedbacks];
-        updatedFeedbacks[index][field] = value;
-        setFeedbackData(prev => ({ ...prev, feedbacks: updatedFeedbacks }));
+    const handleEntryChange = (index, field, value) => {
+        const updatedEntries = [...formData.entries];
+        updatedEntries[index][field] = value;
+        setFormData(prev => ({ ...prev, entries: updatedEntries }));
     };
 
-    const addFeedback = () => {
-        setFeedbackData(prev => ({
+    const addEntry = () => {
+        setFormData(prev => ({
             ...prev,
-            feedbacks: [...prev.feedbacks, { name: '', feedback: '', date: '' }]
+            entries: [...prev.entries, { name: '', comment: '', date: '' }]
         }));
     };
 
-    const removeFeedback = (index) => {
-        const updatedFeedbacks = feedbackData.feedbacks.filter((_, i) => i !== index);
-        setFeedbackData(prev => ({ ...prev, feedbacks: updatedFeedbacks }));
+    const removeEntry = (index) => {
+        const updatedEntries = formData.entries.filter((_, i) => i !== index);
+        setFormData(prev => ({ ...prev, entries: updatedEntries }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback/create`, feedbackData);
-            console.log('Feedback submitted successfully:', response.data);
-            router.push('/cms/feedback')
-            setFeedbackData({
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback/create`, formData);
+            console.log('Form submitted successfully:', response.data);
+            setSnackbar({ open: true, message: 'Form submitted successfully!', severity: 'success' });
+            setFormData({
                 title: '',
                 description: '',
                 join_now_text: '',
                 join_now_url: '',
-                feedbacks: [{ name: '', feedback: '', date: '' }],
+                entries: [{ name: '', comment: '', date: '' }],
                 is_deleted: false
             });
+            router.push('/cms/feedback');
         } catch (error) {
-            console.error('Error submitting feedback:', error);
+            console.error('Error submitting form:', error);
+            setSnackbar({ open: true, message: 'Error submitting form', severity: 'error' });
         }
     };
 
@@ -71,7 +75,7 @@ const FeedbackForm = () => {
                                 label="Title"
                                 variant="outlined"
                                 fullWidth
-                                value={feedbackData.title}
+                                value={formData.title}
                                 onChange={(e) => handleChange('title', e.target.value)}
                             />
                         </Grid>
@@ -80,7 +84,7 @@ const FeedbackForm = () => {
                                 label="Description"
                                 variant="outlined"
                                 fullWidth
-                                value={feedbackData.description}
+                                value={formData.description}
                                 onChange={(e) => handleChange('description', e.target.value)}
                             />
                         </Grid>
@@ -89,7 +93,7 @@ const FeedbackForm = () => {
                                 label="Join Now Text"
                                 variant="outlined"
                                 fullWidth
-                                value={feedbackData.join_now_text}
+                                value={formData.join_now_text}
                                 onChange={(e) => handleChange('join_now_text', e.target.value)}
                             />
                         </Grid>
@@ -98,15 +102,15 @@ const FeedbackForm = () => {
                                 label="Join Now URL"
                                 variant="outlined"
                                 fullWidth
-                                value={feedbackData.join_now_url}
+                                value={formData.join_now_url}
                                 onChange={(e) => handleChange('join_now_url', e.target.value)}
                             />
                         </Grid>
 
-                        {feedbackData.feedbacks.map((fb, index) => (
+                        {formData.entries.map((entry, index) => (
                             <Grid container key={index} spacing={2} alignItems="center">
-                                <Grid item xs={12} >
-                                    <Typography sx={{ p: 2 }} variant="h6">Feedback {index + 1}</Typography>
+                                <Grid item xs={12}>
+                                    <Typography sx={{ p: 2 }} variant="h6">Entry {index + 1}</Typography>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
@@ -114,18 +118,18 @@ const FeedbackForm = () => {
                                         label="Name"
                                         variant="outlined"
                                         fullWidth
-                                        value={fb.name}
-                                        onChange={(e) => handleFeedbackChange(index, 'name', e.target.value)}
+                                        value={entry.name}
+                                        onChange={(e) => handleEntryChange(index, 'name', e.target.value)}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
                                         sx={{ m: 1 }}
-                                        label="Feedback"
+                                        label="Comment"
                                         variant="outlined"
                                         fullWidth
-                                        value={fb.feedback}
-                                        onChange={(e) => handleFeedbackChange(index, 'feedback', e.target.value)}
+                                        value={entry.comment}
+                                        onChange={(e) => handleEntryChange(index, 'comment', e.target.value)}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -136,8 +140,8 @@ const FeedbackForm = () => {
                                         fullWidth
                                         type="date"
                                         InputLabelProps={{ shrink: true }}
-                                        value={fb.date}
-                                        onChange={(e) => handleFeedbackChange(index, 'date', e.target.value)}
+                                        value={entry.date}
+                                        onChange={(e) => handleEntryChange(index, 'date', e.target.value)}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -145,17 +149,17 @@ const FeedbackForm = () => {
                                         sx={{ m: 1 }}
                                         variant="outlined"
                                         color="error"
-                                        onClick={() => removeFeedback(index)}
+                                        onClick={() => removeEntry(index)}
                                     >
-                                        Remove Feedback
+                                        Remove Entry
                                     </Button>
                                 </Grid>
                             </Grid>
                         ))}
 
                         <Grid item xs={12}>
-                            <Button variant="contained" onClick={addFeedback}>
-                                Add Feedback
+                            <Button variant="contained" onClick={addEntry}>
+                                Add Entry
                             </Button>
                         </Grid>
 
@@ -163,7 +167,7 @@ const FeedbackForm = () => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={feedbackData.is_deleted}
+                                        checked={formData.is_deleted}
                                         onChange={(e) => handleChange('is_deleted', e.target.checked)}
                                         color="primary"
                                     />
@@ -180,8 +184,17 @@ const FeedbackForm = () => {
                     </Grid>
                 </CardContent>
             </Card>
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={2000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+            >
+                <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </form>
     );
 };
 
-export default FeedbackForm;
+export default DynamicForm;
