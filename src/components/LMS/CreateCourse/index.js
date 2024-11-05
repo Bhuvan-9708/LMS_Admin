@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box, Button, Card, Checkbox, FormControl, FormControlLabel, Grid,
-  InputLabel, MenuItem, Select, TextField, Typography, CircularProgress
+  InputLabel, MenuItem, Select, TextField, Typography, CircularProgress, Snackbar, Alert
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
@@ -71,6 +71,11 @@ const CreateCourse = () => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const status = ['pending', 'approved', 'rejected'];
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
 
   useEffect(() => {
     fetchData();
@@ -200,6 +205,10 @@ const CreateCourse = () => {
     });
   };
 
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formDataToSend = new FormData();
@@ -241,9 +250,19 @@ const CreateCourse = () => {
 
       const result = await response.json();
       console.log('Course created successfully:', result);
+      setSnackbar({
+        open: true,
+        message: 'Course created successfully!',
+        severity: 'success',
+      });
       router.push('/lms/courses');
     } catch (error) {
       console.error('Error creating course:', error);
+      setSnackbar({
+        open: true,
+        message: error.message || 'An error occurred while creating the course.',
+        severity: 'error',
+      });
     }
   };
 
@@ -770,6 +789,16 @@ const CreateCourse = () => {
         <Button type="submit" variant="contained" color="primary" size="large" fullWidth>
           Create Course
         </Button>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Box>
     </LocalizationProvider >
   );
