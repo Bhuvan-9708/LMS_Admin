@@ -19,8 +19,16 @@ const DynamicForm = () => {
         ],
         is_deleted: false
     });
-    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
     const router = useRouter();
+
+    const handleCloseSnackbar = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
 
     const handleChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -49,7 +57,11 @@ const DynamicForm = () => {
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/feedback/create`, formData);
             console.log('Form submitted successfully:', response.data);
-            setSnackbar({ open: true, message: 'Form submitted successfully!', severity: 'success' });
+            setSnackbar({
+                open: true,
+                message: 'Feedback submitted successfully!',
+                severity: 'success'
+            });
             setFormData({
                 title: '',
                 description: '',
@@ -61,7 +73,11 @@ const DynamicForm = () => {
             router.push('/cms/feedback');
         } catch (error) {
             console.error('Error submitting form:', error);
-            setSnackbar({ open: true, message: 'Error submitting form', severity: 'error' });
+            setSnackbar({
+                open: true,
+                message: 'Error submitting Feedback. Please try again.',
+                severity: 'error'
+            });
         }
     };
 
@@ -186,14 +202,14 @@ const DynamicForm = () => {
             </Card>
             <Snackbar
                 open={snackbar.open}
-                ={2000}
-                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                autoHideDuration={1000}
+                onClose={handleCloseSnackbar}
             >
-                <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
                     {snackbar.message}
                 </Alert>
             </Snackbar>
-        </form>
+        </form >
     );
 };
 
