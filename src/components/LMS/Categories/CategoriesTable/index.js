@@ -25,6 +25,8 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -45,6 +47,16 @@ const CategoryManagement = () => {
     image_icon: null,
   });
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -122,12 +134,22 @@ const CategoryManagement = () => {
 
       const result = await response.json();
       console.log('Category saved successfully:', result);
+      setSnackbar({
+        open: true,
+        message: 'Category created successfully!',
+        severity: 'success',
+      });
       setOpenDialog(false);
       setEditingCategory(null);
       fetchCategories();
       resetForm();
     } catch (error) {
       console.error('Error saving category:', error);
+      setSnackbar({
+        open: true,
+        message: 'Error creating Category. Please try again.',
+        severity: 'error',
+      });
     }
   };
 
@@ -330,6 +352,15 @@ const CategoryManagement = () => {
             </Button>
           </DialogActions>
         </Dialog>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={1000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Card>
     </>
   );

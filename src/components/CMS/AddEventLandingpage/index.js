@@ -10,7 +10,9 @@ import {
     FormControlLabel,
     Button,
     Typography,
-    Box
+    Box,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 function EventLandingPageForm() {
@@ -39,6 +41,15 @@ function EventLandingPageForm() {
     const [events, setEvents] = useState([]);
     const [heroSections, setHeroSections] = useState([]);
     const [feedbacks, setFeedbacks] = useState([]);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
+
+    const handleCloseSnackbar = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -184,9 +195,19 @@ function EventLandingPageForm() {
 
             const result = await response.json();
             console.log('Event landing page created:', result);
+            setSnackbar({
+                open: true,
+                message: 'Event landing page created successfully!',
+                severity: 'success',
+            });
             router.push('/cms/event-landing');
         } catch (error) {
             console.error('Error creating event landing page:', error);
+            setSnackbar({
+                open: true,
+                message: 'Error creating event landing page. Please try again.',
+                severity: 'error',
+            });
         }
     };
 
@@ -367,6 +388,15 @@ function EventLandingPageForm() {
                     Create Event Landing Page
                 </Button>
             </Box>
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={1000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </form>
     );
 }

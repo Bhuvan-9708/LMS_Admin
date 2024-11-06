@@ -16,6 +16,7 @@ import {
   FormControlLabel,
   Chip,
   MenuItem,
+  Snackbar,
   Alert,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -117,6 +118,15 @@ const CreateAnEvent: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   useEffect(() => {
     const fetchInstructors = async () => {
@@ -360,6 +370,11 @@ const CreateAnEvent: React.FC = () => {
 
       if (response.data.success) {
         alert('Event created successfully!');
+        setSnackbar({
+          open: true,
+          message: 'Event created successfully!',
+          severity: 'success',
+        });
         router.push('/events/list');
       } else {
         throw new Error(response.data.message || 'Failed to create event');
@@ -380,6 +395,11 @@ const CreateAnEvent: React.FC = () => {
         }
       } else {
         console.error('Error creating event:', error);
+        setSnackbar({
+          open: true,
+          message: 'Error creating Event. Please try again.',
+          severity: 'error',
+        });
         setSubmitError('An unexpected error occurred. Please try again.');
       }
     }
@@ -1011,6 +1031,16 @@ const CreateAnEvent: React.FC = () => {
             </Grid>
           </Grid>
         </Card>
+        < Snackbar
+          open={snackbar.open}
+          autoHideDuration={1000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Box>
     </LocalizationProvider>
   );

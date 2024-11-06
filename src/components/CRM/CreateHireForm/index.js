@@ -10,6 +10,8 @@ import {
     Typography,
     Container,
     Box,
+    Snackbar,
+    Alert
 } from "@mui/material";
 
 const HireFromUsForm = () => {
@@ -28,8 +30,16 @@ const HireFromUsForm = () => {
     const [faqs, setFaqs] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
 
-    // Fetch FAQ options
+    const handleCloseSnackbar = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
+
     useEffect(() => {
         const fetchFaqs = async () => {
             try {
@@ -82,8 +92,18 @@ const HireFromUsForm = () => {
                 community_image: "",
                 faq: "",
             });
+            setSnackbar({
+                open: true,
+                message: 'Hire Form created successfully!',
+                severity: 'success',
+            });
         } catch (err) {
             setError(err.message);
+            setSnackbar({
+                open: true,
+                message: 'Error creating Hire Form. Please try again.',
+                severity: 'error',
+            });
         } finally {
             setLoading(false);
         }
@@ -206,6 +226,15 @@ const HireFromUsForm = () => {
                     {loading ? "Submitting..." : "Submit"}
                 </Button>
             </Box>
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={1000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };

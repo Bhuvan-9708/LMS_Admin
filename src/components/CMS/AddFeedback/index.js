@@ -186,7 +186,7 @@ const DynamicForm = () => {
             </Card>
             <Snackbar
                 open={snackbar.open}
-                autoHideDuration={2000}
+                ={2000}
                 onClose={() => setSnackbar({ ...snackbar, open: false })}
             >
                 <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>

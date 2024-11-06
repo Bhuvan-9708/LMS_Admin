@@ -246,9 +246,19 @@ export default function CreateAboutUs() {
 
             const result = await response.json();
             console.log('About Us entry created successfully:', result);
+            setSnackbar({
+                open: true,
+                message: 'About Us entry created successfully!',
+                severity: 'success',
+            });
             router.push('/cms/about-us');
         } catch (error) {
             console.error('Error creating About Us entry:', error);
+            setSnackbar({
+                open: true,
+                message: 'Error creating About us. Please try again.',
+                severity: 'error',
+            });
         }
     };
 
@@ -614,7 +624,7 @@ export default function CreateAboutUs() {
             </CardContent>
             < Snackbar
                 open={snackbar.open}
-                autoHideDuration={2000}
+                autoHideDuration={1000}
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             >

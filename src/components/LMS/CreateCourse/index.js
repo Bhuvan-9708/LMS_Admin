@@ -83,14 +83,12 @@ const CreateCourse = () => {
 
   const fetchData = async () => {
     try {
-      // Fetch data from the API
       const [instructorsResponse, categoriesResponse, reviewResponse] = await Promise.all([
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/instructor`),
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/get-all-categories`),
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/`),
       ]);
 
-      // Check for successful responses
       const instructorsData = await instructorsResponse.json();
       const categoriesData = await categoriesResponse.json();
       const reviewData = await reviewResponse.json();
@@ -791,7 +789,7 @@ const CreateCourse = () => {
         </Button>
         <Snackbar
           open={snackbar.open}
-          autoHideDuration={6000}
+          autoHideDuration={1000}
           onClose={handleSnackbarClose}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >

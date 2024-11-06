@@ -19,6 +19,8 @@ import {
     Typography,
     IconButton,
     SelectChangeEvent,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -56,6 +58,15 @@ export default function AddCourseEnrollmentForm() {
     const [selectionType, setSelectionType] = useState<'course' | 'event'>('course');
     const [courses, setCourses] = useState<Course[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+        open: false,
+        message: "",
+        severity: "success",
+    });
+
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -168,10 +179,20 @@ export default function AddCourseEnrollmentForm() {
                     throw new Error(responseData.error || 'Failed to create enrollment form');
                 }
             } else {
+                setSnackbar({
+                    open: true,
+                    message: 'Enroll created successfully!',
+                    severity: 'success',
+                });
                 router.push('/lms/enroll-courses/');
             }
         } catch (error) {
             console.error('Error creating enrollment form:', error);
+            setSnackbar({
+                open: true,
+                message: 'Error creating Enrollment. Please try again.',
+                severity: 'error',
+            });
             alert("An unexpected error occurred. Please try again.");
         }
     };
@@ -317,6 +338,16 @@ export default function AddCourseEnrollmentForm() {
                     </Grid>
                 </form>
             </CardContent>
+            < Snackbar
+                open={snackbar.open}
+                autoHideDuration={1000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Card>
     );
 }

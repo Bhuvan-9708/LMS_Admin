@@ -16,6 +16,8 @@ import {
     IconButton,
     FormControlLabel,
     Switch,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -138,6 +140,11 @@ export default function AddHomepageForm() {
     const [courseReviews, setCourseReviews] = useState<any[]>([]);
     const [sectionWorkings, setSectionWorkings] = useState<any[]>([]);
     const [aboutUs, setAboutUs] = useState<any[]>([]);
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+        open: false,
+        message: "",
+        severity: "success",
+    });
 
     const router = useRouter();
 
@@ -338,10 +345,24 @@ export default function AddHomepageForm() {
 
             const result = await response.json();
             console.log('Homepage created successfully:', result);
+            setSnackbar({
+                open: true,
+                message: 'HomePage created successfully!',
+                severity: 'success',
+            });
             router.push('/cms/homepage');
         } catch (error) {
             console.error('Error creating homepage:', error);
+            setSnackbar({
+                open: true,
+                message: 'Error creating Homepage. Please try again.',
+                severity: 'error',
+            });
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     return (
@@ -871,6 +892,16 @@ export default function AddHomepageForm() {
                     </Button>
                 </form>
             </CardContent>
+            < Snackbar
+                open={snackbar.open}
+                autoHideDuration={1000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Card>
     );
 }

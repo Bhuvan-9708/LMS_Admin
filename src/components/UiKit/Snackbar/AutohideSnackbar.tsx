@@ -48,7 +48,7 @@ const AutohideSnackbar: React.FC = () => {
           <Button onClick={handleClick}>Open Snackbar</Button>
           <Snackbar
             open={open}
-            autoHideDuration={5000}
+            autoHideDuration={1000}
             onClose={handleClose}
             message="This Snackbar will be dismissed in 5 seconds."
           />

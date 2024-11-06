@@ -14,6 +14,8 @@ import {
     FormControlLabel,
     Button,
     Box,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select'; // Import SelectChangeEvent here
 import dynamic from "next/dynamic";
@@ -60,6 +62,11 @@ export default function AddEmailTemplate() {
         is_active: true,
     });
     const router = useRouter();
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+        open: false,
+        message: "",
+        severity: "success",
+    });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
         const { name, value } = event.target;
@@ -85,6 +92,10 @@ export default function AddEmailTemplate() {
         }));
     };
 
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
@@ -103,11 +114,20 @@ export default function AddEmailTemplate() {
 
             const data = await response.json();
             console.log('Email template created:', data);
+            setSnackbar({
+                open: true,
+                message: 'Section created successfully!',
+                severity: 'success',
+            });
             router.push('/cms/templates');
             resetForm();
         } catch (error) {
             console.error('Error creating email template:', error);
-            // Show error message to user
+            setSnackbar({
+                open: true,
+                message: 'Error creating Section. Please try again.',
+                severity: 'error',
+            });
         }
     };
 
@@ -175,6 +195,16 @@ export default function AddEmailTemplate() {
                     </Box>
                 </form>
             </CardContent>
+            < Snackbar
+                open={snackbar.open}
+                autoHideDuration={1000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Card>
     );
 }

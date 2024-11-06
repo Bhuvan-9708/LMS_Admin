@@ -9,6 +9,8 @@ import {
     Checkbox,
     FormControlLabel,
     Box,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -36,6 +38,11 @@ export default function AddSectionForm() {
         meta_description: '',
         is_active: true,
     });
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+        open: false,
+        message: "",
+        severity: "success",
+    });
 
     const router = useRouter();
 
@@ -60,6 +67,10 @@ export default function AddSectionForm() {
         setSection(prev => ({ ...prev, meta_tags: newMetaTags }));
     };
 
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
@@ -79,11 +90,22 @@ export default function AddSectionForm() {
 
             const result = await response.json();
             console.log('Section created successfully:', result);
+            setSnackbar({
+                open: true,
+                message: 'Section created successfully!',
+                severity: 'success',
+            });
             router.push('/cms/section');
         } catch (error) {
             console.error('Error creating section:', error);
+            setSnackbar({
+                open: true,
+                message: 'Error creating Section. Please try again.',
+                severity: 'error',
+            });
         }
     };
+
 
     return (
         <Card>
@@ -156,6 +178,16 @@ export default function AddSectionForm() {
                         Create Section
                     </Button>
                 </form>
+                < Snackbar
+                    open={snackbar.open}
+                    autoHideDuration={1000}
+                    onClose={handleCloseSnackbar}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                >
+                    <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
             </CardContent>
         </Card>
     );

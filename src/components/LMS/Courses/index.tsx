@@ -356,7 +356,7 @@ const Courses: React.FC = () => {
               </TableBody>
               <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={6000}
+                autoHideDuration={1000}
                 onClose={() => setSnackbarOpen(false)}
               >
                 <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>

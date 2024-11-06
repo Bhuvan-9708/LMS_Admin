@@ -57,6 +57,11 @@ function CourseLandingPageForm() {
     const [faqs, setFaqs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -269,6 +274,10 @@ function CourseLandingPageForm() {
         setFormData({ ...formData, course_benefits_title: updatedTitles });
     };
 
+    const handleCloseSnackbar = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formDataToSend = new FormData();
@@ -309,9 +318,19 @@ function CourseLandingPageForm() {
 
             const result = await response.json();
             console.log('Course landing page created:', result);
+            setSnackbar({
+                open: true,
+                message: 'Course Landing submitted successfully!',
+                severity: 'success'
+            });
             router.push('/cms/course-landing');
         } catch (error) {
             console.error('Error creating course landing page:', error);
+            setSnackbar({
+                open: true,
+                message: 'Error submitting Course Landing. Please try again.',
+                severity: 'error'
+            });
         }
     };
 
@@ -688,6 +707,15 @@ function CourseLandingPageForm() {
                     </Button>
                 </Grid>
             </Grid>
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={1000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </form>
     );
 };

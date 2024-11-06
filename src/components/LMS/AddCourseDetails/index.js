@@ -12,7 +12,9 @@ import {
     FormControl,
     InputLabel,
     Select,
-    MenuItem
+    MenuItem,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
@@ -37,6 +39,15 @@ const AddCourseDetailsForm = () => {
     });
     const [courses, setCourses] = useState();
     const router = useRouter();
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
+
+    const handleCloseSnackbar = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
 
     useEffect(() => {
         fetchCourses();
@@ -204,12 +215,22 @@ const AddCourseDetailsForm = () => {
             if (response.ok) {
                 const result = await response.json();
                 console.log('Course details added successfully:', result);
+                setSnackbar({
+                    open: true,
+                    message: 'Course Details created successfully!',
+                    severity: 'success',
+                });
                 router.push('/lms/courses');
             } else {
                 console.error('Failed to add course details');
             }
         } catch (error) {
             console.error('Error adding course details:', error);
+            setSnackbar({
+                open: true,
+                message: 'Error creating Course Details page. Please try again.',
+                severity: 'error',
+            });
         }
     };
 
@@ -510,12 +531,18 @@ const AddCourseDetailsForm = () => {
                     </Button>
                 </CardContent>
             </Card>
-
-
-
             <Button type="submit" variant="contained" color="primary" fullWidth>
                 Submit Course Details
             </Button>
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={1000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

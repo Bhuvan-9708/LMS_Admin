@@ -8,7 +8,9 @@ import {
   Select,
   MenuItem,
   Typography,
-  Box
+  Box,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
@@ -32,6 +34,11 @@ function CourseLandingPageDetailsForm() {
   const [courseLandingPages, setCourseLandingPages] = useState([]);
   const [sectionWorkings, setSectionWorkings] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -174,6 +181,10 @@ function CourseLandingPageDetailsForm() {
     }));
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
@@ -212,9 +223,19 @@ function CourseLandingPageDetailsForm() {
 
       const result = await response.json();
       console.log('Course landing page details created:', result);
+      setSnackbar({
+        open: true,
+        message: 'Course Landing created successfully!',
+        severity: 'success',
+      });
       router.push('/cms/course-landing');
     } catch (error) {
       console.error('Error creating course landing page details:', error);
+      setSnackbar({
+        open: true,
+        message: 'Error creating Course landing page. Please try again.',
+        severity: 'error',
+      });
     }
   };
 
@@ -391,6 +412,15 @@ function CourseLandingPageDetailsForm() {
           Create Course Landing Page Details
         </Button>
       </Box>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={1000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </form>
   );
 }

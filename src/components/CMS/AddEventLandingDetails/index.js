@@ -8,7 +8,9 @@ import {
     MenuItem,
     Button,
     Typography,
-    Box
+    Box,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 function EventLandingPageDetailsForm() {
@@ -25,10 +27,6 @@ function EventLandingPageDetailsForm() {
             description: '',
             points: []
         },
-        skills_learn: {
-            title: '',
-            tags: []
-        },
         meta_title: '',
         meta_description: '',
         meta_keywords: [],
@@ -38,6 +36,11 @@ function EventLandingPageDetailsForm() {
     const [landingPages, setLandingPages] = useState([]);
     const [faqs, setFaqs] = useState([]);
     const [certificate, setCertificate] = useState([]);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -163,40 +166,6 @@ function EventLandingPageDetailsForm() {
         }));
     };
 
-    const handleSkillsLearnChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevData => ({
-            ...prevData,
-            skills_learn: {
-                ...prevData.skills_learn,
-                [name]: value
-            }
-        }));
-
-    };
-
-    const handleTagsChange = (e, index) => {
-        const newTags = [...formData.skills_learn.tags];
-        newTags[index] = e.target.value;
-        setFormData(prevData => ({
-            ...prevData,
-            skills_learn: {
-                ...prevData.skills_learn,
-                tags: newTags
-            }
-        }));
-    };
-
-    const addTag = () => {
-        setFormData(prevData => ({
-            ...prevData,
-            skills_learn: {
-                ...prevData.skills_learn,
-                tags: [...prevData.skills_learn.tags, '']
-            }
-        }));
-    };
-
     const handleMetaKeywordsChange = (e, index) => {
         const newKeywords = [...formData.meta_keywords];
         newKeywords[index] = e.target.value;
@@ -211,6 +180,10 @@ function EventLandingPageDetailsForm() {
             ...prevData,
             meta_keywords: [...formData.meta_keywords, '']
         }));
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
     };
 
     const handleSubmit = async (e) => {
@@ -233,11 +206,6 @@ function EventLandingPageDetailsForm() {
         formData.pro.points.forEach((point, index) => {
             formDataToSend.append(`pro[points][${index}][title]`, point.title);
             formDataToSend.append(`pro[points][${index}][description]`, point.description);
-        });
-
-        formDataToSend.append('skills_learn[title]', formData.skills_learn.title);
-        formData.skills_learn.tags.forEach((tag, index) => {
-            formDataToSend.append(`skills_learn[tags][${index}]`, tag);
         });
 
         if (Array.isArray(formData.faq) && formData.faq.length > 0) {
@@ -264,9 +232,19 @@ function EventLandingPageDetailsForm() {
 
             const result = await response.json();
             console.log('Event landing page details created:', result);
+            setSnackbar({
+                open: true,
+                message: 'Event landing page created successfully!',
+                severity: 'success',
+            });
             router.push('/cms/event-landing');
         } catch (error) {
             console.error('Error creating event landing page details:', error);
+            setSnackbar({
+                open: true,
+                message: 'Error creating event landing page. Please try again.',
+                severity: 'error',
+            });
         }
     };
 
@@ -347,11 +325,12 @@ function EventLandingPageDetailsForm() {
             <Button type="button" onClick={addToolImage} variant="outlined" color="primary">
                 Add Tool Image
             </Button>
+            <br />
 
-            <Typography variant="h6" gutterBottom>Pro</Typography>
+            <Typography variant="h6" gutterBottom>Reasons to Join</Typography>
             <TextField
                 fullWidth
-                label="Pro Title"
+                label="Title"
                 name="title"
                 value={formData.pro.title}
                 onChange={handleProChange}
@@ -359,7 +338,7 @@ function EventLandingPageDetailsForm() {
             />
             <TextField
                 fullWidth
-                label="Pro Description"
+                label="Description"
                 name="description"
                 value={formData.pro.description}
                 onChange={handleProChange}
@@ -389,31 +368,7 @@ function EventLandingPageDetailsForm() {
                 </Box>
             ))}
             <Button type="button" onClick={addProPoint} variant="outlined" color="primary">
-                Add Pro Point
-            </Button>
-
-            <Typography variant="h6" gutterBottom>Skills Learn</Typography>
-            <TextField
-                fullWidth
-                label="Skills Learn Title"
-                name="title"
-                value={formData.skills_learn.title}
-                onChange={handleSkillsLearnChange}
-                margin="normal"
-            />
-
-            {formData.skills_learn.tags.map((tag, index) => (
-                <TextField
-                    key={index}
-                    fullWidth
-                    label={`Skill Tag ${index + 1}`}
-                    value={tag}
-                    onChange={(e) => handleTagsChange(e, index)}
-                    margin="normal"
-                />
-            ))}
-            <Button type="button" onClick={addTag} variant="outlined" color="primary">
-                Add Skill Tag
+                Add Point
             </Button>
 
             <TextField
@@ -464,7 +419,17 @@ function EventLandingPageDetailsForm() {
                     Create Event Landing Page Details
                 </Button>
             </Box>
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={1000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </form>
+
     );
 }
 

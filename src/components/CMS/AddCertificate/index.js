@@ -222,7 +222,7 @@ const CertificateForm = () => {
 
             <Snackbar
                 open={snackbar.open}
-                autoHideDuration={2000}
+                autoHideDuration={1000}
                 onClose={handleCloseSnackbar}
             >
                 <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>

@@ -83,7 +83,6 @@ const AddFaqForm = () => {
         } catch (error) {
             console.error('Error submitting FAQ:', error);
 
-            // Show error snackbar
             setSnackbar({
                 open: true,
                 message: 'Error submitting FAQ. Please try again.',
@@ -193,7 +192,7 @@ const AddFaqForm = () => {
 
             <Snackbar
                 open={snackbar.open}
-                autoHideDuration={2000}
+                autoHideDuration={1000}
                 onClose={() => setSnackbar({ ...snackbar, open: false })}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >

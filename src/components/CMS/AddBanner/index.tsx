@@ -145,6 +145,11 @@ export default function AddBannerForm() {
 
             const result = await response.json();
             console.log('Banner created successfully:', result);
+            setSnackbar({
+                open: true,
+                message: 'Banner created successfully!',
+                severity: 'success',
+            });
             router.push('/cms/banner');
         } catch (error) {
             console.error('Error creating banner:', error);
@@ -296,7 +301,7 @@ export default function AddBannerForm() {
                 </form>
                 <Snackbar
                     open={snackbar.open}
-                    autoHideDuration={2000}
+                    autoHideDuration={1000}
                     onClose={() => setSnackbar({ ...snackbar, open: false })}
                 >
                     <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>

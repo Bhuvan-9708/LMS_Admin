@@ -32,14 +32,16 @@ const LandingPageHeroSectionForm = () => {
         batch_start_date_text: '',
         batch_start_date: '',
         instructor_intro_text: '',
-        instructor_name: '',
+        instructor_name: [],
         date: '',
         time: '',
         is_deleted: false,
+        tag_line: ''
     });
-    const [openSnackbar, setOpenSnackbar] = useState(false); // Snackbar open state
-    const [snackbarMessage, setSnackbarMessage] = useState(''); // Snackbar message
-    const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // Snackbar severity (success, error)
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [instructors, setInstructors] = useState([]);
 
     const router = useRouter();
     const [events, setEvents] = useState([]);
@@ -50,8 +52,10 @@ const LandingPageHeroSectionForm = () => {
             try {
                 const eventsResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/event/get-all-events`);
                 const coursesResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/`);
+                const instructorResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/instructor/`);
                 setEvents(eventsResponse.data.data);
                 setCourses(coursesResponse.data.data);
+                setInstructors(instructorResponse.data.data);
             } catch (error) {
                 console.error('Error fetching events and courses:', error);
             }
@@ -62,6 +66,25 @@ const LandingPageHeroSectionForm = () => {
 
     const handleChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
+    };
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        if (name === 'instructor_name') {
+            const selectedNames = instructors
+                .filter((instructor) => value.includes(instructor._id))
+                .map((instructor) => `${instructor.first_name} ${instructor.last_name}`);
+
+            setFormData((prev) => ({
+                ...prev,
+                [name]: selectedNames,
+            }));
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
     };
 
     const handleImageChange = (e, field) => {
@@ -115,13 +138,13 @@ const LandingPageHeroSectionForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Check if either Event or Course is selected
         if (!formData.event_id && !formData.course_id) {
             alert('Please select either an Event or a Course.');
             return;
         }
 
         const submitData = new FormData();
-
         for (const key in formData) {
             const value = formData[key];
             if (value !== undefined && value !== null) {
@@ -134,15 +157,20 @@ const LandingPageHeroSectionForm = () => {
         }
 
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page-hero-section/create`, submitData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/landing-page-hero-section/create`,
+                submitData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
                 }
-            });
+            );
             console.log('Landing page hero section submitted successfully:', response.data);
             setSnackbarMessage('Landing page hero section submitted successfully!');
             setSnackbarSeverity('success');
             setOpenSnackbar(true);
+
             router.push('/cms/landing-hero-section');
             setFormData({
                 type: '',
@@ -157,14 +185,18 @@ const LandingPageHeroSectionForm = () => {
                 batch_start_date_text: '',
                 batch_start_date: '',
                 instructor_intro_text: '',
-                instructor_name: '',
+                instructor_name: [],
                 date: '',
                 time: '',
+                tag_line: '',
                 is_deleted: false,
             });
         } catch (error) {
             console.error('Error submitting landing page hero section:', error);
-            setSnackbarMessage('Error submitting landing page hero section.');
+
+            const errorMessage = error.response?.data?.message || 'Error submitting landing page hero section.';
+            alert(errorMessage);
+            setSnackbarMessage(errorMessage);
             setSnackbarSeverity('error');
             setOpenSnackbar(true);
         }
@@ -298,6 +330,16 @@ const LandingPageHeroSectionForm = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    label="Tag Line"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={formData.tag_line}
+                                    onChange={(e) => handleChange('tag_line', e.target.value)}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
                                     label="Application Deadline Text"
                                     variant="outlined"
                                     fullWidth
@@ -337,13 +379,24 @@ const LandingPageHeroSectionForm = () => {
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField
-                                    label="Instructor Name"
-                                    variant="outlined"
-                                    fullWidth
-                                    value={formData.instructor_name}
-                                    onChange={(e) => handleChange('instructor_name', e.target.value)}
-                                />
+                                <FormControl fullWidth>
+                                    <InputLabel id="instructor-label">Instructors</InputLabel>
+                                    <Select
+                                        labelId="instructor-label"
+                                        multiple
+                                        name="instructor_name"
+                                        value={Array.isArray(formData.instructor_name) ? formData.instructor_name.map((name) =>
+                                            instructors.find((i) => `${i.first_name} ${i.last_name}` === name)?._id) : []}
+                                        onChange={handleInputChange}
+                                        required
+                                    >
+                                        {instructors.map((instructor) => (
+                                            <MenuItem key={instructor._id} value={instructor._id}>
+                                                {`${instructor.first_name} ${instructor.last_name}`}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
@@ -380,7 +433,7 @@ const LandingPageHeroSectionForm = () => {
                     </CardContent>
                 </Card>
             </form>
-            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+            <Snackbar open={openSnackbar} autoHideDuration={2000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
                     {snackbarMessage}
                 </Alert>

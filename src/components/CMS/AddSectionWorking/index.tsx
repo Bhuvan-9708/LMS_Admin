@@ -289,7 +289,7 @@ export default function AddSectionWorking() {
 
                 <Snackbar
                     open={snackbarOpen}
-                    autoHideDuration={6000}
+                    autoHideDuration={1000}
                     onClose={handleCloseSnackbar}
                 >
                     <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
