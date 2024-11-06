@@ -351,6 +351,7 @@ export default function AddCourseInfoForm() {
                         <FormControl fullWidth margin="normal">
                             <InputLabel id="course-select-label">Select Course</InputLabel>
                             <Select
+                                required
                                 labelId="course-select-label"
                                 value={formData.course_id}
                                 onChange={handleCourseChange}
@@ -383,6 +384,7 @@ export default function AddCourseInfoForm() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
+                                        required
                                         fullWidth
                                         label="Title"
                                         value={opportunity.title}
@@ -391,6 +393,7 @@ export default function AddCourseInfoForm() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        required
                                         fullWidth
                                         label="Short Description"
                                         value={opportunity.short_desc}
@@ -401,6 +404,7 @@ export default function AddCourseInfoForm() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <input
+                                        required
                                         accept="image/*"
                                         type="file"
                                         onChange={(e) => handleFileChange(e, index, 'placement_opportunity')}
@@ -416,6 +420,7 @@ export default function AddCourseInfoForm() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
+                                        required
                                         fullWidth
                                         label="Link"
                                         value={opportunity.link}
@@ -443,7 +448,7 @@ export default function AddCourseInfoForm() {
                         <TextField
                             fullWidth
                             label="Title"
-
+                            required
                             name="title"
                             value={formData.curriculum.title}
                             onChange={handleCurriculumChange}
@@ -453,6 +458,7 @@ export default function AddCourseInfoForm() {
                             <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
                                 <Grid item xs={10}>
                                     <TextField
+                                        required
                                         fullWidth
                                         label={`Tag ${index + 1}`}
                                         value={tag}
@@ -473,6 +479,7 @@ export default function AddCourseInfoForm() {
                             <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
+                                        required
                                         fullWidth
                                         label="Title"
                                         value={pathItem.title}
@@ -481,6 +488,7 @@ export default function AddCourseInfoForm() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
+                                        required
                                         fullWidth
                                         label="Description"
                                         value={pathItem.description}
@@ -509,6 +517,7 @@ export default function AddCourseInfoForm() {
                             <Grid container spacing={2} key={projectIndex} sx={{ mb: 2 }}>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
+                                        required
                                         fullWidth
                                         label="Level"
                                         name="level"
@@ -518,6 +527,7 @@ export default function AddCourseInfoForm() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
+                                        required
                                         fullWidth
                                         label="Title"
                                         name="title"
@@ -533,6 +543,7 @@ export default function AddCourseInfoForm() {
                                         <Grid container spacing={2} key={tagIndex} sx={{ mb: 2 }}>
                                             <Grid item xs={10}>
                                                 <TextField
+                                                    required
                                                     fullWidth
                                                     label={`Tag ${tagIndex + 1}`}
                                                     value={tag}
@@ -587,6 +598,7 @@ export default function AddCourseInfoForm() {
                             <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
+                                        required
                                         fullWidth
                                         label="Question"
                                         name="title"
@@ -596,6 +608,7 @@ export default function AddCourseInfoForm() {
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
+                                        required
                                         fullWidth
                                         label="Answer"
                                         name="description"

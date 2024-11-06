@@ -14,7 +14,9 @@ import {
     Checkbox,
     FormControlLabel,
     CircularProgress,
-    IconButton
+    IconButton,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -359,6 +361,7 @@ function CourseLandingPageForm() {
                             name="hero_section"
                             value={formData.hero_section}
                             onChange={handleChange}
+                            required
                         >
                             {heroSections.map((section) => (
                                 <MenuItem key={section._id} value={section._id}>
@@ -373,6 +376,7 @@ function CourseLandingPageForm() {
                     <FormControl fullWidth required>
                         <InputLabel>Course</InputLabel>
                         <Select
+                            required
                             name="course_id"
                             value={formData.course_id}
                             onChange={handleChange}
@@ -391,6 +395,7 @@ function CourseLandingPageForm() {
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <TextField
+                                required
                                 label="Title"
                                 name="title"
                                 value={formData.user_learning.title}
@@ -401,6 +406,7 @@ function CourseLandingPageForm() {
 
                         <Grid item xs={6}>
                             <TextField
+                                required
                                 label="Description"
                                 name="description"
                                 value={formData.user_learning.description}
@@ -413,6 +419,7 @@ function CourseLandingPageForm() {
                             <Grid key={index} container spacing={2}>
                                 <Grid item xs={6}>
                                     <TextField
+                                        required
                                         sx={{ m: 2 }}
                                         label="Point Title"
                                         name="title"
@@ -424,6 +431,7 @@ function CourseLandingPageForm() {
 
                                 <Grid item xs={6}>
                                     <TextField
+                                        required
                                         sx={{ m: 2 }}
                                         label="Point Description"
                                         name="description"
@@ -447,11 +455,11 @@ function CourseLandingPageForm() {
                     {formData.course_benefits_title.map((benefit, index) => (
                         <Grid item xs={12} key={index}>
                             <TextField
+                                required
                                 label={`Course Benefits Title ${index + 1}`}
                                 value={benefit.title}
                                 onChange={(e) => handleCourseBenefitTitleChange(index, e)}
                                 fullWidth
-                                required
                             />
                             <Button onClick={() => removeCourseBenefitTitle(index)} color="secondary">
                                 Remove
@@ -470,6 +478,7 @@ function CourseLandingPageForm() {
                         <Grid key={index} container spacing={2}>
                             <Grid item xs={6}>
                                 <TextField
+                                    required
                                     sx={{ m: 1 }}
                                     label="Benefit Title"
                                     name="title"
@@ -481,6 +490,7 @@ function CourseLandingPageForm() {
 
                             <Grid item xs={6}>
                                 <TextField
+                                    required
                                     sx={{ m: 1 }}
                                     label="Benefit Description"
                                     name="description"
@@ -503,6 +513,7 @@ function CourseLandingPageForm() {
                     <FormControl fullWidth>
                         <InputLabel>Syllabus</InputLabel>
                         <Select
+                            required
                             name="syllabus"
                             value={formData.syllabus}
                             onChange={handleChange}
@@ -521,6 +532,7 @@ function CourseLandingPageForm() {
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <TextField
+                                required
                                 label="Title"
                                 name="title"
                                 value={formData.for_whom.title}
@@ -531,6 +543,7 @@ function CourseLandingPageForm() {
 
                         <Grid item xs={6}>
                             <TextField
+                                required
                                 label=" Description"
                                 name="description"
                                 value={formData.for_whom.description}
@@ -543,6 +556,7 @@ function CourseLandingPageForm() {
                             <Grid key={index} container spacing={2}>
                                 <Grid item xs={6}>
                                     <TextField
+                                        required
                                         sx={{ m: 2 }}
                                         label="Content Title"
                                         name="title"
@@ -554,6 +568,7 @@ function CourseLandingPageForm() {
 
                                 <Grid item xs={6}>
                                     <TextField
+                                        required
                                         sx={{ m: 2 }}
                                         label="Content Description"
                                         name="description"
@@ -575,6 +590,7 @@ function CourseLandingPageForm() {
                 <Grid container spacing={2} sx={{ m: 1 }}>
                     <Typography variant="h6" gutterBottom>Tools</Typography>
                     <TextField
+                        required
                         sx={{ m: 1 }}
                         fullWidth
                         label="Tools Title"
@@ -587,6 +603,7 @@ function CourseLandingPageForm() {
                     {formData.tools.image.map((img, index) => (
                         <Box key={index} mb={2}>
                             <input
+                                required
                                 sx={{ m: 1 }}
                                 accept="image/*"
                                 style={{ display: 'none' }}
@@ -613,6 +630,7 @@ function CourseLandingPageForm() {
                     <Box>
                         <Typography variant="h6">Skills Learning</Typography>
                         <TextField
+                            required
                             label="Title"
                             name="title"
                             variant="outlined"
@@ -628,6 +646,7 @@ function CourseLandingPageForm() {
                         {formData.skills_learning.tags.map((tag, index) => (
                             <Box key={index} display="flex" alignItems="center" mb={1}>
                                 <TextField
+                                    required
                                     label={`Tag ${index + 1}`}
                                     variant="outlined"
                                     value={tag}
@@ -658,6 +677,7 @@ function CourseLandingPageForm() {
                     <FormControl fullWidth>
                         <InputLabel>Certificate</InputLabel>
                         <Select
+                            required
                             name="certificate"
                             value={formData.certificate}
                             onChange={handleChange}
@@ -675,6 +695,7 @@ function CourseLandingPageForm() {
                     <FormControl fullWidth>
                         <InputLabel>FAQ</InputLabel>
                         <Select
+                            required
                             name="faq"
                             value={formData.faq}
                             onChange={handleChange}

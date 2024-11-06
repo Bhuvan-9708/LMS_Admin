@@ -111,16 +111,17 @@ const AddHeroSection: React.FC = () => {
     return (
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
             <TextField
+                required
                 fullWidth
                 label="Title"
                 name="title"
                 value={formData.title}
                 onChange={handleInputChange}
-                required
                 margin="normal"
             />
 
             <TextField
+                required
                 fullWidth
                 label="Sub Title"
                 name="sub_title"
@@ -130,12 +131,12 @@ const AddHeroSection: React.FC = () => {
             />
 
             <TextField
+                required
                 fullWidth
                 label="Description"
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
-                required
                 margin="normal"
                 multiline
                 rows={4}
@@ -143,6 +144,7 @@ const AddHeroSection: React.FC = () => {
 
             <Box sx={{ mt: 2, mb: 2 }}>
                 <input
+                    required
                     accept="image/*"
                     style={{ display: 'none' }}
                     id="raised-button-file"
@@ -163,6 +165,7 @@ const AddHeroSection: React.FC = () => {
             </Box>
 
             <TextField
+                required
                 fullWidth
                 label="Tag Line"
                 name="tag_line"
@@ -172,6 +175,7 @@ const AddHeroSection: React.FC = () => {
             />
 
             <TextField
+                required
                 fullWidth
                 label="Button Text"
                 name="buttonText"
@@ -181,6 +185,7 @@ const AddHeroSection: React.FC = () => {
             />
 
             <TextField
+                required
                 fullWidth
                 label="Button URL"
                 name="buttonUrl"

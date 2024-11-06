@@ -281,6 +281,7 @@ export default function CreateAboutUs() {
                         required
                     />
                     <TextField
+                        required
                         fullWidth
                         label="About Us Heading"
                         name="about_us_heading"
@@ -289,6 +290,7 @@ export default function CreateAboutUs() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="About Us Sub Heading"
                         name="about_us_sub_heading"
@@ -299,6 +301,7 @@ export default function CreateAboutUs() {
                     <Box sx={{ mb: 2 }}>
                         <Typography variant="subtitle1">About Us Image</Typography>
                         <input
+                            required
                             type="file"
                             accept="image/*"
                             onChange={(e) => handleImageChange(e, 'image')}
@@ -312,6 +315,7 @@ export default function CreateAboutUs() {
                     <br />
                     <Typography variant="h6" gutterBottom>Hero Section Heading & Description</Typography>
                     <TextField
+                        required
                         fullWidth
                         label="Hero Section Title"
                         name="hero_section_title"
@@ -320,6 +324,7 @@ export default function CreateAboutUs() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Hero Section Description"
                         name="hero_section_description"
@@ -332,6 +337,7 @@ export default function CreateAboutUs() {
                     {aboutUs.about_us_description.map((desc, index) => (
                         <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
                             <TextField
+                                required
                                 fullWidth
                                 label="Title"
                                 value={desc.title}
@@ -339,6 +345,7 @@ export default function CreateAboutUs() {
                                 margin="normal"
                             />
                             <TextField
+                                required
                                 fullWidth
                                 label="Description"
                                 value={desc.description}
@@ -365,6 +372,7 @@ export default function CreateAboutUs() {
                         </Select>
                     </FormControl>
                     <TextField
+                        required
                         fullWidth
                         label="Points Title"
                         name="points_title"
@@ -373,6 +381,7 @@ export default function CreateAboutUs() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Points Heading"
                         name="points_heading"
@@ -381,6 +390,7 @@ export default function CreateAboutUs() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Points Sub Title"
                         name="points_sub_title"
@@ -392,6 +402,7 @@ export default function CreateAboutUs() {
                     {aboutUs.points_description.map((point, index) => (
                         <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
                             <TextField
+                                required
                                 fullWidth
                                 label="Title"
                                 value={point.title}
@@ -399,6 +410,7 @@ export default function CreateAboutUs() {
                                 margin="normal"
                             />
                             <TextField
+                                required
                                 fullWidth
                                 label="Description"
                                 value={point.description}
@@ -410,6 +422,7 @@ export default function CreateAboutUs() {
                             <Box sx={{ mb: 2 }}>
                                 <Typography variant="subtitle2">Image</Typography>
                                 <input
+                                    required
                                     type="file"
                                     accept="image/*"
                                     onChange={(e) => {
@@ -426,6 +439,7 @@ export default function CreateAboutUs() {
                         Add Point
                     </Button>
                     <TextField
+                        required
                         fullWidth
                         label="Community Text"
                         name="community_text"
@@ -434,6 +448,7 @@ export default function CreateAboutUs() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Community Description"
                         name="community_description"
@@ -446,12 +461,14 @@ export default function CreateAboutUs() {
                     <Box sx={{ mb: 2 }}>
                         <Typography variant="subtitle1">Community Banner Image</Typography>
                         <input
+                            required
                             type="file"
                             accept="image/*"
                             onChange={(e) => handleImageChange(e, 'coummnity_banner_image')}
                         />
                     </Box>
                     <TextField
+                        required
                         fullWidth
                         label="Team Heading"
                         name="team_heading"
@@ -463,6 +480,7 @@ export default function CreateAboutUs() {
                     {aboutUs.team_description.map((member, index) => (
                         <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
                             <TextField
+                                required
                                 fullWidth
                                 label="Name"
                                 value={member.name}
@@ -470,6 +488,7 @@ export default function CreateAboutUs() {
                                 margin="normal"
                             />
                             <TextField
+                                required
                                 fullWidth
                                 label="Position"
                                 value={member.position}
@@ -490,6 +509,7 @@ export default function CreateAboutUs() {
                                 />
                             </Box>
                             <TextField
+                                required
                                 fullWidth
                                 label="Description"
                                 value={member.description}
@@ -502,6 +522,7 @@ export default function CreateAboutUs() {
                             {member.social_media.map((social, socialIndex) => (
                                 <Box key={socialIndex} sx={{ display: 'flex', gap: 2, mb: 1 }}>
                                     <TextField
+                                        required
                                         label="Name"
                                         value={social.name}
                                         onChange={(e) => {
@@ -511,6 +532,7 @@ export default function CreateAboutUs() {
                                         }}
                                     />
                                     <TextField
+                                        required
                                         label="Link"
                                         value={social.link}
                                         onChange={(e) => {
@@ -567,6 +589,7 @@ export default function CreateAboutUs() {
                         label="Is Active"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Meta Title"
                         name="meta_title"
@@ -575,6 +598,7 @@ export default function CreateAboutUs() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Meta Description"
                         name="meta_description"
@@ -588,6 +612,7 @@ export default function CreateAboutUs() {
                     {aboutUs.meta_keywords.map((keyword, index) => (
                         <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                             <TextField
+                                required
                                 fullWidth
                                 label={`Keyword ${index + 1}`}
                                 value={keyword}
@@ -610,6 +635,7 @@ export default function CreateAboutUs() {
                         Add Keyword
                     </Button>
                     <TextField
+                        required
                         fullWidth
                         label="SEO URL"
                         name="seo_url"

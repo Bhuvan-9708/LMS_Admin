@@ -479,6 +479,7 @@ const CreateAnEvent: React.FC = () => {
                 </Typography>
                 <FormControl fullWidth error={!!errors.event_type}>
                   <Select
+                    required
                     id="event_type"
                     name="event_type"
                     value={formData.event_type}
@@ -503,6 +504,7 @@ const CreateAnEvent: React.FC = () => {
                 </Typography>
                 <FormControl fullWidth error={!!errors.event_level}>
                   <Select
+                    required
                     id="event_level"
                     name="event_level"
                     value={formData.event_level}
@@ -631,6 +633,7 @@ const CreateAnEvent: React.FC = () => {
                 </Typography>
                 <FormControl fullWidth error={!!errors.instructor}>
                   <Select
+                    required
                     multiple
                     id="instructor"
                     name="instructor"
@@ -669,6 +672,7 @@ const CreateAnEvent: React.FC = () => {
                 </Typography>
                 <FormControl fullWidth error={!!errors.category}>
                   <Select
+                    required
                     id="category"
                     name="category"
                     value={formData.category}
@@ -789,6 +793,7 @@ const CreateAnEvent: React.FC = () => {
               <TextField
                 type="file"
                 fullWidth
+                required
                 onChange={handleImageUpload}
                 sx={{
                   "& fieldset": {
@@ -807,12 +812,14 @@ const CreateAnEvent: React.FC = () => {
               {formData.skills.map((skill, index) => (
                 <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                   <TextField
+                    required
                     label="Tag"
                     value={skill.tag}
                     onChange={(e) => handleArrayItemChange(index, 'skills', 'tag', e.target.value)}
                     sx={inputStyle}
                   />
                   <TextField
+                    required
                     label="Learning"
                     value={skill.learning}
                     onChange={(e) => handleArrayItemChange(index, 'skills', 'learning', e.target.value)}
@@ -832,12 +839,14 @@ const CreateAnEvent: React.FC = () => {
               {formData.your_learning.map((item, index) => (
                 <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                   <TextField
+                    required
                     label="Tag"
                     value={item.tag}
                     onChange={(e) => handleArrayItemChange(index, 'your_learning', 'tag', e.target.value)}
                     sx={inputStyle}
                   />
                   <TextField
+                    required
                     label="Description"
                     value={item.description}
                     onChange={(e) => handleArrayItemChange(index, 'your_learning', 'description', e.target.value)}
@@ -857,12 +866,14 @@ const CreateAnEvent: React.FC = () => {
               {formData.for_whom.map((item, index) => (
                 <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                   <TextField
+                    required
                     label="Tag"
                     value={item.tag}
                     onChange={(e) => handleArrayItemChange(index, 'for_whom', 'tag', e.target.value)}
                     sx={inputStyle}
                   />
                   <TextField
+                    required
                     label="Description"
                     value={item.description}
                     onChange={(e) => handleArrayItemChange(index, 'for_whom', 'description', e.target.value)}
@@ -898,6 +909,7 @@ const CreateAnEvent: React.FC = () => {
                         Certificate
                       </Typography>
                       <TextField
+                        required
                         label="Enter certificate name"
                         variant="filled"
                         id="certificate"
@@ -917,6 +929,7 @@ const CreateAnEvent: React.FC = () => {
                         Certificate Description
                       </Typography>
                       <TextField
+                        required
                         label="Enter certificate description"
                         variant="filled"
                         id="certificate_description"
@@ -941,6 +954,7 @@ const CreateAnEvent: React.FC = () => {
               {formData.schedule.map((item, index) => (
                 <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                   <TextField
+                    required
                     label="Day"
                     type="number"
                     value={item.day}
@@ -948,6 +962,7 @@ const CreateAnEvent: React.FC = () => {
                     sx={inputStyle}
                   />
                   <TextField
+                    required
                     label="Time"
                     value={item.time}
                     onChange={(e) => handleArrayItemChange(index, 'schedule', 'time', e.target.value)}
@@ -971,6 +986,7 @@ const CreateAnEvent: React.FC = () => {
                 </Typography>
                 <FormControl fullWidth error={!!errors.event_level}>
                   <Select
+                    required
                     id="status"
                     name="status"
                     value={formData.status}

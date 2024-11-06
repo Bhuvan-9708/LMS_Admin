@@ -255,6 +255,7 @@ function EventLandingPageDetailsForm() {
             <FormControl fullWidth margin="normal" required>
                 <InputLabel>Landing Page</InputLabel>
                 <Select
+                    required
                     name="landing_page_id"
                     value={formData.landing_page_id}
                     onChange={handleLandingPageIdChange}
@@ -269,6 +270,7 @@ function EventLandingPageDetailsForm() {
             <FormControl fullWidth margin="normal" required>
                 <InputLabel>Faq</InputLabel>
                 <Select
+                    required
                     name="faq"
                     value={formData.faq}
                     onChange={handleFaqChange}
@@ -283,6 +285,7 @@ function EventLandingPageDetailsForm() {
             <FormControl fullWidth margin="normal" required>
                 <InputLabel>Certificate</InputLabel>
                 <Select
+                    required
                     name="certificate"
                     value={formData.certificate}
                     onChange={handleCertificateChange}
@@ -295,6 +298,7 @@ function EventLandingPageDetailsForm() {
 
             <Typography variant="h6" gutterBottom>Tools</Typography>
             <TextField
+                required
                 fullWidth
                 label="Tools Title"
                 name="title"
@@ -306,6 +310,7 @@ function EventLandingPageDetailsForm() {
             {formData.tools.image.map((img, index) => (
                 <Box key={index} mb={2}>
                     <input
+                        required
                         accept="image/*"
                         style={{ display: 'none' }}
                         id={`tool-image-upload-${index}`}
@@ -329,6 +334,7 @@ function EventLandingPageDetailsForm() {
 
             <Typography variant="h6" gutterBottom>Reasons to Join</Typography>
             <TextField
+                required
                 fullWidth
                 label="Title"
                 name="title"
@@ -337,6 +343,7 @@ function EventLandingPageDetailsForm() {
                 margin="normal"
             />
             <TextField
+                required
                 fullWidth
                 label="Description"
                 name="description"
@@ -350,6 +357,7 @@ function EventLandingPageDetailsForm() {
             {formData.pro.points.map((point, index) => (
                 <Box key={index} mb={2}>
                     <TextField
+                        required
                         fullWidth
                         label={`Point ${index + 1} Title`}
                         name="title"
@@ -358,6 +366,7 @@ function EventLandingPageDetailsForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label={`Point ${index + 1} Description`}
                         name="description"
@@ -372,6 +381,7 @@ function EventLandingPageDetailsForm() {
             </Button>
 
             <TextField
+                required
                 fullWidth
                 label="Meta Title"
                 name="meta_title"
@@ -381,6 +391,7 @@ function EventLandingPageDetailsForm() {
             />
 
             <TextField
+                required
                 fullWidth
                 label="Meta Description"
                 name="meta_description"
@@ -393,6 +404,7 @@ function EventLandingPageDetailsForm() {
 
             {formData.meta_keywords.map((keyword, index) => (
                 <TextField
+                    required
                     key={index}
                     fullWidth
                     label={`Meta Keyword ${index + 1}`}
@@ -406,6 +418,7 @@ function EventLandingPageDetailsForm() {
             </Button>
 
             <TextField
+                required
                 fullWidth
                 label="SEO URL"
                 name="seo_url"

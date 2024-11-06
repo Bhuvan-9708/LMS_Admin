@@ -100,6 +100,7 @@ const AddFaqForm = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
+                                required
                                 label="FAQ Title"
                                 variant="outlined"
                                 fullWidth
@@ -109,6 +110,7 @@ const AddFaqForm = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                required
                                 label="FAQ Description"
                                 variant="outlined"
                                 fullWidth
@@ -124,6 +126,7 @@ const AddFaqForm = () => {
                                             <Typography variant="h6">Content {index + 1}</Typography>
                                             <Box mb={2}>
                                                 <TextField
+                                                    required
                                                     label="Question"
                                                     variant="outlined"
                                                     fullWidth
@@ -135,6 +138,7 @@ const AddFaqForm = () => {
                                             </Box>
                                             <Box mb={2}>
                                                 <TextField
+                                                    required
                                                     label="Answer"
                                                     variant="outlined"
                                                     fullWidth

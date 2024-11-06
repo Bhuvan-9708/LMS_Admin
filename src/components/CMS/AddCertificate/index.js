@@ -120,6 +120,7 @@ const CertificateForm = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
+                                required
                                 label="Certification Title"
                                 variant="outlined"
                                 fullWidth
@@ -129,6 +130,7 @@ const CertificateForm = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                required
                                 label="Certification Heading"
                                 variant="outlined"
                                 fullWidth
@@ -138,14 +140,15 @@ const CertificateForm = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <input
+                                required
                                 type="file"
                                 accept="image/*"
                                 onChange={handleImageChange}
-                                required
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                required
                                 label="Text Displayed on Frontend"
                                 variant="outlined"
                                 fullWidth
@@ -161,6 +164,7 @@ const CertificateForm = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        required
                                         sx={{ m: 1 }}
                                         label="Detail Title"
                                         variant="outlined"
@@ -171,6 +175,7 @@ const CertificateForm = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        required
                                         sx={{ m: 1 }}
                                         label="Detail Description"
                                         variant="outlined"

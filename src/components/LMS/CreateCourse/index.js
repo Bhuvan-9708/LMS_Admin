@@ -310,6 +310,7 @@ const CreateCourse = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                required
                 fullWidth
                 label="Special Price"
                 name="special_price"
@@ -336,6 +337,7 @@ const CreateCourse = () => {
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
+                required
                 placeholder="6-10 Week"
                 fullWidth
                 label="duration"
@@ -347,6 +349,7 @@ const CreateCourse = () => {
             </Grid>
             <Grid item xs={12}>
               <input
+                required
                 accept="image/*"
                 style={{ display: 'none' }}
                 id="raised-button-file-image"
@@ -364,6 +367,7 @@ const CreateCourse = () => {
 
             <Grid item xs={12}>
               <input
+                required
                 accept="application/pdf"
                 style={{ display: 'none' }}
                 id="raised-button-file-syllabus"
@@ -520,6 +524,7 @@ const CreateCourse = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                required
                 fullWidth
                 label="Start Time"
                 name="start_time"
@@ -557,6 +562,7 @@ const CreateCourse = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                required
                 fullWidth
                 label="Meta Title"
                 name="meta_title"
@@ -566,6 +572,7 @@ const CreateCourse = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                required
                 fullWidth
                 label="Meta Description"
                 name="meta_description"
@@ -577,6 +584,7 @@ const CreateCourse = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                required
                 fullWidth
                 label="Meta Keywords"
                 name="meta_keywords"
@@ -586,6 +594,7 @@ const CreateCourse = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                required
                 fullWidth
                 label="Meta URL"
                 name="meta_url"
@@ -596,6 +605,7 @@ const CreateCourse = () => {
             {formData.course_includes.map((item, index) => (
               <Grid item xs={12} key={index}>
                 <TextField
+                  required
                   fullWidth
                   label={`Course Include ${index + 1}`}
                   value={item}
@@ -611,6 +621,7 @@ const CreateCourse = () => {
               <Typography variant="h6">Your Learning</Typography>
               <TextField
                 sx={{ m: 1 }}
+                required
                 fullWidth
                 label="Title"
                 name="your_learning.title"
@@ -619,6 +630,7 @@ const CreateCourse = () => {
               />
               <TextField
                 sx={{ m: 1 }}
+                required
                 fullWidth
                 label="Text"
                 name="your_learning.text"
@@ -632,6 +644,7 @@ const CreateCourse = () => {
                 <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
                   <TextField
                     sx={{ m: 1 }}
+                    required
                     fullWidth
                     label={`Tag ${index + 1}`}
                     value={tag}
@@ -648,6 +661,7 @@ const CreateCourse = () => {
                 <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
                   <TextField
                     sx={{ m: 1 }}
+                    required
                     fullWidth
                     label={`Point ${index + 1}`}
                     value={point}
@@ -666,6 +680,7 @@ const CreateCourse = () => {
               <TextField
                 sx={{ m: 1 }}
                 fullWidth
+                required
                 label="Title"
                 name="for_whom.title"
                 value={formData.for_whom.title}
@@ -674,6 +689,7 @@ const CreateCourse = () => {
               <TextField
                 sx={{ m: 1 }}
                 fullWidth
+                required
                 label="Text"
                 name="for_whom.text"
                 value={formData.for_whom.text}
@@ -687,6 +703,7 @@ const CreateCourse = () => {
                   <TextField
                     sx={{ m: 1 }}
                     fullWidth
+                    required
                     label={`Tag ${index + 1}`}
                     value={tag}
                     onChange={(e) => handleArrayChange(index, e.target.value, 'for_whom', 'tags')}
@@ -703,6 +720,7 @@ const CreateCourse = () => {
                   <TextField
                     sx={{ m: 1 }}
                     fullWidth
+                    required
                     label={`Point ${index + 1}`}
                     value={point}
                     onChange={(e) => handleArrayChange(index, e.target.value, 'for_whom', 'points')}
@@ -720,6 +738,7 @@ const CreateCourse = () => {
               <TextField
                 sx={{ m: 1 }}
                 fullWidth
+                required
                 label="Certification Text"
                 name="certification_text"
                 value={formData.certification_text}
@@ -733,6 +752,7 @@ const CreateCourse = () => {
                   <TextField
                     sx={{ m: 1 }}
                     fullWidth
+                    required
                     label={`Certification Point ${index + 1}`}
                     value={point}
                     onChange={(e) => handleArrayChange(index, e.target.value, 'certification_points')}
@@ -769,6 +789,7 @@ const CreateCourse = () => {
                   <Select
                     id="status"
                     name="status"
+                    required
                     value={formData.status}
                     onChange={handleSelectChange}
                     sx={selectStyle}

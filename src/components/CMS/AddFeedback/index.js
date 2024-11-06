@@ -88,6 +88,7 @@ const DynamicForm = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
+                                required
                                 label="Title"
                                 variant="outlined"
                                 fullWidth
@@ -97,6 +98,7 @@ const DynamicForm = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                required
                                 label="Description"
                                 variant="outlined"
                                 fullWidth
@@ -106,6 +108,7 @@ const DynamicForm = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                required
                                 label="Join Now Text"
                                 variant="outlined"
                                 fullWidth
@@ -115,6 +118,7 @@ const DynamicForm = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                required
                                 label="Join Now URL"
                                 variant="outlined"
                                 fullWidth
@@ -130,6 +134,7 @@ const DynamicForm = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        required
                                         sx={{ m: 1 }}
                                         label="Name"
                                         variant="outlined"
@@ -140,6 +145,7 @@ const DynamicForm = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        required
                                         sx={{ m: 1 }}
                                         label="Comment"
                                         variant="outlined"
@@ -150,6 +156,7 @@ const DynamicForm = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        required
                                         sx={{ m: 1 }}
                                         label="Date"
                                         variant="outlined"

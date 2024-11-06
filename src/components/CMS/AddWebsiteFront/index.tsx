@@ -162,6 +162,7 @@ const AddWebsiteFront: React.FC = () => {
                     <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                         <FormControl fullWidth>
                             <Select
+                                required
                                 id="banner"
                                 name="banner"
                                 value={form.banner}

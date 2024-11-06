@@ -125,7 +125,7 @@ export default function AddEmailTemplate() {
             console.error('Error creating email template:', error);
             setSnackbar({
                 open: true,
-                message: 'Error creating Section. Please try again.',
+                message: 'Error creating Email Template. Please try again.',
                 severity: 'error',
             });
         }

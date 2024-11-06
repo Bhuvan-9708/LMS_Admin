@@ -372,6 +372,7 @@ export default function AddHomepageForm() {
                 <form onSubmit={handleSubmit}>
                     <Box sx={{ mb: 2 }}>
                         <input
+                            required
                             accept="image/*"
                             style={{ display: 'none' }}
                             id="header-logo-upload"
@@ -401,6 +402,7 @@ export default function AddHomepageForm() {
                         onChange={(value) => handleRichTextChange('header_text', value)}
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Title"
                         name="title"
@@ -409,6 +411,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Sub Title"
                         name="sub_title"
@@ -421,11 +424,13 @@ export default function AddHomepageForm() {
                     {homepage.navigation_bars.map((nav, index) => (
                         <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                             <TextField
+                                required
                                 label="Name"
                                 value={nav.name}
                                 onChange={(e) => handleArrayInputChange(index, 'navigation_bars', 'name', e.target.value)}
                             />
                             <TextField
+                                required
                                 label="Link"
                                 value={nav.link}
                                 onChange={(e) => handleArrayInputChange(index, 'navigation_bars', 'link', e.target.value)}
@@ -458,6 +463,7 @@ export default function AddHomepageForm() {
                     <FormControl fullWidth margin="normal">
                         <InputLabel>Section Working</InputLabel>
                         <Select
+                            required
                             value={homepage.section_working}
                             onChange={(e) => setHomepage(prev => ({ ...prev, section_working: e.target.value }))}
                         >
@@ -468,6 +474,7 @@ export default function AddHomepageForm() {
                     </FormControl>
 
                     <TextField
+                        required
                         fullWidth
                         label="Popular Category Heading"
                         name="popular_category_heading"
@@ -476,6 +483,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Popular Category Text"
                         name="popular_category_text"
@@ -491,6 +499,7 @@ export default function AddHomepageForm() {
                             <FormControl fullWidth>
                                 <InputLabel>Category</InputLabel>
                                 <Select
+                                    required
                                     value={cat.category}
                                     onChange={(e) => handleArrayInputChange(index, 'popular_categories', 'category', e.target.value)}
                                 >
@@ -500,6 +509,7 @@ export default function AddHomepageForm() {
                                 </Select>
                             </FormControl>
                             <TextField
+                                required
                                 label="Background Color"
                                 value={cat.background_color}
                                 onChange={(e) => handleArrayInputChange(index, 'popular_categories', 'background_color', e.target.value)}
@@ -514,6 +524,7 @@ export default function AddHomepageForm() {
                     </Button>
 
                     <TextField
+                        required
                         fullWidth
                         label="Popular Course Title"
                         name="popular_course_title"
@@ -522,6 +533,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Popular Course Heading"
                         name="popular_course_heading"
@@ -530,6 +542,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Popular Course Text"
                         name="popular_course_text"
@@ -541,6 +554,7 @@ export default function AddHomepageForm() {
                     <FormControl fullWidth margin="normal">
                         <InputLabel>Popular Courses</InputLabel>
                         <Select
+                            required
                             multiple
                             value={homepage.popular_courses}
                             onChange={(e) => handleMultiSelectChange(e, 'popular_courses')}
@@ -559,6 +573,7 @@ export default function AddHomepageForm() {
                     </FormControl>
 
                     <TextField
+                        required
                         fullWidth
                         label="Upcoming Course Title"
                         name="upcoming_course_title"
@@ -567,6 +582,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Upcoming Course Heading"
                         name="upcoming_course_heading"
@@ -575,6 +591,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Upcoming Course Text"
                         name="upcoming_course_text"
@@ -586,6 +603,7 @@ export default function AddHomepageForm() {
                     <FormControl fullWidth margin="normal">
                         <InputLabel>Upcoming Courses</InputLabel>
                         <Select
+                            required
                             multiple
                             value={homepage.upcoming_courses}
                             onChange={(e) => handleMultiSelectChange(e, 'upcoming_courses')}
@@ -604,6 +622,7 @@ export default function AddHomepageForm() {
                     </FormControl>
 
                     <TextField
+                        required
                         fullWidth
                         label="Upcoming Webinar Title"
                         name="upcoming_webinar_title"
@@ -612,6 +631,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Upcoming Webinar Heading"
                         name="upcoming_webinar_heading"
@@ -620,6 +640,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Upcoming Webinar Text"
                         name="upcoming_webinar_text"
@@ -631,6 +652,7 @@ export default function AddHomepageForm() {
                     <FormControl fullWidth margin="normal">
                         <InputLabel>Upcoming Webinars</InputLabel>
                         <Select
+                            required
                             multiple
                             value={homepage.upcoming_webinar}
                             onChange={(e) => handleMultiSelectChange(e, 'upcoming_webinar')}
@@ -651,6 +673,7 @@ export default function AddHomepageForm() {
                     <FormControl fullWidth margin="normal">
                         <InputLabel>Banners</InputLabel>
                         <Select
+                            required
                             multiple
                             value={homepage.banner}
                             onChange={(e) => handleMultiSelectChange(e, 'banner')}
@@ -671,6 +694,7 @@ export default function AddHomepageForm() {
                     <FormControl fullWidth margin="normal">
                         <InputLabel>About Us</InputLabel>
                         <Select
+                            required
                             value={homepage.about}
                             onChange={(e) => setHomepage(prev => ({ ...prev, about: e.target.value }))}
                         >
@@ -681,6 +705,7 @@ export default function AddHomepageForm() {
                     </FormControl>
 
                     <TextField
+                        required
                         fullWidth
                         label="Article Main"
                         name="article_main"
@@ -689,6 +714,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Article Title"
                         name="article_title"
@@ -697,6 +723,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Article Heading"
                         name="article_heading"
@@ -705,6 +732,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Article Description"
                         name="article_description"
@@ -718,6 +746,7 @@ export default function AddHomepageForm() {
                     <FormControl fullWidth margin="normal">
                         <InputLabel>Articles</InputLabel>
                         <Select
+                            required
                             multiple
                             value={homepage.articles}
                             onChange={(e) => handleMultiSelectChange(e, 'articles')}
@@ -736,6 +765,7 @@ export default function AddHomepageForm() {
                     </FormControl>
 
                     <TextField
+                        required
                         fullWidth
                         label="Testimonials Title"
                         name="testimonials_title"
@@ -744,6 +774,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Testimonials Heading"
                         name="testimonials_heading"
@@ -752,6 +783,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Testimonials Sub Title"
                         name="testimonials_sub_title"
@@ -763,6 +795,7 @@ export default function AddHomepageForm() {
                     <FormControl fullWidth margin="normal">
                         <InputLabel>Testimonials</InputLabel>
                         <Select
+                            required
                             multiple
                             value={homepage.testimonials}
                             onChange={(e) => handleMultiSelectChange(e, 'testimonials')}
@@ -783,6 +816,7 @@ export default function AddHomepageForm() {
                     </FormControl>
 
                     <TextField
+                        required
                         fullWidth
                         label="FAQ Title"
                         name="faq_title"
@@ -791,6 +825,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="FAQ Heading"
                         name="faq_heading"
@@ -803,11 +838,13 @@ export default function AddHomepageForm() {
                     {homepage.faqs.map((faq, index) => (
                         <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                             <TextField
+                                required
                                 label="Question"
                                 value={faq.question}
                                 onChange={(e) => handleArrayInputChange(index, 'faqs', 'question', e.target.value)}
                             />
                             <TextField
+                                required
                                 label="Answer"
                                 value={faq.answer}
                                 onChange={(e) => handleArrayInputChange(index, 'faqs', 'answer', e.target.value)}
@@ -833,6 +870,7 @@ export default function AddHomepageForm() {
                     />
 
                     <TextField
+                        required
                         fullWidth
                         label="Meta Title"
                         name="meta_title"
@@ -841,6 +879,7 @@ export default function AddHomepageForm() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Meta Description"
                         name="meta_description"
@@ -862,6 +901,7 @@ export default function AddHomepageForm() {
                         ))}
                     </Box>
                     <TextField
+                        required
                         fullWidth
                         label="Add Meta Keyword"
                         onKeyPress={(e) => {
@@ -879,6 +919,7 @@ export default function AddHomepageForm() {
                     />
 
                     <TextField
+                        required
                         fullWidth
                         label="SEO URL"
                         name="seo_url"

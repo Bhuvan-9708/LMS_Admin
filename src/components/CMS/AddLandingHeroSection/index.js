@@ -216,6 +216,7 @@ const LandingPageHeroSectionForm = () => {
                                 <FormControl fullWidth variant="outlined" required>
                                     <InputLabel id="type-label">Type</InputLabel>
                                     <Select
+                                        required
                                         labelId="type-label"
                                         value={formData.type}
                                         onChange={handleTypeChange}
@@ -234,6 +235,7 @@ const LandingPageHeroSectionForm = () => {
                                     <FormControl fullWidth variant="outlined" required>
                                         <InputLabel id="event-label">Event</InputLabel>
                                         <Select
+                                            required
                                             labelId="event-label"
                                             value={formData.event_id}
                                             onChange={(e) => handleChange('event_id', e.target.value)}
@@ -256,6 +258,7 @@ const LandingPageHeroSectionForm = () => {
                                     <FormControl fullWidth variant="outlined" required>
                                         <InputLabel id="course-label">Course</InputLabel>
                                         <Select
+                                            required
                                             labelId="course-label"
                                             value={formData.course_id}
                                             onChange={handleCourseChange}
@@ -277,6 +280,7 @@ const LandingPageHeroSectionForm = () => {
                                 <>
                                     <Grid item xs={12}>
                                         <TextField
+                                            required
                                             label="Batch Start Date Text"
                                             variant="outlined"
                                             fullWidth
@@ -286,6 +290,7 @@ const LandingPageHeroSectionForm = () => {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
+                                            required
                                             label="Batch Start Date"
                                             type="date"
                                             variant="outlined"
@@ -302,44 +307,45 @@ const LandingPageHeroSectionForm = () => {
 
                             <Grid item xs={12}>
                                 <input
+                                    required
                                     type="file"
                                     accept="image/*"
                                     onChange={(e) => handleImageChange(e, 'logo_image')}
-                                    required
                                 />
                                 <Typography variant="body2">Upload Logo Image</Typography>
                             </Grid>
                             <Grid item xs={12}>
                                 <input
+                                    required
                                     type="file"
                                     accept="image/*"
                                     onChange={(e) => handleImageChange(e, 'image')}
-                                    required
                                 />
                                 <Typography variant="body2">Upload Main Image</Typography>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Title"
                                     variant="outlined"
                                     fullWidth
                                     value={formData.title}
                                     onChange={(e) => handleChange('title', e.target.value)}
-                                    required
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Tag Line"
                                     variant="outlined"
                                     fullWidth
                                     value={formData.tag_line}
                                     onChange={(e) => handleChange('tag_line', e.target.value)}
-                                    required
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Application Deadline Text"
                                     variant="outlined"
                                     fullWidth
@@ -349,6 +355,7 @@ const LandingPageHeroSectionForm = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Application Deadline Date"
                                     type="date"
                                     variant="outlined"
@@ -362,6 +369,7 @@ const LandingPageHeroSectionForm = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Reservation Text"
                                     variant="outlined"
                                     fullWidth
@@ -371,6 +379,7 @@ const LandingPageHeroSectionForm = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Instructor Intro Text"
                                     variant="outlined"
                                     fullWidth
@@ -382,13 +391,13 @@ const LandingPageHeroSectionForm = () => {
                                 <FormControl fullWidth>
                                     <InputLabel id="instructor-label">Instructors</InputLabel>
                                     <Select
+                                        required
                                         labelId="instructor-label"
                                         multiple
                                         name="instructor_name"
                                         value={Array.isArray(formData.instructor_name) ? formData.instructor_name.map((name) =>
                                             instructors.find((i) => `${i.first_name} ${i.last_name}` === name)?._id) : []}
                                         onChange={handleInputChange}
-                                        required
                                     >
                                         {instructors.map((instructor) => (
                                             <MenuItem key={instructor._id} value={instructor._id}>
@@ -400,6 +409,7 @@ const LandingPageHeroSectionForm = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Date"
                                     type="date"
                                     variant="outlined"
@@ -413,6 +423,7 @@ const LandingPageHeroSectionForm = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Time"
                                     type="time"
                                     variant="outlined"

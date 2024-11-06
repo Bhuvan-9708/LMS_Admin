@@ -248,6 +248,7 @@ const AddCourseDetailsForm = () => {
                             </Typography>
                             <FormControl fullWidth margin="normal">
                                 <Select
+                                    required
                                     labelId="course-select-label"
                                     value={formData.course_id}
                                     onChange={handleCourseChange}
@@ -266,6 +267,7 @@ const AddCourseDetailsForm = () => {
                         <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
                             <Grid item xs={5}>
                                 <TextField
+                                    required
                                     fullWidth
                                     label="Title"
                                     value={benefit.title}
@@ -274,6 +276,7 @@ const AddCourseDetailsForm = () => {
                             </Grid>
                             <Grid item xs={5}>
                                 <TextField
+                                    required
                                     fullWidth
                                     label="Description"
                                     value={benefit.description}
@@ -302,6 +305,7 @@ const AddCourseDetailsForm = () => {
                         <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
                             <Grid item xs={10}>
                                 <TextField
+                                    required
                                     fullWidth
                                     label={`Title ${index + 1}`}
                                     value={title}
@@ -330,6 +334,7 @@ const AddCourseDetailsForm = () => {
                         <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
                             <Grid item xs={5}>
                                 <TextField
+                                    required
                                     fullWidth
                                     label="Title"
                                     value={stat.title}
@@ -338,6 +343,7 @@ const AddCourseDetailsForm = () => {
                             </Grid>
                             <Grid item xs={5}>
                                 <TextField
+                                    required
                                     fullWidth
                                     label="Description"
                                     value={stat.description}
@@ -363,6 +369,7 @@ const AddCourseDetailsForm = () => {
                         Admission Details
                     </Typography>
                     <TextField
+                        required
                         fullWidth
                         label="Admission Details Text"
                         name="admission_details_text"
@@ -371,6 +378,7 @@ const AddCourseDetailsForm = () => {
                         sx={{ mb: 2 }}
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Admission Details Description"
                         name="admission_details_desc"
@@ -384,6 +392,7 @@ const AddCourseDetailsForm = () => {
                         <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
                             <Grid item xs={5}>
                                 <TextField
+                                    required
                                     fullWidth
                                     label="Title"
                                     value={detail.title}
@@ -392,6 +401,7 @@ const AddCourseDetailsForm = () => {
                             </Grid>
                             <Grid item xs={5}>
                                 <TextField
+                                    required
                                     fullWidth
                                     label="Description"
                                     value={detail.description}
@@ -417,6 +427,7 @@ const AddCourseDetailsForm = () => {
                         Why Us
                     </Typography>
                     <TextField
+                        required
                         fullWidth
                         label="Title"
                         name="title"
@@ -425,6 +436,7 @@ const AddCourseDetailsForm = () => {
                         sx={{ mb: 2 }}
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Heading"
                         name="heading"
@@ -433,6 +445,7 @@ const AddCourseDetailsForm = () => {
                         sx={{ mb: 2 }}
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Description"
                         name="description"
@@ -446,6 +459,7 @@ const AddCourseDetailsForm = () => {
                         <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
                             <Grid item xs={5}>
                                 <TextField
+                                    required
                                     fullWidth
                                     label="Title"
                                     value={point.title}
@@ -454,6 +468,7 @@ const AddCourseDetailsForm = () => {
                             </Grid>
                             <Grid item xs={5}>
                                 <input
+                                    required
                                     accept="image/*"
                                     type="file"
                                     onChange={(e) => handleFileChange(e, index, 'why_us')}
@@ -486,6 +501,7 @@ const AddCourseDetailsForm = () => {
                         Placement Info
                     </Typography>
                     <TextField
+                        required
                         fullWidth
                         label="Placement Info Text"
                         name="placement_info_text"
@@ -497,6 +513,7 @@ const AddCourseDetailsForm = () => {
                         <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
                             <Grid item xs={5}>
                                 <TextField
+                                    required
                                     fullWidth
                                     label="Text"
                                     value={info.text}
@@ -505,6 +522,7 @@ const AddCourseDetailsForm = () => {
                             </Grid>
                             <Grid item xs={5}>
                                 <input
+                                    required
                                     accept="image/*"
                                     type="file"
                                     onChange={(e) => handleFileChange(e, index, 'placement_info')}

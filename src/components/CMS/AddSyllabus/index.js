@@ -104,6 +104,7 @@ const SyllabusForm = () => {
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Syllabus Title"
                                     variant="outlined"
                                     fullWidth
@@ -113,6 +114,7 @@ const SyllabusForm = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Download Syllabus Link Text"
                                     variant="outlined"
                                     fullWidth
@@ -122,6 +124,7 @@ const SyllabusForm = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Download Syllabus Link"
                                     variant="outlined"
                                     fullWidth
@@ -131,6 +134,7 @@ const SyllabusForm = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
                                     label="Description"
                                     variant="outlined"
                                     fullWidth
@@ -146,6 +150,7 @@ const SyllabusForm = () => {
                                             <CardContent>
                                                 <Typography variant="h6">Detailed Description {detailIndex + 1}</Typography>
                                                 <TextField
+                                                    required
                                                     label="Title"
                                                     variant="outlined"
                                                     fullWidth
@@ -158,6 +163,7 @@ const SyllabusForm = () => {
                                                             <Typography variant="subtitle1">Heading {headingIndex + 1}</Typography>
                                                             <Box mb={2}>
                                                                 <TextField
+                                                                    required
                                                                     label="Heading Title"
                                                                     variant="outlined"
                                                                     fullWidth
@@ -169,6 +175,7 @@ const SyllabusForm = () => {
                                                             </Box>
                                                             <Box mb={2}>
                                                                 <TextField
+                                                                    required
                                                                     label="Lesson No"
                                                                     variant="outlined"
                                                                     fullWidth
@@ -181,6 +188,7 @@ const SyllabusForm = () => {
                                                             </Box>
                                                             <Box mb={2}>
                                                                 <TextField
+                                                                    required
                                                                     label="Time"
                                                                     variant="outlined"
                                                                     fullWidth

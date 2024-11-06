@@ -263,6 +263,7 @@ export default function AddCourseEnrollmentForm() {
                                                 <FormControl fullWidth>
                                                     <InputLabel id={`question-type-label-${qnaIndex}`}>Question Type</InputLabel>
                                                     <Select
+                                                        required
                                                         labelId={`question-type-label-${qnaIndex}`}
                                                         value={qna.question_type}
                                                         onChange={(e) => handleQuestionChange(qnaIndex, 'question_type', e.target.value)}

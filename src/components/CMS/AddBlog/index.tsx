@@ -229,12 +229,12 @@ export default function CreateBlog() {
                         < FormControl fullWidth margin="normal" >
                             <InputLabel id="author-label" > Author </InputLabel>
                             < Select
+                                required
                                 labelId="author-label"
                                 id="author"
                                 name="author"
                                 value={blogPost.author}
                                 onChange={handleSelectChange}
-                                required
                             >
                                 {
                                     instructors.map((instructor) => (
@@ -251,6 +251,7 @@ export default function CreateBlog() {
                         />
                         < Box sx={{ mt: 2, mb: 2 }}>
                             <input
+                                required
                                 accept="image/*"
                                 style={{ display: 'none' }}
                                 id="raised-button-file"

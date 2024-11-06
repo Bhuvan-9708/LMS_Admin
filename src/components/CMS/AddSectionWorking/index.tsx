@@ -165,6 +165,7 @@ export default function AddSectionWorking() {
                         required
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Sub Title"
                         name="sub_title"
@@ -177,6 +178,7 @@ export default function AddSectionWorking() {
                     {sectionWorking.description.map((desc, index) => (
                         <Box key={index} sx={{ border: '1px solid #ccc', p: 2, mb: 2 }}>
                             <TextField
+                                required
                                 fullWidth
                                 label="Title"
                                 value={desc.title}
@@ -195,6 +197,7 @@ export default function AddSectionWorking() {
                             </label>
                             {desc.image_icon && <Typography variant="body2">{desc.image_icon.name}</Typography>}
                             <TextField
+                                required
                                 fullWidth
                                 label="Short Description"
                                 value={desc.short_description}
@@ -204,6 +207,7 @@ export default function AddSectionWorking() {
                                 rows={2}
                             />
                             <TextField
+                                required
                                 fullWidth
                                 label="Long Description"
                                 value={desc.long_description}
@@ -224,6 +228,7 @@ export default function AddSectionWorking() {
                             </label>
                             {desc.image && <Typography variant="body2">{desc.image.name}</Typography>}
                             <TextField
+                                required
                                 fullWidth
                                 label="Alt Text"
                                 value={desc.alt_text}
@@ -251,6 +256,7 @@ export default function AddSectionWorking() {
                     />
 
                     <TextField
+                        required
                         fullWidth
                         label="Meta Title"
                         name="meta_title"
@@ -259,6 +265,7 @@ export default function AddSectionWorking() {
                         margin="normal"
                     />
                     <TextField
+                        required
                         fullWidth
                         label="Meta Description"
                         name="meta_description"

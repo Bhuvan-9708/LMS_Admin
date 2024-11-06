@@ -156,6 +156,7 @@ const HireFromUsForm = () => {
                     value={formData.button_text}
                     onChange={handleChange}
                     fullWidth
+                    required
                     margin="normal"
                 />
                 <TextField
@@ -164,6 +165,7 @@ const HireFromUsForm = () => {
                     value={formData.button_url}
                     onChange={handleChange}
                     fullWidth
+                    required
                     margin="normal"
                 />
                 <TextField
@@ -172,6 +174,7 @@ const HireFromUsForm = () => {
                     value={formData.community_title}
                     onChange={handleChange}
                     fullWidth
+                    required
                     margin="normal"
                 />
                 <TextField
@@ -180,6 +183,7 @@ const HireFromUsForm = () => {
                     value={formData.community_description}
                     onChange={handleChange}
                     fullWidth
+                    required
                     margin="normal"
                 />
                 <TextField
@@ -188,6 +192,7 @@ const HireFromUsForm = () => {
                     value={formData.community_image}
                     onChange={handleChange}
                     fullWidth
+                    required
                     margin="normal"
                 />
 

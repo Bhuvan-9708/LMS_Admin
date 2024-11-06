@@ -45,7 +45,8 @@ function CourseLandingPageDetailsForm() {
       try {
         const courseLandingPagesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page/course`);
         const courseLandingPagesData = await courseLandingPagesResponse.json();
-        const coursesWithIdAndTitle = courseLandingPagesData.data.dataWithEffectivePrice.map(course => ({
+        console.log("course", courseLandingPagesData)
+        const coursesWithIdAndTitle = courseLandingPagesData.data.map(course => ({
           _id: course._id,
           title: course.title,
         }));
@@ -249,6 +250,7 @@ function CourseLandingPageDetailsForm() {
           name="course_landing_page_id"
           value={formData.course_landing_page_id}
           onChange={handleInputChange}
+          required
         >
           {courseLandingPages?.map(page => (
             <MenuItem key={page._id} value={page._id}>{page.title}</MenuItem>
@@ -263,6 +265,7 @@ function CourseLandingPageDetailsForm() {
         value={formData.course_highlights.title}
         onChange={(e) => handleNestedInputChange('course_highlights', 'title', e.target.value)}
         margin="normal"
+        required
       />
       <TextField
         fullWidth
@@ -272,6 +275,7 @@ function CourseLandingPageDetailsForm() {
         margin="normal"
         multiline
         rows={4}
+        required
       />
       <input
         accept="image/*"
@@ -279,6 +283,7 @@ function CourseLandingPageDetailsForm() {
         id="course-highlights-image"
         type="file"
         onChange={handleImageChange}
+        required
       />
       <label htmlFor="course-highlights-image">
         <Button variant="contained" component="span">
@@ -296,6 +301,7 @@ function CourseLandingPageDetailsForm() {
             value={point.title}
             onChange={(e) => handleArrayInputChange('course_highlights.points', index, 'title', e.target.value)}
             margin="normal"
+            required
           />
           <TextField
             fullWidth
@@ -303,6 +309,7 @@ function CourseLandingPageDetailsForm() {
             value={point.description}
             onChange={(e) => handleArrayInputChange('course_highlights.points', index, 'description', e.target.value)}
             margin="normal"
+            required
           />
           <Button
             type="button"
@@ -323,12 +330,13 @@ function CourseLandingPageDetailsForm() {
         Add Highlight Point
       </Button>
 
-      <FormControl fullWidth margin="normal">
+      <FormControl fullWidth margin="normal" required>
         <InputLabel>Section Working</InputLabel>
         <Select
           name="section_working"
           value={formData.section_working}
           onChange={handleInputChange}
+          required
         >
           {sectionWorkings.map(section => (
             <MenuItem key={section._id} value={section._id}>{section.title}</MenuItem>
@@ -336,12 +344,13 @@ function CourseLandingPageDetailsForm() {
         </Select>
       </FormControl>
 
-      <FormControl fullWidth margin="normal">
+      <FormControl fullWidth margin="normal" required>
         <InputLabel>Feedbacks</InputLabel>
         <Select
           name="feedbacks"
           value={formData.feedbacks}
           onChange={handleInputChange}
+          required
         >
           {feedbacks.map(feedback => (
             <MenuItem key={feedback._id} value={feedback._id}>{feedback.title}</MenuItem>
@@ -356,6 +365,7 @@ function CourseLandingPageDetailsForm() {
         value={formData.meta_title}
         onChange={handleInputChange}
         margin="normal"
+        required
       />
 
       <TextField
@@ -367,6 +377,7 @@ function CourseLandingPageDetailsForm() {
         margin="normal"
         multiline
         rows={4}
+        required
       />
 
       {formData.meta_keywords.map((keyword, index) => (
@@ -378,6 +389,7 @@ function CourseLandingPageDetailsForm() {
             value={keyword}
             onChange={(e) => handleKeywordChange(index, e.target.value)}
             margin="normal"
+            required
           />
           <Button
             type="button"
@@ -405,6 +417,7 @@ function CourseLandingPageDetailsForm() {
         value={formData.seo_url}
         onChange={handleInputChange}
         margin="normal"
+        required
       />
 
       <Box mt={2}>

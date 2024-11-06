@@ -228,6 +228,7 @@ function EventLandingPageForm() {
             <FormControl fullWidth margin="normal" required>
                 <InputLabel>Hero Section</InputLabel>
                 <Select
+                    required
                     name="hero_section"
                     value={formData.hero_section}
                     onChange={handleInputChange}
@@ -240,6 +241,7 @@ function EventLandingPageForm() {
             <FormControl fullWidth margin="normal" required>
                 <InputLabel>Syllabus</InputLabel>
                 <Select
+                    required
                     name="syllabus"
                     value={formData.syllabus}
                     onChange={handleInputChange}
@@ -252,6 +254,7 @@ function EventLandingPageForm() {
             <FormControl fullWidth margin="normal" required>
                 <InputLabel>Event</InputLabel>
                 <Select
+                    required
                     name="event_id"
                     value={formData.event_id}
                     onChange={handleInputChange}
@@ -263,6 +266,7 @@ function EventLandingPageForm() {
             </FormControl>
 
             <TextField
+                required
                 fullWidth
                 label="For Whom Title"
                 name="for_whom_title"
@@ -272,6 +276,7 @@ function EventLandingPageForm() {
             />
 
             <TextField
+                required
                 fullWidth
                 label="For Whom Text"
                 name="for_whom_text"
@@ -285,6 +290,7 @@ function EventLandingPageForm() {
             <Typography variant="h6" gutterBottom>For Whom Tags</Typography>
             {formData.for_whom.map((item, index) => (
                 <TextField
+                    required
                     key={index}
                     fullWidth
                     label={`Tag ${index + 1}`}
@@ -299,6 +305,7 @@ function EventLandingPageForm() {
 
             <Typography variant="h6" gutterBottom>Instructor Details</Typography>
             <TextField
+                required
                 fullWidth
                 label="Instructor Title Text"
                 name="instructor_title_text"
@@ -308,6 +315,7 @@ function EventLandingPageForm() {
             />
 
             <input
+                required
                 accept="image/*"
                 style={{ display: 'none' }}
                 id="instructor-image-upload"
@@ -324,6 +332,7 @@ function EventLandingPageForm() {
             )}
 
             <TextField
+                required
                 fullWidth
                 label="Instructor Description"
                 name="description"
@@ -336,6 +345,7 @@ function EventLandingPageForm() {
 
             <Typography variant="h6" gutterBottom>Skills Learn</Typography>
             <TextField
+                required
                 fullWidth
                 label="Skills Learn Title"
                 name="title"
@@ -346,6 +356,7 @@ function EventLandingPageForm() {
 
             {formData.skills_learn.tags.map((tag, index) => (
                 <TextField
+                    required
                     key={index}
                     fullWidth
                     label={`Skill Tag ${index + 1}`}
@@ -361,6 +372,7 @@ function EventLandingPageForm() {
             <FormControl fullWidth margin="normal">
                 <InputLabel>Feedbacks</InputLabel>
                 <Select
+                    required
                     name="feedbacks"
                     value={formData.feedbacks}
                     onChange={handleInputChange}

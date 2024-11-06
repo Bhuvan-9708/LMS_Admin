@@ -167,6 +167,7 @@ export default function AddBannerForm() {
                 <form onSubmit={handleSubmit}>
                     <Typography variant="h6" gutterBottom>Upload Banner Image</Typography>
                     <input
+                        required
                         accept="image/*"
                         type="file"
                         ref={imageInputRef}
@@ -230,6 +231,7 @@ export default function AddBannerForm() {
                     <FormControl fullWidth margin="normal">
                         <InputLabel id="status-label">Status</InputLabel>
                         <Select
+                            required
                             labelId="status-label"
                             name="status"
                             value={banner.status}
@@ -240,6 +242,7 @@ export default function AddBannerForm() {
                         </Select>
                     </FormControl>
                     <TextField
+                        required
                         fullWidth
                         label="Position"
                         name="position"
@@ -252,12 +255,14 @@ export default function AddBannerForm() {
                     {banner.buttons.map((button, index) => (
                         <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                             <TextField
+                                required
                                 label={`Button ${index + 1} Text`}
                                 value={button.text}
                                 onChange={(e) => handleButtonChange(index, 'text', e.target.value)}
                                 margin="normal"
                             />
                             <TextField
+                                required
                                 label={`Button ${index + 1} Link`}
                                 value={button.link}
                                 onChange={(e) => handleButtonChange(index, 'link', e.target.value)}
@@ -269,6 +274,7 @@ export default function AddBannerForm() {
                     <Button onClick={handleAddButton}>Add Button</Button>
                     <Typography variant="h6" gutterBottom>Upload Additional Images</Typography>
                     <input
+                        required
                         accept="image/*"
                         type="file"
                         ref={additionalImagesInputRef}

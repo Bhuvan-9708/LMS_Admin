@@ -129,6 +129,7 @@ export default function AddSectionForm() {
                     />
 
                     <TextField
+                        required
                         fullWidth
                         label="Meta URL"
                         name="meta_url"
@@ -141,6 +142,7 @@ export default function AddSectionForm() {
                     {section.meta_tags.map((tag, index) => (
                         <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                             <TextField
+                                required
                                 fullWidth
                                 label={`Meta Tag ${index + 1}`}
                                 value={tag}
@@ -153,6 +155,7 @@ export default function AddSectionForm() {
                     <Button onClick={handleAddMetaTag}>Add Meta Tag</Button>
 
                     <TextField
+                        required
                         fullWidth
                         label="Meta Description"
                         name="meta_description"

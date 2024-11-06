@@ -86,9 +86,10 @@ const CourseLandingPageList = () => {
 
                 console.log("API response:", result);
 
-                if (result.success && result.data && result.data.data) {
-                    setLandingPages(result.data.data);
-                    console.log("landing pages", result.data.data.data.data)
+                // Check for the expected data structure in the response
+                if (result.success && Array.isArray(result.data)) {
+                    setLandingPages(result.data); // Corrected path for data array
+                    console.log("landing pages", result.data);
                 } else {
                     throw new Error('Invalid data structure in API response');
                 }
