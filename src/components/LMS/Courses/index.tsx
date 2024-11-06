@@ -159,40 +159,43 @@ const Courses: React.FC = () => {
 
     const dataToUpdate = {
       status: updateData.status ?? course.status,
-      is_active: updateData.isActive !== undefined ? Boolean(updateData.isActive) : Boolean(course.is_active)  // Ensure boolean value
+      is_active: updateData.isActive !== undefined ? Boolean(updateData.isActive) : Boolean(course.is_active),
     };
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/course/status/${courseId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToUpdate),  
+        body: JSON.stringify(dataToUpdate),
       });
+
       const result = await response.json();
+
       if (result.success) {
-        setSnackbarMessage('Courses updated successfully');
+        setSnackbarMessage('Course updated successfully');
         setSnackbarSeverity('success');
         setSnackbarOpen(true);
-        fetchCourses();
+        fetchCourses(); 
       } else {
-        throw new Error('Failed to update Courses');
+        throw new Error('Failed to update Course');
       }
     } catch (error) {
-      setSnackbarMessage('Error updating Courses');
+      setSnackbarMessage('Error updating Course');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
   };
 
-
   const handleIsActiveChange = (courseId: string, isActive: boolean) => {
-    console.log("Calling handleUpdatecourseId with ID:", courseId);
+    console.log("Updating course with ID:", courseId, "is_active:", isActive);
     handleUpdateCourseStatus(courseId, { isActive });
   };
+
   const handleStatusChange = (courseId: string, newStatus: string) => {
-    console.log("Calling handleUpdatecourseId with ID:", courseId);
+    console.log("Updating course with ID:", courseId, "status:", newStatus);
     handleUpdateCourseStatus(courseId, { status: newStatus });
   };
+
 
   const handleDelete = async (id: string) => {
     try {
@@ -292,7 +295,7 @@ const Courses: React.FC = () => {
             <Table sx={{ minWidth: 1200 }} aria-label="Courses Table">
               <TableHead className="bg-primary-50">
                 <TableRow>
-                  {["ID", "Course Name", "Course Level", "Created By", "Price", "Status", "Active", "Action"].map((header, index) => (
+                  {["ID", "Course Name", "Course Level", "Created By", "Price", "Status", "Action"].map((header, index) => (
                     <TableCell
                       key={index}
                       sx={{
@@ -328,13 +331,13 @@ const Courses: React.FC = () => {
                       </Select>
                     </TableCell>
 
-                    <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
+                    {/* <TableCell sx={{ padding: '13px 20px', fontSize: '14px' }} className="text-black border-bottom">
                       <Switch
                         checked={course.is_active ?? false}
                         onChange={(e) => handleIsActiveChange(course._id, e.target.checked)}
                         color="primary"
                       />
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       <IconButton aria-label="view" color="primary">
                         <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
@@ -342,9 +345,9 @@ const Courses: React.FC = () => {
                       <IconButton aria-label="edit" color="secondary">
                         <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
                       </IconButton>
-                      <IconButton aria-label="delete" color="error" onClick={() => handleDelete(course.id)}>
+                      {/* <IconButton aria-label="delete" color="error" onClick={() => handleDelete(course.id)}>
                         <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>delete</i>
-                      </IconButton>
+                      </IconButton> */}
                     </TableCell>
                   </TableRow>
                 ))}

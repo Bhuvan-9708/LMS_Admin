@@ -30,7 +30,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import styles from "@/components/LMS/Search.module.css";
 
@@ -170,23 +170,23 @@ const CategoryManagement = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleDelete = async (categoryId) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/${categoryId}`, {
-          method: 'DELETE',
-        });
+  // const handleDelete = async (categoryId) => {
+  //   if (window.confirm('Are you sure you want to delete this category?')) {
+  //     try {
+  //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/${categoryId}`, {
+  //         method: 'DELETE',
+  //       });
 
-        if (!response.ok) {
-          throw new Error('Failed to delete category');
-        }
+  //       if (!response.ok) {
+  //         throw new Error('Failed to delete category');
+  //       }
 
-        fetchCategories();
-      } catch (error) {
-        console.error('Error deleting category:', error);
-      }
-    }
-  };
+  //       fetchCategories();
+  //     } catch (error) {
+  //       console.error('Error deleting category:', error);
+  //     }
+  //   }
+  // };
 
   const resetForm = () => {
     setFormData({
@@ -280,9 +280,9 @@ const CategoryManagement = () => {
                     <IconButton onClick={() => handleEdit(category)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => handleDelete(category._id)}>
+                    {/* <IconButton onClick={() => handleDelete(category._id)}>
                       <DeleteIcon />
-                    </IconButton>
+                    </IconButton> */}
                   </TableCell>
                 </TableRow>
               ))}
@@ -343,6 +343,54 @@ const CategoryManagement = () => {
                     </Box>
                   </FormControl>
                 </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="parent-category-label">Parent Category</InputLabel>
+                    <Select
+                      sx={{ m: 1 }}
+                      labelId="parent-category-label"
+                      id="parent_category"
+                      name="parent_category"
+                      value={formData.parent_category}
+                      onChange={handleInputChange}
+                    >
+                      <MenuItem sx={{ m: 1 }} value="">None</MenuItem>
+                      {renderCategoryOptions(categories)}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <input
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    id="category-image"
+                    type="file"
+                    name="image"
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="category-image">
+                    <Button variant="contained" component="span">
+                      Upload Category Image
+                    </Button>
+                  </label>
+                  {formData.image && <Typography>{formData.image.name}</Typography>}
+                </Grid>
+                <Grid item xs={12}>
+                  <input
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    id="category-image-icon"
+                    type="file"
+                    name="image_icon"
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="category-image-icon">
+                    <Button variant="contained" component="span">
+                      Upload Category Icon
+                    </Button>
+                  </label>
+                  {formData.image_icon && <Typography>{formData.image_icon.name}</Typography>}
+                </Grid>
               </Grid>
             </Box>
           </DialogContent>
@@ -362,7 +410,7 @@ const CategoryManagement = () => {
             {snackbar.message}
           </Alert>
         </Snackbar>
-      </Card>
+      </Card >
     </>
   );
 };
