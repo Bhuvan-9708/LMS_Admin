@@ -25,6 +25,8 @@ interface Description {
     long_description: string;
     image: File | null;
     alt_text: string;
+    imageIconPreview: string | null;
+    imagePreview: string | null;
 }
 
 interface SectionWorking {
@@ -76,7 +78,12 @@ export default function EditSectionWorking({ sectionId }: { sectionId: string })
     const handleDescriptionChange = (index: number, field: keyof Description, value: string | File | null) => {
         if (sectionWorking) {
             const newDescription = [...sectionWorking.description];
-            newDescription[index] = { ...newDescription[index], [field]: value };
+            newDescription[index] = {
+                ...newDescription[index],
+                [field]: value,
+                imageIconPreview: field === 'image_icon' && value instanceof File ? URL.createObjectURL(value) : newDescription[index].imageIconPreview,
+                imagePreview: field === 'image' && value instanceof File ? URL.createObjectURL(value) : newDescription[index].imagePreview,
+            };
             setSectionWorking({ ...sectionWorking, description: newDescription });
         }
     };
@@ -87,7 +94,16 @@ export default function EditSectionWorking({ sectionId }: { sectionId: string })
                 ...sectionWorking,
                 description: [
                     ...sectionWorking.description,
-                    { title: '', image_icon: null, short_description: '', long_description: '', image: null, alt_text: '' },
+                    {
+                        title: '',
+                        image_icon: null,
+                        short_description: '',
+                        long_description: '',
+                        image: null,
+                        alt_text: '',
+                        imageIconPreview: null,
+                        imagePreview: null,
+                    },
                 ],
             });
         }
@@ -229,6 +245,12 @@ export default function EditSectionWorking({ sectionId }: { sectionId: string })
                             <label htmlFor={`image-icon-upload-${index}`}>
                                 <Button variant="contained" component="span">Upload Image Icon</Button>
                             </label>
+                            {desc.image_icon && (
+                                <div>
+                                    <Typography variant="body2">{desc.image_icon.name}</Typography>
+                                    {desc.imageIconPreview && <img src={desc.imageIconPreview} alt="Image Icon Preview" style={{ width: '100px', height: '100px' }} />}
+                                </div>
+                            )}
                             {desc.image_icon && <Typography variant="body2">{desc.image_icon.name}</Typography>}
                             <TextField
                                 required
@@ -260,7 +282,12 @@ export default function EditSectionWorking({ sectionId }: { sectionId: string })
                             <label htmlFor={`image-upload-${index}`}>
                                 <Button variant="contained" component="span">Upload Image</Button>
                             </label>
-                            {desc.image && <Typography variant="body2">{desc.image.name}</Typography>}
+                            {desc.image && (
+                                <div>
+                                    <Typography variant="body2">{desc.image.name}</Typography>
+                                    {desc.imagePreview && <img src={desc.imagePreview} alt="Image Preview" style={{ width: '100px', height: '100px' }} />}
+                                </div>
+                            )}
                             <TextField
                                 required
                                 fullWidth

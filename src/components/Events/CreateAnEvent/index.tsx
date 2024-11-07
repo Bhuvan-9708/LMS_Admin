@@ -41,12 +41,6 @@ interface Category {
   _id: string;
   name: string;
 }
-// interface ScheduleItem {
-//   day: number;
-//   time: string;
-//   date: Dayjs | null;
-// };
-
 interface EventFormData {
   title: string;
   event_type: string;
@@ -57,7 +51,7 @@ interface EventFormData {
   registration_link: string;
   instructor: string[];
   is_active: boolean;
-  category: string;
+  category: string[];
   is_paid: boolean;
   organizer: string;
   price: {
@@ -65,6 +59,7 @@ interface EventFormData {
     currency: string;
   };
   image: File | null;
+  event_certificate_image: File | null;
   status: string;
   description: string;
   skills: { tag: string; learning: string }[];
@@ -95,13 +90,14 @@ const CreateAnEvent: React.FC = () => {
     registration_link: '',
     instructor: [],
     is_active: true,
-    category: '',
+    category: [],
     is_paid: false,
     price: {
       amount: 0,
       currency: 'INR',
     },
     image: null,
+    event_certificate_image: null,
     description: '',
     skills: [],
     your_learning: [],
@@ -175,6 +171,20 @@ const CreateAnEvent: React.FC = () => {
       [name]: value,
     }));
     validateField(name, value);
+  };
+
+  const handleCategoryChange = (e: SelectChangeEvent<string | string[]>) => {
+    const { value } = e.target;
+
+    // Ensure category value is always an array
+    const newValue = Array.isArray(value) ? value : [value];
+
+    setFormData((prevData) => ({
+      ...prevData,
+      category: newValue,  // Update category as an array
+    }));
+
+    validateField('category', newValue);
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -324,7 +334,9 @@ const CreateAnEvent: React.FC = () => {
       formData.instructor.forEach((instructor, index) => {
         formDataToSend.append(`event[instructor][${index}]`, instructor);
       });
-      formDataToSend.append('event[category]', formData.category);
+      formData.category.forEach((categoryId, index) => {
+        formDataToSend.append(`event[category][${index}]`, categoryId);
+      });
       formDataToSend.append('event[is_paid]', formData.is_paid.toString());
       if (formData.is_paid) {
         formDataToSend.append('event[price][amount]', formData.price.amount.toString());
@@ -363,19 +375,21 @@ const CreateAnEvent: React.FC = () => {
       if (formData.image) {
         formDataToSend.append('event[image]', formData.image);
       }
+      if (formData.event_certificate_image) {
+        formDataToSend.append('event[image]', formData.event_certificate_image);
+      }
 
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/event/create`, formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       if (response.data.success) {
-        alert('Event created successfully!');
         setSnackbar({
           open: true,
           message: 'Event created successfully!',
           severity: 'success',
         });
-        router.push('/events/list');
+        // router.push('/events/list');
       } else {
         throw new Error(response.data.message || 'Failed to create event');
       }
@@ -675,12 +689,22 @@ const CreateAnEvent: React.FC = () => {
                     required
                     id="category"
                     name="category"
+                    multiple
                     value={formData.category}
-                    onChange={handleSelectChange}
+                    onChange={handleCategoryChange}
                     sx={selectStyle}
+                    renderValue={(selected) => {
+                      return selected
+                        .map((id: string) => {
+                          const category = categories.find((cat) => cat._id === id);
+                          return category ? category.name : '';
+                        })
+                        .join(', ');
+                    }}
                   >
                     {categories.map((category) => (
                       <MenuItem key={category._id} value={category._id}>
+                        <Checkbox checked={formData.category.includes(category._id)} />
                         {category.name}
                       </MenuItem>
                     ))}
@@ -715,7 +739,7 @@ const CreateAnEvent: React.FC = () => {
                       </Typography>
                       <TextField
                         label="Enter price amount"
-                        placeholder="E.g. 2000"
+                        placeholder="E.g. 1000"
                         variant="filled"
                         id="price-amount"
                         name="amount"
@@ -945,8 +969,28 @@ const CreateAnEvent: React.FC = () => {
                 </Grid>
               </>
             )}
+            <Grid item xs={12} sm={12} lg={12} xl={12}>
+              <Typography
+                component="h5"
+                sx={labelStyle}
+                className="text-black"
+              >
+                Certificate Image
+              </Typography>
+              <TextField
+                type="file"
+                fullWidth
+                required
+                onChange={handleImageUpload}
+                sx={{
+                  "& fieldset": {
+                    border: "1px solid #D5D9E2",
+                    borderRadius: "7px",
+                  },
+                }}
+              />
+            </Grid>
 
-            {/* Schedule */}
             <Grid item xs={12}>
               <Typography component="h5" sx={labelStyle} className="text-black">
                 Schedule
