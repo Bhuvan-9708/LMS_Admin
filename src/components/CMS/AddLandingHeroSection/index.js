@@ -195,7 +195,7 @@ const LandingPageHeroSectionForm = () => {
             console.error('Error submitting landing page hero section:', error);
 
             const errorMessage = error.response?.data?.message || 'Error submitting landing page hero section.';
-            alert(errorMessage);
+            // alert(errorMessage);
             setSnackbarMessage(errorMessage);
             setSnackbarSeverity('error');
             setOpenSnackbar(true);

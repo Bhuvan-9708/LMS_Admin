@@ -715,7 +715,7 @@ const CreateAnEvent: React.FC = () => {
                       </Typography>
                       <TextField
                         label="Enter price amount"
-                        placeholder="E.g. 1000"
+                        placeholder="E.g. 2000"
                         variant="filled"
                         id="price-amount"
                         name="amount"
@@ -1049,7 +1049,7 @@ const CreateAnEvent: React.FC = () => {
         </Card>
         < Snackbar
           open={snackbar.open}
-          autoHideDuration={1000}
+          autoHideDuration={2000}
           onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         >

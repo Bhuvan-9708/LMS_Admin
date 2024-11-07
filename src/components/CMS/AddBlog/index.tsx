@@ -303,7 +303,7 @@ export default function CreateBlog() {
             </Card>
             < Snackbar
                 open={snackbar.open}
-                autoHideDuration={1000}
+                autoHideDuration={2000}
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             >

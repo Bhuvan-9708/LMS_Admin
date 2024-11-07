@@ -133,17 +133,17 @@ const LandingHeroSection: React.FC = () => {
 
     const handleToggleActive = async (id: string, newStatus: boolean) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page-hero-section/status/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page-hero-section/soft-delete/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ is_active: newStatus }),
+                body: JSON.stringify({ is_deleted: newStatus }),
             });
             if (!response.ok) {
                 throw new Error("Failed to update active status");
             }
             setHerosection(prevSections =>
                 prevSections.map(section =>
-                    section._id === id ? { ...section, is_active: newStatus } : section
+                    section._id === id ? { ...section, is_deleted: newStatus } : section
                 )
             );
             setSnackbarMessage('Hero Section active status updated successfully!');
@@ -152,26 +152,6 @@ const LandingHeroSection: React.FC = () => {
         } catch (error) {
             console.error("Failed to update Hero Section active status", error);
             setSnackbarMessage('Failed to update Hero Section active status');
-            setSnackbarSeverity('error');
-            setSnackbarOpen(true);
-        }
-    };
-
-    const handleDelete = async (id: string) => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/landing-page-hero-section/soft-delete/${id}`, {
-                method: "DELETE",
-            });
-            if (!response.ok) {
-                throw new Error("Failed to delete Hero Section");
-            }
-            setHerosection(prevSections => prevSections.filter(section => section._id !== id));
-            setSnackbarMessage('Hero Section deleted successfully!');
-            setSnackbarSeverity('success');
-            setSnackbarOpen(true);
-        } catch (error) {
-            console.error("Failed to delete Hero Section", error);
-            setSnackbarMessage('Failed to delete Hero Section');
             setSnackbarSeverity('error');
             setSnackbarOpen(true);
         }
@@ -269,14 +249,8 @@ const LandingHeroSection: React.FC = () => {
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/herosection/${section._id}`)}>
-                                                <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
-                                            </IconButton>
                                             <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-section/${section._id}`)}>
                                                 <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
-                                            </IconButton>
-                                            <IconButton aria-label="delete" color="error" onClick={() => handleDelete(section._id)}>
-                                                <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>delete</i>
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>
@@ -313,7 +287,7 @@ const LandingHeroSection: React.FC = () => {
             </Card>
             <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={1000}
+                autoHideDuration={2000}
                 onClose={() => setSnackbarOpen(false)}
             >
                 <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>

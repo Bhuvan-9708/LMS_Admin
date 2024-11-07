@@ -72,7 +72,7 @@ const SimpleSnackbar: React.FC = () => {
           <Button onClick={handleClick}>Open Snackbar</Button>
           <Snackbar
             open={open}
-            autoHideDuration={1000}
+            autoHideDuration={2000}
             onClose={handleClose}
             message="Note archived"
             action={action}

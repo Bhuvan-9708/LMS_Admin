@@ -68,7 +68,7 @@ const SimpleGrow: React.FC = () => {
             <Grow
               in={checked}
               style={{ transformOrigin: "0 0 0" }}
-              {...(checked ? { timeout: 1000 } : {})}
+              {...(checked ? { timeout: 2000 } : {})}
             >
               {icon}
             </Grow>

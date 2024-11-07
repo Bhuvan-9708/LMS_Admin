@@ -196,7 +196,7 @@ const AddFaqForm = () => {
 
             <Snackbar
                 open={snackbar.open}
-                autoHideDuration={1000}
+                autoHideDuration={2000}
                 onClose={() => setSnackbar({ ...snackbar, open: false })}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >

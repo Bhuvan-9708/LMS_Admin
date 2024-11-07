@@ -16,14 +16,14 @@ const Countdown: React.FC<CountdownProps> = ({ endDate }) => {
     const timeRemaining = endDateTime - now;
 
     if (timeRemaining > 0) {
-      const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+      const days = Math.floor(timeRemaining / (2000 * 60 * 60 * 24));
       const hours = Math.floor(
-        (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        (timeRemaining % (2000 * 60 * 60 * 24)) / (2000 * 60 * 60)
       );
       const minutes = Math.floor(
-        (timeRemaining % (1000 * 60 * 60)) / (1000 * 60)
+        (timeRemaining % (2000 * 60 * 60)) / (2000 * 60)
       );
-      const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+      const seconds = Math.floor((timeRemaining % (2000 * 60)) / 2000);
 
       setCountdown({ days, hours, minutes, seconds });
     } else {
@@ -41,7 +41,7 @@ const Countdown: React.FC<CountdownProps> = ({ endDate }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       calculateTimeLeft();
-    }, 1000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [endDate]);

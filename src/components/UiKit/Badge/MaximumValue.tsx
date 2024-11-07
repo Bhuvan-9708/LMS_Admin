@@ -41,7 +41,7 @@ const MaximumValue: React.FC = () => {
           <Badge color="primary" badgeContent={100}>
             <MailIcon sx={{ fontSize: "25px" }} />
           </Badge>
-          <Badge color="primary" badgeContent={1000} max={999}>
+          <Badge color="primary" badgeContent={2000} max={999}>
             <MailIcon sx={{ fontSize: "25px" }} />
           </Badge>
         </Box>

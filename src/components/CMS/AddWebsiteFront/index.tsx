@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Box, Typography, TextField, FormControl, Select, MenuItem, FormControlLabel, Checkbox, Button, Card, CardContent } from '@mui/material';
+import { Box, Typography, TextField, FormControl, Snackbar, Alert, Select, MenuItem, FormControlLabel, Checkbox, Button, Card, CardContent } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 
@@ -34,6 +34,13 @@ const AddWebsiteFront: React.FC = () => {
     const [banners, setBanners] = useState<Banner[]>([]);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -93,10 +100,16 @@ const AddWebsiteFront: React.FC = () => {
                 // Handle validation errors from the backend
                 setError(result.errors?.[0]?.msg || result.message);
             } else {
+                setSnackbarMessage('Website Front created successfully!');
+                setSnackbarSeverity('success');
+                setSnackbarOpen(true);
                 router.push('/cms/website-front');
             }
         } catch (error) {
             console.error("Error creating website front page:", error);
+            setSnackbarMessage('Error creating Website Front.');
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
             setError("An error occurred while creating the page. Please try again.");
         }
     };
@@ -198,6 +211,15 @@ const AddWebsiteFront: React.FC = () => {
                             Create Website Front
                         </Button>
                     </Box>
+                    <Snackbar
+                        open={snackbarOpen}
+                        autoHideDuration={2000}
+                        onClose={handleCloseSnackbar}
+                    >
+                        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+                            {snackbarMessage}
+                        </Alert>
+                    </Snackbar>
                 </form>
             </CardContent>
         </Card>

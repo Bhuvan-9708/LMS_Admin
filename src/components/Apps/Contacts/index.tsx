@@ -261,7 +261,7 @@ const Contacts: React.FC = () => {
             }}
             className="rmui-table"
           >
-            <Table sx={{ minWidth: 1000 }} aria-label="Contacts List Table">
+            <Table sx={{ minWidth: 2000 }} aria-label="Contacts List Table">
               <TableHead className="bg-primary-50">
                 <TableRow>
                   <TableCell

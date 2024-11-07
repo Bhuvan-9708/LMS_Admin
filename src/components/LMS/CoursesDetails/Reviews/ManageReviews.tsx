@@ -470,7 +470,7 @@ const ManageReviews: React.FC = () => {
           }}
           className="rmui-table border"
         >
-          <Table sx={{ minWidth: 1000 }} aria-label="Table">
+          <Table sx={{ minWidth: 2000 }} aria-label="Table">
             <TableHead className="bg-f6f7f9">
               <TableRow>
                 <TableCell

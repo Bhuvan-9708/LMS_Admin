@@ -313,7 +313,7 @@ const FaqFaq: React.FC = () => {
             </Card>
             <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={1000}
+                autoHideDuration={2000}
                 onClose={() => setSnackbarOpen(false)}
             >
                 <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>

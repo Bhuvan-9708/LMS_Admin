@@ -430,7 +430,7 @@ const ToDoList: React.FC = () => {
             }}
             className="rmui-table"
           >
-            <Table sx={{ minWidth: 1000 }} aria-label="To Do List Table">
+            <Table sx={{ minWidth: 2000 }} aria-label="To Do List Table">
               <TableHead className="bg-primary-50">
                 <TableRow>
                   <TableCell

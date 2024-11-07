@@ -33,7 +33,7 @@ const ProjectsRoadmap: React.FC = () => {
   const series = [
     {
       name: "Projects",
-      data: [400, 550, 600, 700, 1000, 1100, 1200],
+      data: [400, 550, 600, 700, 2000, 1100, 1200],
     },
   ];
 
