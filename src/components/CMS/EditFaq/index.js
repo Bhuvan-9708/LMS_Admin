@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import {
     Button,
@@ -12,7 +12,7 @@ import {
     Alert
 } from '@mui/material';
 
-const EditFaqForm = (faqId) => {
+const EditFaqForm = ({ faqId }) => {
     const [faq, setFaq] = useState({
         title: '',
         description: '',
@@ -22,16 +22,13 @@ const EditFaqForm = (faqId) => {
     const [loading, setLoading] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
     const router = useRouter();
-    // const searchParams = useSearchParams();
-
-    // const faqId = searchParams.get("id");
 
     useEffect(() => {
         if (faqId) {
             const fetchFaqData = async () => {
                 try {
                     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/faq/${faqId}`);
-                    setFaq(response.data);
+                    setFaq(response.data.data);
                 } catch (error) {
                     console.error('Error fetching FAQ:', error);
                 }
@@ -69,9 +66,9 @@ const EditFaqForm = (faqId) => {
         event.preventDefault();
         setLoading(true);
         try {
-            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/faq/${faqId}`, faq);
+            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/faq/update/${faqId}`, faq);
             setSnackbar({ open: true, message: 'FAQ updated successfully!', severity: 'success' });
-            router.push('/cms/faqs');
+            router.push('/cms/faq');
         } catch (error) {
             console.error('Error updating FAQ:', error);
             setSnackbar({ open: true, message: 'Failed to update FAQ.', severity: 'error' });

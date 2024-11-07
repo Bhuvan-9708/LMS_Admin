@@ -21,7 +21,7 @@ const RichTextEditor = dynamic(() => import("@mantine/rte"), {
 });
 
 interface Section {
-    sectionId: string; 
+    sectionId: string;
     title: string;
     content: string;
     meta_url: string;
@@ -32,7 +32,7 @@ interface Section {
 
 export default function EditSectionForm({ sectionId }: { sectionId: string }) {
     const [section, setSection] = useState<Section>({
-        sectionId: '', 
+        sectionId: '',
         title: '',
         content: '',
         meta_url: '',
@@ -47,9 +47,8 @@ export default function EditSectionForm({ sectionId }: { sectionId: string }) {
     });
 
     const router = useRouter();
-    const { id } = useParams(); // Use this to fetch the section by ID
+    const { id } = useParams();
 
-    // Fetch the section data when the component is loaded
     useEffect(() => {
         if (id) {
             const fetchSectionData = async () => {
@@ -59,8 +58,12 @@ export default function EditSectionForm({ sectionId }: { sectionId: string }) {
                         throw new Error('Failed to fetch section data');
                     }
 
-                    const data = await response.json();
-                    setSection(prev => ({ ...prev, ...data, sectionId: id }));
+                    const responseData = await response.json();
+                    if (responseData.success) {
+                        setSection(prev => ({ ...prev, ...responseData.data, sectionId: id }));
+                    } else {
+                        console.error('Unexpected response format:', responseData);
+                    }
                 } catch (error) {
                     console.error('Error fetching section data:', error);
                 }
@@ -99,7 +102,7 @@ export default function EditSectionForm({ sectionId }: { sectionId: string }) {
         event.preventDefault();
         try {
             const method = 'PUT';
-            const url = `${process.env.NEXT_PUBLIC_API_URL}/api/section/${id}`;
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/api/section/update/${id}`;
 
             const response = await fetch(url, {
                 method,

@@ -241,13 +241,13 @@ const CourseLandingPageList: React.FC = () => {
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            <IconButton
+                                            {/* <IconButton
                                                 aria-label="view"
                                                 color="primary"
                                                 onClick={() => router.push(`/cms/course-landing-pages/${landingPage._id}`)}
                                             >
                                                 <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>visibility</span>
-                                            </IconButton>
+                                            </IconButton> */}
                                             <IconButton
                                                 aria-label="edit"
                                                 color="secondary"

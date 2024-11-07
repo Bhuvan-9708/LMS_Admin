@@ -133,17 +133,17 @@ const FaqFaq: React.FC = () => {
 
     const handleToggleActive = async (id: string, newStatus: boolean) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/faq/status/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/faq/soft-delete/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ is_active: newStatus }),
+                body: JSON.stringify({ is_deleted: newStatus }),
             });
             if (!response.ok) {
                 throw new Error("Failed to update active status");
             }
             setFaqFaq(prevFaqs =>
                 prevFaqs.map(faq =>
-                    faq._id === id ? { ...faq, is_active: newStatus } : faq
+                    faq._id === id ? { ...faq, is_deleted: newStatus } : faq
                 )
             );
             setSnackbarMessage('Faq active status updated successfully!');
@@ -269,14 +269,8 @@ const FaqFaq: React.FC = () => {
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/faq/${faq._id}`)}>
-                                                <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
-                                            </IconButton>
                                             <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-faq/${faq._id}`)}>
                                                 <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
-                                            </IconButton>
-                                            <IconButton aria-label="delete" color="error" onClick={() => handleDelete(faq._id)}>
-                                                <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>delete</i>
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>

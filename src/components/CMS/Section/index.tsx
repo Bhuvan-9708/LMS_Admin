@@ -276,9 +276,6 @@ const SectionTable: React.FC = () => {
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/sections/${section._id}`)}>
-                                                <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
-                                            </IconButton>
                                             <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-section/${section._id}`)}>
                                                 <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
                                             </IconButton>
