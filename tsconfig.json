@@ -24,6 +24,6 @@
       "@/*": ["./src/*"]
     },
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/CMS/AddEventLandingDetails/index.js", "src/app/cms/add-website-front/page.jsx", "src/components/LMS/CreateCourse/index.js", "src/app/lms/create-course/page.js", "src/app/cms/landing-hero-section/page.jsx", "src/components/CMS/AddCourseLanding/index.js", "src/components/LMS/Categories/CategoriesTable/index.js", "src/components/CMS/CourseLanding/index.js", "src/components/CRM/CreateHireForm/index.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/CMS/AddEventLandingDetails/index.js", "src/app/cms/add-website-front/page.jsx", "src/components/LMS/CreateCourse/index.js", "src/app/lms/create-course/page.js", "src/app/cms/landing-hero-section/page.jsx", "src/components/CMS/AddCourseLanding/index.js", "src/components/LMS/Categories/CategoriesTable/index.js", "src/components/CMS/CourseLanding/index.js", "src/components/CRM/CreateHireForm/index.js", "src/app/cms/edit-faq/[id]/page.js"],
   "exclude": ["node_modules"]
 }

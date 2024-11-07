@@ -131,12 +131,12 @@ const BannerTable: React.FC = () => {
     };
 
     const handleToggleActive = async (id: string, isChecked: boolean) => {
-        const newStatus = isChecked ? "active" : "inactive"; // Map the checked state to status
+        const newStatus = isChecked ? "active" : "inactive"; 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner/status/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: newStatus }), // Update with the new status
+                body: JSON.stringify({ status: newStatus }), 
             });
             if (!response.ok) {
                 throw new Error("Failed to update status");
@@ -276,9 +276,6 @@ const BannerTable: React.FC = () => {
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <IconButton aria-label="view" color="primary" onClick={() => router.push(`/cms/banners/${banner._id}`)}>
-                                            <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</i>
-                                        </IconButton>
                                         <IconButton aria-label="edit" color="secondary" onClick={() => router.push(`/cms/edit-banner/${banner._id}`)}>
                                             <i className="material-symbols-outlined" style={{ fontSize: "16px" }}>edit</i>
                                         </IconButton>

@@ -11,8 +11,11 @@ import {
     Container,
     Box,
     Snackbar,
-    Alert
+    Alert,
+    InputAdornment,
+    IconButton
 } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
 
 const HireFromUsForm = () => {
     const [formData, setFormData] = useState({
@@ -24,7 +27,7 @@ const HireFromUsForm = () => {
         button_url: "",
         community_title: "",
         community_description: "",
-        community_image: "",
+        community_image: null,
         faq: "",
     });
     const [faqs, setFaqs] = useState([]);
@@ -64,22 +67,40 @@ const HireFromUsForm = () => {
         }));
     };
 
+    // Handle file input change
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData((prevData) => ({
+                ...prevData,
+                community_image: file, // Store the image file
+            }));
+        }
+    };
+
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
+        const formDataToSubmit = new FormData();
+        Object.keys(formData).forEach(key => {
+            if (key === "community_image") {
+                formDataToSubmit.append(key, formData[key]); // Append the image file
+            } else {
+                formDataToSubmit.append(key, formData[key]);
+            }
+        });
+
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hire-from-us/create/`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: formDataToSubmit, // Send FormData to handle file upload
             });
 
             if (!response.ok) throw new Error("Failed to add HireFromUs entry");
 
-            alert("Entry added successfully");
             setFormData({
                 title: "",
                 heading: "",
@@ -89,7 +110,7 @@ const HireFromUsForm = () => {
                 button_url: "",
                 community_title: "",
                 community_description: "",
-                community_image: "",
+                community_image: null,
                 faq: "",
             });
             setSnackbar({
@@ -186,15 +207,29 @@ const HireFromUsForm = () => {
                     required
                     margin="normal"
                 />
-                <TextField
-                    label="Community Image URL"
-                    name="community_image"
-                    value={formData.community_image}
-                    onChange={handleChange}
+
+                {/* Image Upload Input */}
+                <Button
+                    variant="contained"
+                    component="label"
+                    color="primary"
                     fullWidth
-                    required
-                    margin="normal"
-                />
+                    sx={{ mt: 2 }}
+                >
+                    Upload Community Image
+                    <input
+                        type="file"
+                        hidden
+                        onChange={handleFileChange}
+                    />
+                </Button>
+                {formData.community_image && (
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="body2" color="textSecondary">
+                            {formData.community_image.name}
+                        </Typography>
+                    </Box>
+                )}
 
                 <FormControl fullWidth margin="normal">
                     <InputLabel>FAQ</InputLabel>
