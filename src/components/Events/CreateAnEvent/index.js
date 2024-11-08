@@ -8,10 +8,11 @@ import {
   Box,
   Typography,
   FormControl,
+  InputLabel,
   TextField,
   Button,
+  IconButton,
   Select,
-  SelectChangeEvent,
   Checkbox,
   FormControlLabel,
   Chip,
@@ -23,7 +24,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { useRouter } from 'next/navigation';
 
 import dynamic from "next/dynamic";
@@ -31,63 +34,18 @@ const RichTextEditor = dynamic(() => import("@mantine/rte"), {
   ssr: false,
 });
 
-interface Instructor {
-  _id: string;
-  first_name: string;
-  last_name: string;
-}
-
-interface Category {
-  _id: string;
-  name: string;
-}
-interface EventFormData {
-  title: string;
-  event_type: string;
-  event_level: string;
-  start_date: Dayjs | null;
-  start_time: Dayjs | null;
-  end_time: Dayjs | null;
-  registration_link: string;
-  instructor: string[];
-  is_active: boolean;
-  category: string[];
-  is_paid: boolean;
-  organizer: string;
-  price: {
-    amount: number;
-    currency: string;
-  };
-  image: File | null;
-  event_certificate_image: File | null;
-  status: string;
-  description: string;
-  skills: { tag: string; learning: string }[];
-  your_learning: { tag: string; description: string }[];
-  for_whom: { tag: string; description: string }[];
-  is_certificate: boolean;
-  certificate: string;
-  certificate_description: string;
-  schedule: Array<{ day: number; time: string; date: Dayjs | null }>;
-}
-
-interface FormErrors {
-  [key: string]: string;
-}
-
-const eventTypes = ['workshop', 'seminar', 'presentation', 'workshop-seminar', 'workshop-presentation'];
+const eventTypes = ['workshop', 'Webinar', 'presentation', 'workshop-Webinar', 'workshop-presentation'];
 const eventLevels = ['all', 'beginner', 'intermediate', 'expert'];
 const status = ['pending', 'approved', 'rejected'];
 
-const CreateAnEvent: React.FC = () => {
-  const [formData, setFormData] = useState<EventFormData>({
+const CreateAnEvent = () => {
+  const [formData, setFormData] = useState({
     title: '',
     event_type: '',
     event_level: 'all',
     start_date: null,
     start_time: null,
     end_time: null,
-    registration_link: '',
     instructor: [],
     is_active: true,
     category: [],
@@ -96,25 +54,33 @@ const CreateAnEvent: React.FC = () => {
       amount: 0,
       currency: 'INR',
     },
+    special_price: 0,
+    special_price_from: null,
+    special_price_to: null,
     image: null,
-    event_certificate_image: null,
     description: '',
+    language: [''],
+    includes: [''],
     skills: [],
     your_learning: [],
     for_whom: [],
     is_certificate: true,
-    certificate: '',
-    certificate_description: '',
+    certificate_description: null,
+    syllabus: null,
+    faq: null,
     schedule: [{ day: 0, time: '', date: null }],
     organizer: '',
     status: 'pending',
   });
   const router = useRouter();
-  const [instructors, setInstructors] = useState<Instructor[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+  const [instructors, setInstructors] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [certificate, setCertificate] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [syllabus, setSyllabus] = useState([]);
+  const [faqs, setFaqs] = useState([]);
+  const [submitError, setSubmitError] = useState(null);
+  const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
@@ -151,58 +117,148 @@ const CreateAnEvent: React.FC = () => {
       }
     };
 
+    const fetchCertificate = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/certificate/`);
+        const data = await response.json();
+        if (data.success) {
+          setCertificate(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    const fetchSyllabus = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/syllabus/`);
+        const data = await response.json();
+        if (data.success) {
+          setSyllabus(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    const fetchFaq = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/faq/`);
+        const data = await response.json();
+        if (data.success) {
+          setFaqs(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchFaq();
+    fetchSyllabus();
+    fetchCertificate();
     fetchInstructors();
     fetchCategories();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleCertificateChange = (event) => {
+    setFormData((prev) => ({
+      ...prev,
+      certificate_description: event.target.value,
+    }));
+  };
+
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: Array.isArray(value) ? value : [value],
     }));
-    validateField(name, value);
   };
 
-  const handleSelectChange = (e: SelectChangeEvent<string | string[]>) => {
-    const { name, value } = e.target;
+  const handleChange = (e, index, fieldName) => {
+    const updatedArray = [...formData[fieldName]];
+    updatedArray[index] = e.target.value;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [fieldName]: updatedArray,
     }));
-    validateField(name, value);
   };
 
-  const handleCategoryChange = (e: SelectChangeEvent<string | string[]>) => {
+  const handleAddField = (fieldName) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [fieldName]: [...prevData[fieldName], ""],
+    }));
+  };
+
+  const handleRemoveField = (index, fieldName) => {
+    const updatedArray = [...formData[fieldName]];
+    updatedArray.splice(index, 1);
+    setFormData((prevData) => ({
+      ...prevData,
+      [fieldName]: updatedArray,
+    }));
+  };
+
+  const handleSelectChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: Array.isArray(value) ? value : [value],
+    }));
+  };
+
+  const handleCategoryChange = (e) => {
     const { value } = e.target;
 
-    // Ensure category value is always an array
     const newValue = Array.isArray(value) ? value : [value];
-
     setFormData((prevData) => ({
       ...prevData,
-      category: newValue,  // Update category as an array
+      category: newValue,
     }));
 
     validateField('category', newValue);
   };
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: checked,
-    }));
+
+    setFormData((prevData) => {
+      let updatedData = { ...prevData, [name]: checked };
+
+      if (name === 'is_paid') {
+        if (!checked) {
+          updatedData = {
+            ...updatedData,
+            price: { amount: 0, currency: 'INR' },
+            special_price: 0,
+            special_price_from: null,
+            special_price_to: null,
+          };
+        }
+      }
+
+      if (name === 'is_certificate') {
+        if (!checked) {
+          updatedData = { ...updatedData, certificate_description: '' };
+        }
+      }
+
+      return updatedData;
+    });
   };
 
-  const handleDateChange = (date: Dayjs | null, name: string) => {
+
+  const handleDateChange = (date, name) => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: date,
     }));
     validateField(name, date);
   };
-  const handleScheduleDateChange = (date: Dayjs | null, index: number) => {
+
+  const handleScheduleDateChange = (date, index) => {
     setFormData((prevData) => {
       const updatedSchedule = [...prevData.schedule];
       updatedSchedule[index].date = date;
@@ -212,7 +268,8 @@ const CreateAnEvent: React.FC = () => {
       };
     });
   };
-  const handleTimeChange = (time: Dayjs | null, name: string) => {
+
+  const handleTimeChange = (time, name) => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: time,
@@ -220,18 +277,32 @@ const CreateAnEvent: React.FC = () => {
     validateField(name, time);
   };
 
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePriceChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      price: {
-        ...prevData.price,
-        [name]: name === 'amount' ? (value === '' ? 0 : parseFloat(value)) : value,
-      },
-    }));
+
+    setFormData((prevData) => {
+      if (name.startsWith('price')) {
+        return {
+          ...prevData,
+          price: {
+            ...prevData.price,
+            [name.split('.')[1]]: name === 'price.amount'
+              ? (value === '' ? 0 : parseFloat(value))
+              : value,
+          },
+        };
+      } else if (name === 'special_price' || name === 'special_price_from' || name === 'special_price_to') {
+        return {
+          ...prevData,
+          [name]: name === 'special_price' ? (value === '' ? 0 : parseFloat(value)) : value,
+        };
+      }
+
+      return prevData;
+    });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (e) => {
     const file = e.target.files?.[0] || null;
     setFormData((prevData) => ({
       ...prevData,
@@ -239,33 +310,49 @@ const CreateAnEvent: React.FC = () => {
     }));
   };
 
-  const handleArrayItemChange = (index: number, field: keyof EventFormData, subField: string, value: string) => {
+  const handleArrayItemChange = (index, field, subField, value) => {
     setFormData((prevData) => {
-      const newArray = [...prevData[field] as any[]];
+      const newArray = [...prevData[field]];
       newArray[index] = { ...newArray[index], [subField]: value };
       return { ...prevData, [field]: newArray };
     });
   };
 
-  const handleAddArrayItem = (field: keyof EventFormData) => {
+  const handleAddArrayItem = (field) => {
     setFormData((prevData) => {
       const newItem = field === 'skills' ? { tag: '', learning: '' } :
         field === 'your_learning' || field === 'for_whom' ? { tag: '', description: '' } :
           field === 'schedule' ? { day: prevData.schedule.length + 1, time: '', date: null } :
             {};
-      return { ...prevData, [field]: [...prevData[field] as any[], newItem] };
+      return { ...prevData, [field]: [...prevData[field], newItem] };
     });
   };
 
-  const handleRemoveArrayItem = (index: number, field: keyof EventFormData) => {
+  const handleRemoveArrayItem = (index, field) => {
     setFormData((prevData) => {
-      const newArray = [...prevData[field] as any[]];
+      const newArray = [...prevData[field]];
       newArray.splice(index, 1);
       return { ...prevData, [field]: newArray };
     });
   };
 
-  const validateField = (name: string, value: any) => {
+  const handleFaqChange = (e) => {
+    const { value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      faq: value,
+    }));
+  };
+
+  const handleSyllabusChange = (e) => {
+    const { value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      syllabus: value,
+    }));
+  };
+
+  const validateField = (name, value) => {
     let error = '';
     switch (name) {
       case 'title':
@@ -284,11 +371,8 @@ const CreateAnEvent: React.FC = () => {
       case 'end_time':
         error = value && dayjs(value).isValid() ? '' : `${name === 'start_time' ? 'Start' : 'End'} time is required`;
         break;
-      case 'registration_link':
-        error = value ? (/^https?:\/\/.+/.test(value) ? '' : 'Invalid URL format') : 'Registration link is required';
-        break;
       case 'instructor':
-        error = (value as string[]).length > 0 ? '' : 'At least one instructor is required';
+        error = value.length > 0 ? '' : 'At least one instructor is required';
         break;
       case 'category':
         error = value ? '' : 'Category is required';
@@ -303,15 +387,15 @@ const CreateAnEvent: React.FC = () => {
   };
 
   const validateForm = () => {
-    const newErrors: FormErrors = {};
+    const newErrors = {};
     Object.keys(formData).forEach((key) => {
-      validateField(key, formData[key as keyof EventFormData]);
+      validateField(key, formData[key]);
     });
     setErrors(newErrors);
     return Object.values(newErrors).every(error => !error);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError(null);
 
@@ -330,18 +414,23 @@ const CreateAnEvent: React.FC = () => {
       formDataToSend.append('event[start_date]', formData.start_date ? dayjs(formData.start_date).format('YYYY-MM-DD') : '');
       formDataToSend.append('event[start_time]', formData.start_time ? dayjs(formData.start_time).toISOString() : '');
       formDataToSend.append('event[end_time]', formData.end_time ? dayjs(formData.end_time).toISOString() : '');
-      formDataToSend.append('event[registration_link]', formData.registration_link);
+
       formData.instructor.forEach((instructor, index) => {
         formDataToSend.append(`event[instructor][${index}]`, instructor);
       });
+
       formData.category.forEach((categoryId, index) => {
         formDataToSend.append(`event[category][${index}]`, categoryId);
       });
-      formDataToSend.append('event[is_paid]', formData.is_paid.toString());
+
       if (formData.is_paid) {
         formDataToSend.append('event[price][amount]', formData.price.amount.toString());
         formDataToSend.append('event[price][currency]', formData.price.currency);
+        formDataToSend.append('event[special_price]', formData.special_price.toString());
+        formDataToSend.append('event[special_price_from]', formData.special_price_from ? dayjs(formData.special_price_from).format('YYYY-MM-DD') : '');
+        formDataToSend.append('event[special_price_to]', formData.special_price_to ? dayjs(formData.special_price_to).format('YYYY-MM-DD') : '');
       }
+
       formDataToSend.append('event[status]', 'pending');
       formDataToSend.append('event[organizer]', formData.organizer);
 
@@ -351,32 +440,44 @@ const CreateAnEvent: React.FC = () => {
         formDataToSend.append(`eventDetails[skills][${index}][tag]`, skill.tag);
         formDataToSend.append(`eventDetails[skills][${index}][learning]`, skill.learning);
       });
+
       formData.your_learning.forEach((item, index) => {
         formDataToSend.append(`eventDetails[your_learning][${index}][tag]`, item.tag);
         formDataToSend.append(`eventDetails[your_learning][${index}][description]`, item.description);
       });
+
       formData.for_whom.forEach((item, index) => {
         formDataToSend.append(`eventDetails[for_whom][${index}][tag]`, item.tag);
         formDataToSend.append(`eventDetails[for_whom][${index}][description]`, item.description);
       });
+
       formData.schedule.forEach((item, index) => {
         formDataToSend.append(`eventDetails[schedule][${index}][day]`, item.day.toString());
         formDataToSend.append(`eventDetails[schedule][${index}][time]`, item.time || '');
         const formattedDate = item.date ? dayjs(item.date).format('YYYY-MM-DD') : '';
         formDataToSend.append(`eventDetails[schedule][${index}][date]`, formattedDate);
       });
-      formData.instructor.forEach((instructor, index) => {
-        formDataToSend.append(`eventDetails[instructors][${index}]`, instructor);
-      });
+
+      formDataToSend.append('eventDetails[faq]', formData.faq);
+
       formDataToSend.append('eventDetails[is_certificate]', formData.is_certificate.toString());
-      formDataToSend.append('eventDetails[certificate]', formData.certificate);
-      formDataToSend.append('eventDetails[certificate_description]', formData.certificate_description);
+      if (formData.is_certificate && formData.certificate_description) {
+        formDataToSend.append('eventDetails[certificate_description]', formData.certificate_description);
+      }
+
+      formDataToSend.append('eventDetails[syllabus]', formData.syllabus);
+
+      formData.includes.forEach((includeItem, index) => {
+        const includeObject = { title: includeItem };
+        formDataToSend.append(`eventDetails[includes][${index}]`, JSON.stringify(includeObject));
+      });
+
+      formData.language.forEach((language, index) => {
+        formDataToSend.append(`eventDetails[language][${index}]`, language);
+      });
 
       if (formData.image) {
         formDataToSend.append('event[image]', formData.image);
-      }
-      if (formData.event_certificate_image) {
-        formDataToSend.append('event[image]', formData.event_certificate_image);
       }
 
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/event/create`, formDataToSend, {
@@ -389,7 +490,7 @@ const CreateAnEvent: React.FC = () => {
           message: 'Event created successfully!',
           severity: 'success',
         });
-        // router.push('/events/list');
+        router.push('/events')
       } else {
         throw new Error(response.data.message || 'Failed to create event');
       }
@@ -398,8 +499,8 @@ const CreateAnEvent: React.FC = () => {
         console.error('Server response:', error.response.data);
         if (error.response.data.errors) {
           const serverErrors = error.response.data.errors;
-          const newErrors: FormErrors = {};
-          serverErrors.forEach((err: any) => {
+          const newErrors = {};
+          serverErrors.forEach((err) => {
             const field = err.path.split('.').pop();
             newErrors[field] = err.msg;
           });
@@ -617,30 +718,8 @@ const CreateAnEvent: React.FC = () => {
                 </FormControl>
               </Box>
             </Grid>
-            <Grid item xs={12} sm={6} lg={6} xl={4}>
-              <Box>
-                <FormControl fullWidth>
-                  <Typography component="label" sx={labelStyle} className="text-black">
-                    Registration Link
-                  </Typography>
-                  <TextField
-                    label="Enter registration link"
-                    placeholder="E.g. https://example.com/register"
-                    variant="filled"
-                    id="registration_link"
-                    name="registration_link"
-                    value={formData.registration_link}
-                    onChange={handleInputChange}
-                    required
-                    error={!!errors.registration_link}
-                    helperText={errors.registration_link}
-                    sx={inputStyle}
-                  />
-                </FormControl>
-              </Box>
-            </Grid>
 
-            <Grid item xs={12} sm={6} lg={6} xl={4}>
+            <Grid item xs={12} sm={6} lg={6} xl={6}>
               <Box>
                 <Typography component="label" sx={labelStyle} className="text-black">
                   Instructors
@@ -656,12 +735,12 @@ const CreateAnEvent: React.FC = () => {
                     sx={selectStyle}
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {(selected as string[]).map((value) => {
+                        {selected.map((value) => {
                           const instructor = instructors.find(i => i._id === value);
                           return (
                             <Chip
                               key={value}
-                              label={instructor ? `${instructor.first_name} ${instructor.last_name} ` : value}
+                              label={instructor ? `${instructor.first_name} ${instructor.last_name}` : value}
                             />
                           );
                         })}
@@ -670,7 +749,7 @@ const CreateAnEvent: React.FC = () => {
                   >
                     {instructors.map((instructor) => (
                       <MenuItem key={instructor._id} value={instructor._id}>
-                        {`${instructor.first_name} ${instructor.last_name} `}
+                        {`${instructor.first_name} ${instructor.last_name}`}
                       </MenuItem>
                     ))}
                   </Select>
@@ -679,7 +758,7 @@ const CreateAnEvent: React.FC = () => {
               </Box>
             </Grid>
 
-            <Grid item xs={12} sm={6} lg={6} xl={4}>
+            <Grid item xs={12} sm={6} lg={6} xl={6}>
               <Box>
                 <Typography component="label" sx={labelStyle} className="text-black">
                   Category
@@ -695,7 +774,7 @@ const CreateAnEvent: React.FC = () => {
                     sx={selectStyle}
                     renderValue={(selected) => {
                       return selected
-                        .map((id: string) => {
+                        .map((id) => {
                           const category = categories.find((cat) => cat._id === id);
                           return category ? category.name : '';
                         })
@@ -710,6 +789,47 @@ const CreateAnEvent: React.FC = () => {
                     ))}
                   </Select>
                   {errors.category && <Typography color="error">{errors.category}</Typography>}
+                </FormControl>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={6} lg={6} xl={6}>
+              <Box>
+                <Typography component="label" sx={labelStyle} className="text-black">
+                  Syllabus
+                </Typography>
+                <FormControl fullWidth margin="normal" required>
+                  <Select
+                    required
+                    name="syllabus"
+                    value={formData.syllabus || ''}
+                    onChange={handleSyllabusChange}
+                  >
+                    {syllabus?.map(syllabuses => (
+                      <MenuItem key={syllabuses._id} value={syllabuses._id}>{syllabuses.title}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={6} lg={6} xl={6}>
+              <Box>
+                <Typography component="label" sx={labelStyle} className="text-black">
+                  Faq
+                </Typography>
+                <FormControl fullWidth margin="normal" required>
+                  <InputLabel>Faq</InputLabel>
+                  <Select
+                    required
+                    name="faq"
+                    value={formData.faq || ''}
+                    onChange={handleFaqChange}
+                  >
+                    {faqs.map(page => (
+                      <MenuItem key={page._id} value={page._id}>{page.title}</MenuItem>
+                    ))}
+                  </Select>
                 </FormControl>
               </Box>
             </Grid>
@@ -731,6 +851,7 @@ const CreateAnEvent: React.FC = () => {
 
             {formData.is_paid && (
               <>
+                {/* Price Amount */}
                 <Grid item xs={12} sm={6} lg={6} xl={4}>
                   <Box>
                     <FormControl fullWidth>
@@ -742,7 +863,7 @@ const CreateAnEvent: React.FC = () => {
                         placeholder="E.g. 1000"
                         variant="filled"
                         id="price-amount"
-                        name="amount"
+                        name="price.amount"
                         type="number"
                         value={formData.price.amount}
                         onChange={handlePriceChange}
@@ -753,6 +874,7 @@ const CreateAnEvent: React.FC = () => {
                   </Box>
                 </Grid>
 
+                {/* Price Currency */}
                 <Grid item xs={12} sm={6} lg={6} xl={4}>
                   <Box>
                     <FormControl fullWidth>
@@ -764,7 +886,7 @@ const CreateAnEvent: React.FC = () => {
                         placeholder="E.g. INR"
                         variant="filled"
                         id="price-currency"
-                        name="currency"
+                        name="price.currency"
                         value={formData.price.currency}
                         onChange={handlePriceChange}
                         required
@@ -773,8 +895,99 @@ const CreateAnEvent: React.FC = () => {
                     </FormControl>
                   </Box>
                 </Grid>
+
+                {/* Special Price */}
+                <Grid item xs={12} sm={6} lg={6} xl={4}>
+                  <Typography component="h5" sx={labelStyle} className="text-black">
+                    Special Price Amount
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    name="special_price"
+                    value={formData.special_price}
+                    onChange={handlePriceChange}
+                    sx={{ ...selectStyle }}
+                  />
+                </Grid>
+
+                {/* Special Price Start Date */}
+                <Grid item xs={12} sm={6} lg={6} xl={4}>
+                  <Typography component="h5" sx={labelStyle} className="text-black">
+                    Special Price Start Date
+                  </Typography>
+                  <DatePicker
+                    value={formData.special_price_from}
+                    onChange={(date) => handleDateChange(date, 'special_price_from')}
+                    sx={{ width: '100%', ...selectStyle }}
+                    slotProps={{
+                      textField: {
+                        helperText: errors.special_price_from,
+                        error: !!errors.special_price_from,
+                      },
+                    }}
+                  />
+                </Grid>
+
+                {/* Special Price End Date */}
+                <Grid item xs={12} sm={6} lg={6} xl={4}>
+                  <Typography component="h5" sx={labelStyle} className="text-black">
+                    Special Price End Date
+                  </Typography>
+                  <DatePicker
+                    value={formData.special_price_to}
+                    onChange={(date) => handleDateChange(date, 'special_price_to')}
+                    sx={{ width: '100%', ...selectStyle }}
+                    slotProps={{
+                      textField: {
+                        helperText: errors.special_price_to,
+                        error: !!errors.special_price_to,
+                      },
+                    }}
+                  />
+                </Grid>
               </>
             )}
+
+            <Grid item xs={12}>
+              <Typography component="label">Languages</Typography>
+              {formData.language.map((lang, index) => (
+                <Box key={index} display="flex" alignItems="center" mb={1}>
+                  <TextField
+                    fullWidth
+                    label={`Language ${index + 1}`}
+                    value={lang}
+                    onChange={(e) => handleChange(e, index, "language")}
+                  />
+                  <IconButton onClick={() => handleRemoveField(index, "language")} disabled={formData.language.length === 1}>
+                    <RemoveIcon />
+                  </IconButton>
+                </Box>
+              ))}
+              <Button onClick={() => handleAddField("language")} startIcon={<AddIcon />}>
+                Add Language
+              </Button>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography component="label">Includes</Typography>
+              {formData.includes.map((inc, index) => (
+                <Box key={index} display="flex" alignItems="center" mb={1}>
+                  <TextField
+                    fullWidth
+                    label={`Includes ${index + 1}`}
+                    value={inc}
+                    onChange={(e) => handleChange(e, index, "includes")}
+                  />
+                  <IconButton onClick={() => handleRemoveField(index, "includes")} disabled={formData.includes.length === 1}>
+                    <RemoveIcon />
+                  </IconButton>
+                </Box>
+              ))}
+              <Button onClick={() => handleAddField("includes")} startIcon={<AddIcon />}>
+                Add Includes
+              </Button>
+            </Grid>
 
             <Grid item xs={12} sm={12} lg={12} xl={12}>
               <Box>
@@ -925,71 +1138,26 @@ const CreateAnEvent: React.FC = () => {
             </Grid>
 
             {formData.is_certificate && (
-              <>
-                <Grid item xs={12} sm={6} lg={6} xl={4}>
-                  <Box>
-                    <FormControl fullWidth>
-                      <Typography component="label" sx={labelStyle} className="text-black">
-                        Certificate
-                      </Typography>
-                      <TextField
-                        required
-                        label="Enter certificate name"
-                        variant="filled"
-                        id="certificate"
-                        name="certificate"
-                        value={formData.certificate}
-                        onChange={handleInputChange}
-                        sx={inputStyle}
-                      />
-                    </FormControl>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={12} sm={12} lg={12} xl={12}>
-                  <Box>
-                    <FormControl fullWidth>
-                      <Typography component="label" sx={labelStyle} className="text-black">
-                        Certificate Description
-                      </Typography>
-                      <TextField
-                        required
-                        label="Enter certificate description"
-                        variant="filled"
-                        id="certificate_description"
-                        name="certificate_description"
-                        value={formData.certificate_description}
-                        onChange={handleInputChange}
-                        multiline
-                        rows={4}
-                        sx={inputStyle}
-                      />
-                    </FormControl>
-                  </Box>
-                </Grid>
-              </>
+              <Grid item xs={12} sm={12} lg={12} xl={12}>
+                <Typography variant="h6" gutterBottom>Certificate</Typography>
+                <FormControl fullWidth margin="normal" required>
+                  <InputLabel>Certificate Description</InputLabel>
+                  <Select
+                    label="Enter certificate description"
+                    required
+                    name="certificate_description"
+                    value={formData.certificate_description ?? ""}
+                    onChange={handleCertificateChange}
+                  >
+                    {certificate.map((page) => (
+                      <MenuItem key={page._id} value={page._id}>
+                        {page.certification_title}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
             )}
-            <Grid item xs={12} sm={12} lg={12} xl={12}>
-              <Typography
-                component="h5"
-                sx={labelStyle}
-                className="text-black"
-              >
-                Certificate Image
-              </Typography>
-              <TextField
-                type="file"
-                fullWidth
-                required
-                onChange={handleImageUpload}
-                sx={{
-                  "& fieldset": {
-                    border: "1px solid #D5D9E2",
-                    borderRadius: "7px",
-                  },
-                }}
-              />
-            </Grid>
 
             <Grid item xs={12}>
               <Typography component="h5" sx={labelStyle} className="text-black">
@@ -1102,7 +1270,7 @@ const CreateAnEvent: React.FC = () => {
           </Alert>
         </Snackbar>
       </Box>
-    </LocalizationProvider>
+    </LocalizationProvider >
   );
 };
 
