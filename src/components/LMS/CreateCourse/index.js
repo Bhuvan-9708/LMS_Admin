@@ -810,7 +810,7 @@ const CreateCourse = () => {
         </Button>
         <Snackbar
           open={snackbar.open}
-          autoHideDuration={2000}
+          autoHideDuration={3000}
           onClose={handleSnackbarClose}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >

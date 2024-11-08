@@ -213,7 +213,7 @@ const AddWebsiteFront: React.FC = () => {
                     </Box>
                     <Snackbar
                         open={snackbarOpen}
-                        autoHideDuration={2000}
+                        autoHideDuration={3000}
                         onClose={handleCloseSnackbar}
                     >
                         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>

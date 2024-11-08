@@ -210,7 +210,7 @@ export default function EditSectionForm({ sectionId }: { sectionId: string }) {
                 </form>
                 <Snackbar
                     open={snackbar.open}
-                    autoHideDuration={2000}
+                    autoHideDuration={3000}
                     onClose={handleCloseSnackbar}
                     anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 >

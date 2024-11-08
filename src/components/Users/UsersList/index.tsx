@@ -435,7 +435,7 @@ const UsersList: React.FC = () => {
                 </TableBody>
                 <Snackbar
                   open={snackbarOpen}
-                  autoHideDuration={2000}
+                  autoHideDuration={3000}
                   onClose={() => setSnackbarOpen(false)}
                 >
                   <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>

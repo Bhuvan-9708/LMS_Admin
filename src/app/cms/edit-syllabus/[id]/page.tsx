@@ -2,18 +2,18 @@
 import { useState, useEffect } from "react";
 import { useParams } from 'next/navigation';
 import NextLink from 'next/link';
-import EditSectionWorking from "@/components/CMS/EditSectionWorking";
+import EditSyllabus from "@/components/CMS/EditSyllabus";
 
-export default function EditSectionPage() {
+export default function EditSyllabusPage() {
     const { id } = useParams();
     console.log(">>>>>>>>", id);
-    const [sectionId, setSectionId] = useState<string>("");
+    const [syllabusId, setSyllabusId] = useState<string>("");
 
     useEffect(() => {
         if (Array.isArray(id)) {
-            setSectionId(id[0]);
+            setSyllabusId(id[0]);
         } else if (id) {
-            setSectionId(id);
+            setSyllabusId(id);
         }
     }, [id]);
 
@@ -29,10 +29,10 @@ export default function EditSectionPage() {
                         </NextLink>
                     </li>
                     <li>CMS</li>
-                    <li>Edit Section Working</li>
+                    <li>Edit Syllabus</li>
                 </ul>
             </div>
-            <EditSectionWorking sectionId={sectionId} />
+            <EditSyllabus syllabusId={syllabusId} />
         </>
     );
 }

@@ -1,10 +1,10 @@
-"use client"
-import React, { useState } from 'react';
+"use client";
+import React, { useEffect, useState } from 'react';
 import { TextField, Card, CardContent, Box, Button, FormControlLabel, Checkbox, Typography, Grid, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
-const SyllabusForm = () => {
+const EditSyllabusForm = ({ syllabusId }) => {
     const [syllabus, setSyllabus] = useState({
         title: '',
         download_syllabus_link_text: '',
@@ -24,6 +24,23 @@ const SyllabusForm = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // 'success' or 'error'
     const router = useRouter();
+
+    useEffect(() => {
+        const fetchSyllabus = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/syllabus/${syllabusId}`);
+                setSyllabus(response.data.data);
+                console.log("data", response.data);
+            } catch (error) {
+                console.error('Error fetching syllabus:', error);
+                setSnackbarMessage('Error fetching syllabus. Please try again.');
+                setSnackbarSeverity('error');
+                setOpenSnackbar(true);
+            }
+        };
+
+        fetchSyllabus();
+    }, [syllabusId]);
 
     const handleChange = (field, value) => {
         setSyllabus(prev => ({ ...prev, [field]: value }));
@@ -68,25 +85,15 @@ const SyllabusForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/syllabus/create`, syllabus);
-            console.log('Syllabus submitted successfully:', response.data);
-            setSnackbarMessage('Syllabus submitted successfully!');
+            const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/syllabus/update/${syllabusId}`, syllabus);
+            console.log('Syllabus updated successfully:', response.data);
+            setSnackbarMessage('Syllabus updated successfully!');
             setSnackbarSeverity('success');
             setOpenSnackbar(true);
             router.push('/cms/syllabus');
-            setSyllabus({
-                title: '',
-                download_syllabus_link_text: '',
-                download_syllabus_link: '',
-                description: '',
-                detailed_description: [
-                    { title: '', heading: [{ title: '', lesson_no: 1, time: '' }] }
-                ],
-                is_deleted: false
-            });
         } catch (error) {
-            console.error('Error submitting syllabus:', error);
-            setSnackbarMessage('Error submitting syllabus. Please try again.');
+            console.error('Error updating syllabus:', error);
+            setSnackbarMessage('Error updating syllabus. Please try again.');
             setSnackbarSeverity('error');
             setOpenSnackbar(true);
         }
@@ -143,7 +150,7 @@ const SyllabusForm = () => {
                                 />
                             </Grid>
 
-                            {syllabus.detailed_description.map((detail, detailIndex) => (
+                            {syllabus && syllabus.detailed_description && syllabus.detailed_description.map((detail, detailIndex) => (
                                 <Grid container key={detailIndex} spacing={3}>
                                     <Grid item xs={12}>
                                         <Card className="mt-3" style={{ width: '100%' }}>
@@ -230,7 +237,7 @@ const SyllabusForm = () => {
                             />
                         </Grid>
                         <Button sx={{ m: 2 }} type="submit" variant="contained" color="primary">
-                            Submit
+                            Update
                         </Button>
                     </CardContent>
                 </Card>
@@ -245,4 +252,4 @@ const SyllabusForm = () => {
     );
 };
 
-export default SyllabusForm;
+export default EditSyllabusForm;

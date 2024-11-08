@@ -307,7 +307,7 @@ export default function AddBannerForm() {
                 </form>
                 <Snackbar
                     open={snackbar.open}
-                    autoHideDuration={2000}
+                    autoHideDuration={3000}
                     onClose={() => setSnackbar({ ...snackbar, open: false })}
                 >
                     <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
