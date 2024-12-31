@@ -252,6 +252,9 @@ export default function CreateAboutUs() {
                 severity: 'success',
             });
             router.push('/cms/about-us');
+
+
+            //
         } catch (error) {
             console.error('Error creating About Us entry:', error);
             setSnackbar({
